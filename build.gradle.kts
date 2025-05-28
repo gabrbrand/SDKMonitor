@@ -1,28 +1,34 @@
 import com.android.build.gradle.BaseExtension
 import com.android.build.gradle.BasePlugin
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 buildscript {
     repositories {
         google()
         mavenCentral()
-        maven("https://jitpack.io")
     }
     dependencies {
         classpath(libs.android.gradle.plugin)
         classpath(libs.kotlin.gradle.plugin)
+        classpath(libs.hilt.android.gradle.plugin)
     }
 }
 
 plugins {
     id("com.github.ben-manes.versions") version "0.51.0"
-    id("com.google.devtools.ksp") version "2.1.10-1.0.31" apply false
+    id("com.google.devtools.ksp") version "2.1.21-2.0.1" apply false
+    id("org.jetbrains.kotlin.plugin.compose") version "2.1.10" apply false
 }
 
 subprojects {
     tasks.withType<KotlinJvmCompile> {
-        kotlinOptions {
-            jvmTarget = JavaVersion.VERSION_1_8.toString()
+        compilerOptions {
+            jvmTarget.set(JvmTarget.JVM_17)
+            freeCompilerArgs.addAll(
+                "-opt-in=kotlin.RequiresOptIn",
+                "-Xcontext-receivers"
+            )
         }
     }
 
@@ -35,8 +41,9 @@ subprojects {
             }
 
             compileOptions {
-                sourceCompatibility = JavaVersion.VERSION_1_8
-                targetCompatibility = JavaVersion.VERSION_1_8
+                sourceCompatibility = JavaVersion.VERSION_17
+                targetCompatibility = JavaVersion.VERSION_17
+                encoding = "UTF-8"
             }
         }
     }

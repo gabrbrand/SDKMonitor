@@ -4,12 +4,15 @@ import java.util.*
 plugins {
     id("com.android.application")
     id("kotlin-android")
-    id("kotlin-kapt")
     id("kotlin-parcelize")
     id("com.google.devtools.ksp")
+    id("dagger.hilt.android.plugin")
+    id("org.jetbrains.kotlin.plugin.compose")
 }
 
 android {
+    compileSdk = 35
+
     signingConfigs {
         register("release") {
 
@@ -32,10 +35,15 @@ android {
 
     defaultConfig {
         applicationId = "com.bernaferrari.sdkmonitor"
-        versionCode = 13
-        versionName = "0.99"
-        multiDexEnabled = true
+        minSdk = 24
+        targetSdk = 35
+        versionCode = 14
+        versionName = "2.0.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        vectorDrawables {
+            useSupportLibrary = true
+        }
     }
 
     buildTypes {
@@ -44,23 +52,37 @@ android {
             isMinifyEnabled = true
             isShrinkResources = true
             setProguardFiles(
-                    listOf(
-                            getDefaultProguardFile("proguard-android-optimize.txt"),
-                            "proguard-rules.pro"
-                    )
+                listOf(
+                    getDefaultProguardFile("proguard-android-optimize.txt"),
+                    "proguard-rules.pro"
+                )
             )
             signingConfig = signingConfigs.getByName("release")
         }
-//        named("debug") {
-//            applicationIdSuffix = ".debug"
-//        }
     }
 
-    kapt.correctErrorTypes = true
     buildFeatures {
+        compose = true
         buildConfig = true
-        dataBinding = true
-        viewBinding = true
+    }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+
+    kotlinOptions {
+        jvmTarget = "17"
+    }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion = libs.versions.compose.get()
+    }
+
+    packaging {
+        resources {
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+        }
     }
     namespace = "com.bernaferrari.sdkmonitor"
     lint {
@@ -70,85 +92,68 @@ android {
 
 dependencies {
 
-    implementation(project(":base"))
-    implementation(project(":base-android"))
-
     // Kotlin
     implementation(libs.kotlin.stdlib)
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.coroutines.android)
 
-    // Google
-    implementation(libs.material)
+    // Android Core
     implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.constraintlayout)
-    implementation(libs.androidx.appcompat)
-    implementation(libs.androidx.recyclerview)
+    implementation(libs.material)
+
+    // Compose BOM - manages all compose library versions
+    implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.androidx.compose.ui)
+    implementation(libs.androidx.compose.ui.graphics)
+    implementation(libs.androidx.compose.ui.tooling.preview)
+    implementation(libs.androidx.compose.material3)
+    implementation(libs.androidx.compose.material3.window.size)
+    implementation(libs.androidx.compose.material.icons.extended)
+    implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+    implementation(libs.androidx.lifecycle.runtime.compose)
+    implementation(libs.androidx.navigation.compose)
+
+    // Fragment support for viewModels()
     implementation(libs.androidx.fragment.ktx)
 
-    implementation(libs.androidx.palette.ktx)
+    // Coil for image loading
+    implementation(libs.coil.compose)
+    implementation(libs.coil.core)
 
-    // Navigation
-    implementation(libs.androidx.navigation.ui.ktx)
-    implementation(libs.androidx.navigation.fragment.ktx)
+    // Hilt for Dependency Injection
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.android.compiler)
+    implementation(libs.hilt.navigation.compose)
+    implementation(libs.hilt.work)
 
-    // Room
+    // Room Database
     ksp(libs.androidx.room.compiler)
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
-    implementation(libs.androidx.room.rxjava2)
-
-    // LiveData
-    implementation(libs.androidx.lifecycle.livedata.ktx)
-    implementation(libs.androidx.lifecycle.viewmodel.ktx)
+    implementation(libs.androidx.room.paging)
 
     // Paging
     implementation(libs.androidx.paging.runtime.ktx)
+    implementation(libs.androidx.paging.compose)
 
-    // Work
+    // DataStore for Preferences
+    implementation(libs.androidx.datastore.preferences)
+
+    // Work Manager
     implementation(libs.androidx.work.runtime.ktx)
 
-    // Dagger
-    implementation(libs.dagger)
-    kapt(libs.dagger.compiler)
-
-    implementation(libs.dagger.androidSupport)
-    kapt(libs.dagger.androidProcessor)
-
-    // Epoxy
-    implementation(libs.epoxy)
-    implementation(libs.epoxy.databinding)
-    implementation(libs.epoxy.paging3)
-    kapt(libs.epoxy.processor)
-
-    implementation(libs.mavericks)
-    implementation(libs.mavericks.rxjava2)
-    testImplementation(libs.mavericks.testing)
-
-    // RxJava
-    implementation(libs.rxjava2.rxjava)
-    implementation(libs.rxjava2.rxandroid)
-    implementation(libs.rxjava2.rxkotlin)
-    implementation(libs.rxrelay)
-    implementation(libs.rxkprefs)
-
-    implementation(libs.material.dialogs)
-    implementation(libs.stetho)
     implementation(libs.logger)
 
-    implementation(libs.notify)
-
-    debugImplementation(libs.leakcanary)
-//    debugImplementation(libs.leakcanary.support)
-
-    // UI
-    implementation(libs.indicatorfastscroll)
-
-    // Time
-    implementation(libs.timeago)
+    // UI Utils
+    implementation(libs.androidx.palette.ktx)
 
     // Debugging
-    implementation(libs.junit)
-    testImplementation(libs.mockito.core)
-    testImplementation(libs.mockito.kotlin)
+    debugImplementation(libs.androidx.compose.ui.tooling)
+    debugImplementation(libs.leakcanary)
+
+    // Testing
+    testImplementation(libs.junit)
+    androidTestImplementation(platform(libs.androidx.compose.bom))
+    androidTestImplementation(libs.androidx.compose.ui.test.junit4)
 }

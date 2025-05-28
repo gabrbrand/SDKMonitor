@@ -1,31 +1,33 @@
 package com.bernaferrari.sdkmonitor
 
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
-import androidx.navigation.fragment.findNavController
-import androidx.navigation.ui.NavigationUI
-import com.bernaferrari.sdkmonitor.databinding.ActivityMainBinding
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.ui.Modifier
+import androidx.core.view.WindowCompat
+import com.bernaferrari.sdkmonitor.ui.navigation.SDKMonitorNavigation
+import com.bernaferrari.sdkmonitor.ui.theme.SDKMonitorTheme
+import dagger.hilt.android.AndroidEntryPoint
 
-class MainActivity : AppCompatActivity() {
-
-    private lateinit var binding: ActivityMainBinding
-
+@AndroidEntryPoint
+class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
-        if (Injector.get().isLightTheme().get()) {
-            setTheme(R.style.AppThemeLight)
-        } else {
-            setTheme(R.style.AppThemeDark)
-        }
         super.onCreate(savedInstanceState)
-        binding = ActivityMainBinding.inflate(layoutInflater)
-        val view = binding.root
-        setContentView(view)
-
-        supportFragmentManager.findFragmentById(R.id.nav_host_fragment)?.let { fragment ->
-            NavigationUI.setupWithNavController(
-                binding.bottomNav,
-                fragment.findNavController()
-            )
+        
+        // Enable edge-to-edge display
+        enableEdgeToEdge()
+        
+        // Ensure the app draws behind system bars
+        WindowCompat.setDecorFitsSystemWindows(window, true)
+        
+        setContent {
+            SDKMonitorTheme {
+                SDKMonitorNavigation(
+                    modifier = Modifier.fillMaxSize()
+                )
+            }
         }
     }
 }

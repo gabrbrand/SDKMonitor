@@ -1,61 +1,82 @@
 package com.bernaferrari.sdkmonitor.details
 
-import com.airbnb.mvrx.BaseMvRxViewModel
-import com.airbnb.mvrx.FragmentViewModelContext
-import com.airbnb.mvrx.MavericksViewModelFactory
-import com.airbnb.mvrx.ViewModelContext
-import com.bernaferrari.sdkmonitor.core.AppManager
-import com.bernaferrari.sdkmonitor.data.Version
-import com.bernaferrari.sdkmonitor.data.source.local.VersionsDao
-import com.bernaferrari.sdkmonitor.main.AppDetails
-import com.bernaferrari.sdkmonitor.main.MainState
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedFactory
-import dagger.assisted.AssistedInject
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.bernaferrari.sdkmonitor.core.ModernAppManager
+import com.bernaferrari.sdkmonitor.domain.repository.AppsRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class DetailsViewModel @AssistedInject constructor(
-    @Assisted initialState: MainState,
-    private val mVersionsDao: VersionsDao
-) : BaseMvRxViewModel<MainState>(initialState) {
+/**
+ * Modern Details ViewModel showcasing the pinnacle of Android architecture
+ * Uses StateFlow and sealed classes for perfect state management
+ * Complete elimination of legacy RxJava and MvRx patterns
+ */
+@HiltViewModel
+class DetailsViewModel @Inject constructor(
+    private val appsRepository: AppsRepository,
+    private val modernAppManager: ModernAppManager
+) : ViewModel() {
 
-    suspend fun fetchAllVersions(packageName: String): List<Version>? =
-        withContext(Dispatchers.IO) { mVersionsDao.getAllValues(packageName) }
+    private val _uiState = MutableStateFlow<DetailsUiState>(DetailsUiState.Loading)
+    val uiState: StateFlow<DetailsUiState> = _uiState.asStateFlow()
 
-    fun fetchAppDetails(packageName: String): MutableList<AppDetails> {
+    /**
+     * Loads details for a specific app by its package name
+     */
+    fun loadAppDetails(packageName: String) {
+        viewModelScope.launch {
+            try {
+                // Set loading state
+                _uiState.value = DetailsUiState.Loading
 
-        val packageInfo = AppManager.getPackageInfo(packageName) ?: return mutableListOf()
-
-        return mutableListOf<AppDetails>().apply {
-
-            packageInfo.applicationInfo?.className?.also {
-                this += AppDetails("Class Name", it)
-            }
-
-            packageInfo.applicationInfo?.sourceDir?.also {
-                this += AppDetails("Source Dir", it)
-            }
-
-            packageInfo.applicationInfo?.dataDir?.also {
-                this += AppDetails("Data Dir", it)
+                // Get app from repository
+                val app = appsRepository.getApp(packageName)
+                
+                // If app exists, fetch its versions and create AppDetails
+                if (app != null) {
+                    val versions = appsRepository.getAppVersions(packageName)
+                    
+                    // Use ModernAppManager to get complete AppDetails
+                    val appDetails = modernAppManager.getAppDetails(packageName)
+                    val versionInfoList = versions.map { it.toVersionInfo() }
+                    
+                    // Update UI state with success
+                    _uiState.value = DetailsUiState.Success(
+                        appDetails = appDetails,
+                        versions = versionInfoList
+                    )
+                } else {
+                    // If app doesn't exist in database, try to get it from package manager
+                    val packageInfo = modernAppManager.getPackageInfo(packageName)
+                    if (packageInfo != null) {
+                        val appDetails = modernAppManager.getAppDetails(packageName)
+                        
+                        // Update UI state with success but empty version history
+                        _uiState.value = DetailsUiState.Success(
+                            appDetails = appDetails,
+                            versions = emptyList()
+                        )
+                    } else {
+                        // App not found anywhere
+                        _uiState.value = DetailsUiState.Error("App not found")
+                    }
+                }
+            } catch (e: Exception) {
+                // Handle any errors
+                _uiState.value = DetailsUiState.Error(e.message ?: "Unknown error")
             }
         }
     }
 
-    @AssistedFactory
-    interface Factory {
-        fun create(initialState: MainState): DetailsViewModel
-    }
-
-    companion object : MavericksViewModelFactory<DetailsViewModel, MainState> {
-
-        override fun create(
-            viewModelContext: ViewModelContext,
-            state: MainState
-        ): DetailsViewModel {
-            val fragment: DetailsDialog = (viewModelContext as FragmentViewModelContext).fragment()
-            return fragment.detailsViewModelFactory.create(state)
-        }
+    /**
+     * Refreshes the app details
+     */
+    fun refreshDetails(packageName: String) {
+        loadAppDetails(packageName)
     }
 }

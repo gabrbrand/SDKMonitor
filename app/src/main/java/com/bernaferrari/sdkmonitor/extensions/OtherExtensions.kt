@@ -3,10 +3,29 @@ package com.bernaferrari.sdkmonitor.extensions
 import android.graphics.Color
 import androidx.annotation.ColorInt
 import androidx.core.graphics.ColorUtils
-import com.github.marlonlom.utilities.timeago.TimeAgo
-import io.reactivex.Observable
+import java.text.SimpleDateFormat
+import java.util.*
 
-internal fun Long.convertTimestampToDate(): String = TimeAgo.using(this)
+/**
+ * Modern extension functions for the SDK Monitor app
+ */
+
+internal fun Long.convertTimestampToDate(): String {
+    return if (this == 0L) {
+        "Never"
+    } else {
+        val now = System.currentTimeMillis()
+        val diff = now - this
+        
+        when {
+            diff < 60_000 -> "Just now"
+            diff < 3_600_000 -> "${diff / 60_000} minutes ago"
+            diff < 86_400_000 -> "${diff / 3_600_000} hours ago"
+            diff < 604_800_000 -> "${diff / 86_400_000} days ago"
+            else -> SimpleDateFormat("MMM dd, yyyy", Locale.getDefault()).format(Date(this))
+        }
+    }
+}
 
 internal operator fun Boolean.inc() = !this
 
@@ -17,7 +36,6 @@ inline val @receiver:ColorInt Int.darken
 inline val @receiver:ColorInt Int.lighten
     @ColorInt
     get() = ColorUtils.blendARGB(this, Color.WHITE, 0.2f)
-
 
 // colors inspired from https://www.vanschneider.com/colors
 fun Int.apiToColor(): Int = when (this) {
@@ -47,21 +65,3 @@ fun Int.apiToVersion() = when (this) {
     32 -> "Android 12L"
     else -> "Android ${this - 20}"
 }
-
-/**
- * Composes an [rx.Observable] from multiple creation functions chained by [rx.Observable.switchMap].
- *
- * @return composed Observable
- */
-fun <A, B, R> doSwitchMap(
-        zero: () -> Observable<A>,
-        one: (A) -> Observable<B>,
-        two: (A, B) -> Observable<R>
-): Observable<R> =
-        zero.invoke()
-                .switchMap { a ->
-                    one.invoke(a)
-                            .switchMap { b ->
-                                two.invoke(a, b)
-                            }
-                }
