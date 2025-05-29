@@ -5,16 +5,19 @@ import androidx.lifecycle.viewModelScope
 import com.bernaferrari.sdkmonitor.domain.model.LogEntry
 import com.bernaferrari.sdkmonitor.domain.repository.AppsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 sealed class LogsUiState {
-    object Loading : LogsUiState()
+    data object Loading : LogsUiState()
     data class Success(
         val logs: List<LogEntry>,
         val totalCount: Int
     ) : LogsUiState()
+
     data class Error(val message: String) : LogsUiState()
 }
 
@@ -34,12 +37,12 @@ class LogsViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 _uiState.value = LogsUiState.Loading
-                
+
                 val allVersions = appsRepository.getAllVersions()
                 val allApps = appsRepository.getAllApps()
-                
+
                 val appMap = allApps.associateBy { it.packageName }
-                
+
                 val logEntries = allVersions.mapNotNull { version ->
                     val app = appMap[version.packageName] ?: return@mapNotNull null
                     LogEntry(
@@ -53,7 +56,7 @@ class LogsViewModel @Inject constructor(
                         timestamp = version.lastUpdateTime
                     )
                 }.sortedByDescending { it.timestamp } // Most recent first
-                
+
                 _uiState.value = LogsUiState.Success(
                     logs = logEntries,
                     totalCount = logEntries.size

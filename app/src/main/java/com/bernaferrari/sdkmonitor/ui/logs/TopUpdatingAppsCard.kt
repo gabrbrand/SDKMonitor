@@ -152,7 +152,6 @@ fun RecentSdkMigrationsCard(
                     itemsIndexed(apps) { index, app ->
                         SdkMigrationAppItem(
                             app = app,
-                            animationProgress = animationProgress
                         )
                     }
                 }
@@ -167,7 +166,6 @@ fun RecentSdkMigrationsCard(
 private fun SdkMigrationAppItem(
     modifier: Modifier = Modifier,
     app: TopUpdatingApp,
-    animationProgress: Float,
 ) {
     val context = LocalContext.current
     val migrationColor = if (app.newSdk != null && app.oldSdk != null && app.newSdk > app.oldSdk) {

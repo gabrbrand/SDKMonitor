@@ -31,7 +31,7 @@ import com.bernaferrari.sdkmonitor.ui.theme.SDKMonitorTheme
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun StunningThemeOption(
+fun ThemeModeToggle(
     themeMode: ThemeMode,
     isSelected: Boolean,
     onClick: () -> Unit,
@@ -108,13 +108,13 @@ private fun StunningThemeOptionPreview() {
             modifier = Modifier.padding(16.dp),
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            StunningThemeOption(
+            ThemeModeToggle(
                 themeMode = ThemeMode.MATERIAL_YOU,
                 isSelected = true,
                 onClick = {},
                 modifier = Modifier.weight(1f)
             )
-            StunningThemeOption(
+            ThemeModeToggle(
                 themeMode = ThemeMode.LIGHT,
                 isSelected = false,
                 onClick = {},
@@ -132,13 +132,13 @@ private fun StunningThemeOptionDarkPreview() {
             modifier = Modifier.padding(16.dp),
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            StunningThemeOption(
+            ThemeModeToggle(
                 themeMode = ThemeMode.DARK,
                 isSelected = true,
                 onClick = {},
                 modifier = Modifier.weight(1f)
             )
-            StunningThemeOption(
+            ThemeModeToggle(
                 themeMode = ThemeMode.SYSTEM,
                 isSelected = false,
                 onClick = {},

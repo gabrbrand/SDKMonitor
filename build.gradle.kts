@@ -1,54 +1,31 @@
-import com.android.build.gradle.BaseExtension
-import com.android.build.gradle.BasePlugin
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
-
-buildscript {
-    repositories {
-        google()
-        mavenCentral()
-    }
-    dependencies {
-        classpath(libs.android.gradle.plugin)
-        classpath(libs.kotlin.gradle.plugin)
-        classpath(libs.hilt.android.gradle.plugin)
-    }
-}
-
 plugins {
-    id("com.github.ben-manes.versions") version "0.51.0"
-    id("com.google.devtools.ksp") version "2.1.21-2.0.1" apply false
-    id("org.jetbrains.kotlin.plugin.compose") version "2.1.10" apply false
+    alias(libs.plugins.gradle.versions)
+    alias(libs.plugins.version.catalog.update)
+    alias(libs.plugins.android.application) apply false
+    alias(libs.plugins.android.library) apply false
+    alias(libs.plugins.kotlin.android) apply false
+    alias(libs.plugins.kotlin.parcelize) apply false
+    alias(libs.plugins.hilt) apply false
+    alias(libs.plugins.ksp) apply false
+    alias(libs.plugins.compose) apply false
+    alias(libs.plugins.spotless) apply false
 }
 
 subprojects {
-    tasks.withType<KotlinJvmCompile> {
-        compilerOptions {
-            jvmTarget.set(JvmTarget.JVM_17)
-            freeCompilerArgs.addAll(
-                "-opt-in=kotlin.RequiresOptIn",
-                "-Xcontext-receivers"
-            )
+    apply(plugin = "com.diffplug.spotless")
+    configure<com.diffplug.gradle.spotless.SpotlessExtension> {
+        kotlin {
+            target("**/*.kt")
+            targetExclude("${layout.buildDirectory}/**/*.kt")
+            ktlint()
+            licenseHeaderFile(rootProject.file("spotless/copyright.kt"))
+        }
+        kotlinGradle {
+            target("*.gradle.kts")
+            targetExclude("${layout.buildDirectory}/**/*.kt")
+            ktlint()
+            // Look for the first line that doesn't have a block comment (assumed to be the license)
+            licenseHeaderFile(rootProject.file("spotless/copyright.kt"), "(^(?![\\/ ]\\*).*$)")
         }
     }
-
-    plugins.withType<BasePlugin> {
-        configure<BaseExtension> {
-            compileSdkVersion(AndroidConfig.compileSdk)
-            defaultConfig {
-                minSdk = AndroidConfig.minSdk
-                targetSdk = AndroidConfig.targetSdk
-            }
-
-            compileOptions {
-                sourceCompatibility = JavaVersion.VERSION_17
-                targetCompatibility = JavaVersion.VERSION_17
-                encoding = "UTF-8"
-            }
-        }
-    }
-}
-
-tasks.register<Delete>("clean") {
-    delete(rootProject.layout.buildDirectory)
 }

@@ -1,9 +1,25 @@
 package com.bernaferrari.sdkmonitor.ui.components
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.TrendingUp
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -22,7 +38,7 @@ import com.bernaferrari.sdkmonitor.ui.theme.SDKMonitorTheme
 fun EmptyStateCard(
     title: String,
     subtitle: String,
-    iconRes: Int,
+    icon: ImageVector,
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -56,7 +72,7 @@ fun EmptyStateCard(
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
-                        imageVector = ImageVector.vectorResource(iconRes),
+                        imageVector = icon,
                         contentDescription = title,
                         modifier = Modifier.size(40.dp),
                         tint = MaterialTheme.colorScheme.primary
@@ -182,7 +198,7 @@ private fun EmptyStateCardPreview() {
         EmptyStateCard(
             title = "No Logs Yet",
             subtitle = "App changes will appear here as they happen",
-            iconRes = R.drawable.ic_history_24dp
+            icon = Icons.AutoMirrored.Outlined.TrendingUp
         )
     }
 }

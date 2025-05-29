@@ -23,14 +23,15 @@ import androidx.compose.material.icons.automirrored.filled.Sort
 import androidx.compose.material.icons.filled.Android
 import androidx.compose.material.icons.filled.Apps
 import androidx.compose.material.icons.filled.FilterList
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Schedule
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Sync
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
@@ -42,7 +43,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -56,12 +56,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.bernaferrari.sdkmonitor.BuildConfig
 import com.bernaferrari.sdkmonitor.domain.model.AppFilter
 import com.bernaferrari.sdkmonitor.domain.model.ThemeMode
 import com.bernaferrari.sdkmonitor.ui.components.SdkDetailDialog
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun SettingsScreen(
     onNavigateBack: () -> Unit,
@@ -71,13 +70,7 @@ fun SettingsScreen(
     var showSyncDialog by remember { mutableStateOf(false) }
     var selectedSdkVersion by remember { mutableIntStateOf(0) }
     var showSdkDialog by remember { mutableStateOf(false) }
-
-    // Show error snackbar if needed
-    LaunchedEffect(uiState.errorMessage) {
-        if (uiState.hasError) {
-            // Handle error display here if you have a snackbar host
-        }
-    }
+    var showAboutDialog by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
@@ -95,6 +88,15 @@ fun SettingsScreen(
                         Icon(
                             imageVector = Icons.AutoMirrored.Default.ArrowBack,
                             contentDescription = "Back"
+                        )
+                    }
+                },
+                actions = {
+                    IconButton(onClick = { showAboutDialog = true }) {
+                        Icon(
+                            imageVector = Icons.Default.Info,
+                            contentDescription = "About",
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                 },
@@ -172,12 +174,24 @@ fun SettingsScreen(
                 ) {
                     val prefs = uiState.preferences
 
-                    // Beautiful scrollable header
-                    ModernSettingsHeader(
-                        modifier = Modifier.padding(16.dp)
-                    )
-
                     Spacer(modifier = Modifier.height(16.dp))
+
+                    SettingsSection(title = "Appearance") {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            ThemeMode.entries.forEach { theme ->
+                                ThemeModeToggle(
+                                    themeMode = theme,
+                                    isSelected = prefs.themeMode == theme,
+                                    onClick = { viewModel.updateThemeMode(theme) },
+                                    modifier = Modifier.weight(1f)
+                                )
+                            }
+                        }
+
+                    }
 
                     // Analytics Section - NEW!
                     if (uiState.sdkDistribution.isNotEmpty()) {
@@ -195,25 +209,6 @@ fun SettingsScreen(
                         Spacer(modifier = Modifier.height(16.dp))
                     }
 
-                    // 🎨 ABSOLUTELY STUNNING Theme Selection Section - NEW!
-                    SettingsSection(title = "Appearance") {
-
-
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.spacedBy(8.dp)
-                        ) {
-                            ThemeMode.entries.forEach { theme ->
-                                StunningThemeOption(
-                                    themeMode = theme,
-                                    isSelected = prefs.themeMode == theme,
-                                    onClick = { viewModel.updateThemeMode(theme) },
-                                    modifier = Modifier.weight(1f)
-                                )
-                            }
-                        }
-
-                    }
 
                     Spacer(modifier = Modifier.height(16.dp))
 
@@ -313,7 +308,7 @@ fun SettingsScreen(
                                                         AppFilter.SYSTEM_APPS -> Icons.Default.Android
                                                     },
                                                     contentDescription = filter.displayName,
-                                                    modifier = Modifier.size(18.dp)
+                                                    modifier = Modifier.size(16.dp)
                                                 )
                                             },
                                             shape = RoundedCornerShape(16.dp),
@@ -355,7 +350,6 @@ fun SettingsScreen(
 
                         Spacer(modifier = Modifier.height(16.dp))
 
-                        // Enhanced Sort Setting
                         SettingsItem(
                             title = "Sort Order",
                             subtitle = if (prefs.orderBySdk) "📊 Sorted by target SDK version (highest first)" else "🔤 Sorted alphabetically by name",
@@ -420,82 +414,17 @@ fun SettingsScreen(
             sdkVersion = selectedSdkVersion,
             apps = appsWithSdk,
             onDismiss = { showSdkDialog = false },
-            onAppClick = { packageName ->
+            onAppClick = {
                 // Navigate to app details
                 showSdkDialog = false
             }
         )
     }
-}
 
-@Composable
-private fun ModernSettingsHeader(
-    modifier: Modifier = Modifier
-) {
-    Card(
-        modifier = modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(20.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceContainer
-        ),
-        elevation = CardDefaults.cardElevation(4.dp)
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(20.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            Surface(
-                modifier = Modifier.size(48.dp),
-                shape = RoundedCornerShape(14.dp),
-                color = MaterialTheme.colorScheme.primaryContainer
-            ) {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Settings,
-                        contentDescription = "Settings",
-                        modifier = Modifier.size(24.dp),
-                        tint = MaterialTheme.colorScheme.onPrimaryContainer
-                    )
-                }
-            }
-
-            Column(
-                modifier = Modifier.weight(1f)
-            ) {
-                Text(
-                    text = "Settings",
-                    style = MaterialTheme.typography.headlineSmall.copy(
-                        fontWeight = FontWeight.Bold
-                    ),
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-
-                Text(
-                    text = "v${BuildConfig.VERSION_NAME}",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
-
-            Surface(
-                shape = RoundedCornerShape(12.dp),
-                color = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.5f)
-            ) {
-                Text(
-                    text = "SDK Monitor",
-                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
-                    style = MaterialTheme.typography.labelMedium.copy(
-                        fontWeight = FontWeight.Medium
-                    ),
-                    color = MaterialTheme.colorScheme.onSecondaryContainer
-                )
-            }
-        }
+    // About Dialog
+    if (showAboutDialog) {
+        AboutDialog(
+            onDismiss = { showAboutDialog = false }
+        )
     }
 }

@@ -1,17 +1,17 @@
 import java.io.FileInputStream
-import java.util.*
+import java.util.Properties
 
 plugins {
-    id("com.android.application")
-    id("kotlin-android")
-    id("kotlin-parcelize")
-    id("com.google.devtools.ksp")
-    id("dagger.hilt.android.plugin")
-    id("org.jetbrains.kotlin.plugin.compose")
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.kotlin.parcelize)
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.compose)
+    alias(libs.plugins.hilt)
 }
 
 android {
-    compileSdk = 35
+    compileSdk = AndroidConfig.compileSdk
 
     signingConfigs {
         register("release") {
@@ -35,8 +35,8 @@ android {
 
     defaultConfig {
         applicationId = "com.bernaferrari.sdkmonitor"
-        minSdk = 24
-        targetSdk = 35
+        minSdk = AndroidConfig.minSdk
+        targetSdk = AndroidConfig.targetSdk
         versionCode = 14
         versionName = "2.0.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -61,9 +61,8 @@ android {
         }
     }
 
-    buildFeatures {
-        compose = true
-        buildConfig = true
+    kotlinOptions {
+        jvmTarget = "17"
     }
 
     compileOptions {
@@ -71,8 +70,9 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
 
-    kotlinOptions {
-        jvmTarget = "17"
+    buildFeatures {
+        compose = true
+        buildConfig = true
     }
 
     composeOptions {
@@ -99,7 +99,6 @@ dependencies {
 
     // Android Core
     implementation(libs.androidx.core.ktx)
-    implementation(libs.material)
 
     // Compose BOM - manages all compose library versions
     implementation(platform(libs.androidx.compose.bom))
