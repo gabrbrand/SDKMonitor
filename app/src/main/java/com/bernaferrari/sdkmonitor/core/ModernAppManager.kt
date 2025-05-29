@@ -1,18 +1,13 @@
 package com.bernaferrari.sdkmonitor.core
 
-import android.app.PendingIntent
 import android.content.Context
-import android.content.Intent
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
-import android.os.Build
 import androidx.core.graphics.drawable.toBitmap
 import androidx.palette.graphics.Palette
-import com.bernaferrari.sdkmonitor.MainActivity
-import com.bernaferrari.sdkmonitor.R
 import com.bernaferrari.sdkmonitor.data.App
 import com.bernaferrari.sdkmonitor.data.Version
 import com.bernaferrari.sdkmonitor.domain.model.AppDetails
@@ -21,8 +16,8 @@ import com.bernaferrari.sdkmonitor.domain.repository.AppsRepository
 import com.bernaferrari.sdkmonitor.domain.repository.PreferencesRepository
 import com.bernaferrari.sdkmonitor.extensions.convertTimestampToDate
 import com.bernaferrari.sdkmonitor.extensions.darken
-import dagger.hilt.android.qualifiers.ApplicationContext
 import com.bernaferrari.sdkmonitor.notifications.ModernNotificationManager
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
@@ -231,7 +226,7 @@ class ModernAppManager @Inject constructor(
             } catch (e: Exception) {
                 0
             },
-            lastUpdateTime = packageInfo?.lastUpdateTime?.convertTimestampToDate() ?: "Unknown",
+            lastUpdateTime = packageInfo?.lastUpdateTime?.convertTimestampToDate(context) ?: "Unknown",
             isSystemApp = !isUserApp(appInfo)
         )
     }

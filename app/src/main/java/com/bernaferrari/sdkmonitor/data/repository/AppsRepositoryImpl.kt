@@ -1,5 +1,6 @@
 package com.bernaferrari.sdkmonitor.data.repository
 
+import android.content.Context
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
@@ -7,14 +8,13 @@ import com.bernaferrari.sdkmonitor.data.App
 import com.bernaferrari.sdkmonitor.data.Version
 import com.bernaferrari.sdkmonitor.data.source.local.AppsDao
 import com.bernaferrari.sdkmonitor.data.source.local.VersionsDao
-import com.bernaferrari.sdkmonitor.domain.model.AppDetails
 import com.bernaferrari.sdkmonitor.domain.model.AppVersion
 import com.bernaferrari.sdkmonitor.domain.model.LogEntry
 import com.bernaferrari.sdkmonitor.domain.repository.AppsRepository
 import com.bernaferrari.sdkmonitor.extensions.convertTimestampToDate
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -23,7 +23,8 @@ import javax.inject.Singleton
 @Singleton
 class AppsRepositoryImpl @Inject constructor(
     private val appsDao: AppsDao,
-    private val versionsDao: VersionsDao
+    private val versionsDao: VersionsDao,
+    @ApplicationContext private val context: Context,
 ) : AppsRepository {
 
     override fun getAppsFlow(): Flow<List<App>> {
@@ -41,7 +42,7 @@ class AppsRepositoryImpl @Inject constructor(
                     packageName = app.packageName,
                     title = app.title,
                     sdkVersion = sdkVersion,
-                    lastUpdateTime = lastUpdate.convertTimestampToDate(),
+                    lastUpdateTime = lastUpdate.convertTimestampToDate(context),
                     versionName = version?.versionName ?: "",
                     versionCode = version?.version ?: 0L,
                     backgroundColor = app.backgroundColor,
@@ -63,7 +64,7 @@ class AppsRepositoryImpl @Inject constructor(
                     packageName = version.packageName,
                     title = app?.title ?: version.packageName,
                     sdkVersion = version.targetSdk,
-                    lastUpdateTime = version.lastUpdateTime.convertTimestampToDate(),
+                    lastUpdateTime = version.lastUpdateTime.convertTimestampToDate(context),
                     versionName = version.versionName,
                     versionCode = version.version,
                     backgroundColor = app?.backgroundColor ?: 0,
@@ -151,7 +152,7 @@ class AppsRepositoryImpl @Inject constructor(
                 packageName = app.packageName,
                 title = app.title,
                 sdkVersion = sdkVersion,
-                lastUpdateTime = lastUpdate.convertTimestampToDate(),
+                lastUpdateTime = lastUpdate.convertTimestampToDate(context),
                 versionName = version?.versionName ?: "",
                 versionCode = version?.version ?: 0L,
                 backgroundColor = app.backgroundColor,

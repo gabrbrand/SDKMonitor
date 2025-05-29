@@ -15,15 +15,15 @@ import androidx.core.view.WindowCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 
 private val DarkColorScheme = darkColorScheme(
-    primary = Purple80,
-    secondary = PurpleGrey80,
-    tertiary = Pink80
+    primary = Indigo80,
+    secondary = IndigoGrey80,
+    tertiary = Blue80
 )
 
 private val LightColorScheme = lightColorScheme(
-    primary = Purple40,
-    secondary = PurpleGrey40,
-    tertiary = Pink40
+    primary = Indigo40,
+    secondary = IndigoGrey40,
+    tertiary = Blue40
 )
 
 @Composable

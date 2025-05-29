@@ -247,8 +247,7 @@ fun SettingsScreen(
                                             .size(48.dp)
                                             .graphicsLayer(scaleX = iconScale, scaleY = iconScale),
                                         shape = RoundedCornerShape(14.dp),
-                                        color = MaterialTheme.colorScheme.primary.copy(alpha = 0.15f),
-                                        shadowElevation = 4.dp
+                                        color = MaterialTheme.colorScheme.surfaceContainerHigh,
                                     ) {
                                         Box(
                                             modifier = Modifier.fillMaxSize(),
@@ -271,11 +270,7 @@ fun SettingsScreen(
                                             ),
                                             color = MaterialTheme.colorScheme.onSurface
                                         )
-                                        Text(
-                                            text = "Choose which apps to display and analyze",
-                                            style = MaterialTheme.typography.bodyMedium,
-                                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                                        )
+                        
                                     }
                                 }
 
@@ -362,27 +357,23 @@ fun SettingsScreen(
 
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    // Background Sync Section
+                    // Background Sync Section - SIMPLIFIED AND ELEGANT
                     SettingsSection(title = "Background Sync") {
                         SettingsItem(
                             title = "Background Sync",
-                            subtitle = if (prefs.backgroundSync) "Automatically checking for updates" else "Manual updates only",
+                            subtitle = if (prefs.backgroundSync) {
+                                when {
+                                    prefs.syncInterval == "1" && prefs.syncTimeUnit == TimeUnit.DAYS -> "Enabled • Daily updates"
+                                    prefs.syncInterval == "7" && prefs.syncTimeUnit == TimeUnit.DAYS -> "Enabled • Weekly updates"
+                                    prefs.syncInterval == "30" && prefs.syncTimeUnit == TimeUnit.DAYS -> "Enabled • Monthly updates"
+                                    else -> "Enabled • Every ${prefs.syncInterval} ${prefs.syncTimeUnit.displayName.lowercase()}"
+                                }
+                            } else {
+                                "Tap to configure automatic updates"
+                            },
                             icon = Icons.Default.Sync,
-                            isSwitch = true,
-                            switchValue = prefs.backgroundSync,
-                            onSwitchToggle = { viewModel.toggleBackgroundSync() }
+                            onClick = { showSyncDialog = true }
                         )
-
-                        if (prefs.backgroundSync) {
-                            Spacer(modifier = Modifier.height(8.dp))
-
-                            SettingsItem(
-                                title = "Sync Interval",
-                                subtitle = "Every ${prefs.syncInterval} ${prefs.syncTimeUnit.displayName.lowercase()}",
-                                icon = Icons.Default.Schedule,
-                                onClick = { showSyncDialog = true }
-                            )
-                        }
                     }
 
                     Spacer(modifier = Modifier.height(32.dp))
@@ -391,7 +382,7 @@ fun SettingsScreen(
         }
     }
 
-    // Background Sync Dialog
+    // Background Sync Dialog - NOW HANDLES EVERYTHING
     if (showSyncDialog) {
         ModernBackgroundSyncDialog(
             isEnabled = uiState.preferences.backgroundSync,
@@ -402,7 +393,9 @@ fun SettingsScreen(
                 if (enabled != uiState.preferences.backgroundSync) {
                     viewModel.toggleBackgroundSync()
                 }
-                viewModel.setSyncInterval(interval, unit)
+                if (enabled) {
+                    viewModel.setSyncInterval(interval, unit)
+                }
             }
         )
     }

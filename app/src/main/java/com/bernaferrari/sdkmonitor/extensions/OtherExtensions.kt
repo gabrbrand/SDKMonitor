@@ -1,8 +1,10 @@
 package com.bernaferrari.sdkmonitor.extensions
 
+import android.content.Context
 import android.graphics.Color
 import androidx.annotation.ColorInt
 import androidx.core.graphics.ColorUtils
+import com.bernaferrari.sdkmonitor.R
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -10,18 +12,27 @@ import java.util.*
  * Modern extension functions for the SDK Monitor app
  */
 
-internal fun Long.convertTimestampToDate(): String {
+internal fun Long.convertTimestampToDate(context: Context): String {
     return if (this == 0L) {
-        "Never"
+        "Never" // You might want to add this to strings.xml too
     } else {
         val now = System.currentTimeMillis()
         val diff = now - this
         
         when {
-            diff < 60_000 -> "Just now"
-            diff < 3_600_000 -> "${diff / 60_000} minutes ago"
-            diff < 86_400_000 -> "${diff / 3_600_000} hours ago"
-            diff < 604_800_000 -> "${diff / 86_400_000} days ago"
+            diff < 60_000 -> context.getString(R.string.just_now)
+            diff < 3_600_000 -> {
+                val minutes = (diff / 60_000).toInt()
+                context.resources.getQuantityString(R.plurals.minutes_ago, minutes, minutes)
+            }
+            diff < 86_400_000 -> {
+                val hours = (diff / 3_600_000).toInt()
+                context.resources.getQuantityString(R.plurals.hours_ago, hours, hours)
+            }
+            diff < 604_800_000 -> {
+                val days = (diff / 86_400_000).toInt()
+                context.resources.getQuantityString(R.plurals.days_ago, days, days)
+            }
             else -> SimpleDateFormat("MMM dd, yyyy", Locale.getDefault()).format(Date(this))
         }
     }

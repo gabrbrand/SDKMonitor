@@ -29,6 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.LineHeightStyle
@@ -54,6 +55,7 @@ fun LogsCard(
     appIcon: Bitmap? = null,
     onClick: () -> Unit = {},
 ) {
+    val context = LocalContext.current
     val apiColor = Color(logEntry.newSdk.apiToColor())
     val apiDescription = logEntry.newSdk.apiToVersion()
 
@@ -79,7 +81,7 @@ fun LogsCard(
         ) {
             // App Icon with beautiful shadow
             Card(
-                modifier = Modifier.size(48.dp),
+                modifier = Modifier.size(56.dp),
                 shape = RoundedCornerShape(12.dp),
                 colors = CardDefaults.cardColors(
                     containerColor = MaterialTheme.colorScheme.surfaceContainerHighest
@@ -94,13 +96,13 @@ fun LogsCard(
                         Image(
                             bitmap = appIcon.asImageBitmap(),
                             contentDescription = "App icon for ${logEntry.appName}",
-                            modifier = Modifier.size(32.dp)
+                            modifier = Modifier.size(40.dp)
                         )
                     } else {
                         Icon(
                             imageVector = Icons.Outlined.Apps,
                             contentDescription = "Default app icon",
-                            modifier = Modifier.size(24.dp),
+                            modifier = Modifier.size(28.dp),
                             tint = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
@@ -126,7 +128,7 @@ fun LogsCard(
                 Spacer(modifier = Modifier.height(4.dp))
 
                 Text(
-                    text = logEntry.timestamp.convertTimestampToDate(),
+                    text = logEntry.timestamp.convertTimestampToDate(context),
                     style = MaterialTheme.typography.bodySmall.copy(
                         fontFamily = FontFamily.Monospace
                     ),

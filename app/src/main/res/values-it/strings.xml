@@ -1,56 +1,59 @@
 <resources>
-    <string name="app_name">SDK Monitor</string>
+    <string name="app_name">Monitor SDK</string>
 
     <string name="empty_search">Nessun risultato trovato</string>
-    <string name="empty_logs">Nessun cambiamento rilevato</string>
-    <string name="target_history">Cronologia livello SDK di destinazione</string>
-    <string name="background_sync">Sincronizzazione in background</string>
-    <string name="sync_interval">Intervallo di sincronizzazione</string>
-    <string name="constraints">Restrizioni</string>
-    <string name="charging">Caricamento</string>
+    <string name="empty_logs">Nessuna modifica rilevata</string>
+    <string name="target_history">Cronologia TargetSDK</string>
+    <string name="background_sync">Sincronizzazione in Background</string>
+    <string name="sync_interval">Intervallo di Sincronizzazione</string>
+    <string name="constraints">Vincoli</string>
+    <string name="charging">In carica</string>
     <string name="batter_not_low">Batteria non scarica</string>
 
-    <string name="min">minuto</string>
+    <string name="min">min</string>
     <string name="hour">1 ora</string>
     <string name="hours">ore</string>
     <string name="days">giorni</string>
 
-    <string-array name="singularTime">
-        <item>minuto</item>
-        <item>ora</item>
-        <item>giorno</item>
-    </string-array>
-
-    <string-array name="pluralTime">
-        <item>minuti</item>
-        <item>ore</item>
-        <item>giorni</item>
-    </string-array>
-
-    <plurals name="searchApps">
-        <item quantity="one">Cerca %d app</item>
-        <item quantity="other">Cerca %d apps</item>
-    </plurals>
-
     <string name="sync_every">Sincronizza ogni %d %s</string>
-    <string name="sync_disabled">La sincronizzazione è disabilitata</string>
+    <string name="sync_disabled">Sincronizzazione disabilitata</string>
 
     <string name="dismiss">Ignora</string>
-    <string name="contact">Contatti</string>
-    <string name="about_title">SDK Monitor v%1$s</string>
-    <string name="about_body"><![CDATA[
-        Disegnato &amp; sviluppato da <b>Bernardo Ferrari</b>.<br/>
-        <a href=\'https://github.com/bernaferrari\'>GitHub</a>&nbsp;&nbsp;
-        <a href=\'https://www.reddit.com/user/bernaferrari\'>Reddit</a>&nbsp;&nbsp;
-        <a href=\'https://www.linkedin.com/in/bernaferrari\'>LinkedIn</a><br/><br/>
-        Questo progetto è <a href=\'https://github.com/bernaferrari/SDKMonitor\'>open source</a>, ed è concesso in licenza secondo i termini
-        della licenza Apache 2.0.</a>
-  ]]></string>
+    <string name="contact">Contatto</string>
+    <string name="about_title">Monitor SDK v%1$s</string>
 
-    <string name="background_sync_description">Controlla periodicamente se il livello SDK di destinazione è cambiato, poiché le apps vengono continuamente aggiornate.</string>
+    <string name="background_sync_description">Controlla periodicamente se il targetSDK è cambiato, poiché le app vengono sempre aggiornate.</string>
     <string name="home">Home</string>
-    <string name="logs">Logs</string>
+    <string name="logs">Log</string>
     <string name="settings">Impostazioni</string>
     <string name="loading">Caricamento..</string>
 
+    <string name="target_sdk_logs">Log TargetSDK</string>
+    <string name="no_logs_yet">Nessun Log Ancora</string>
+    <string name="app_changes_will_appear">I cambiamenti dell\'app appariranno qui man mano che accadono</string>
+    <string name="failed_to_load_logs">Caricamento Log Fallito</string>
+    <string name="loading_logs">Caricamento log...</string>
+    <string name="retry">Riprova</string>
+    
+    <string name="main_title">App</string>
+    <string name="logs_title">Log</string>
+    <string name="settings_title">Impostazioni</string>
+
+    <!-- Time formatting -->
+    <string name="just_now">Proprio ora</string>
+
+    <plurals name="minutes_ago">
+        <item quantity="one">%d minuto fa</item>
+        <item quantity="many">%d minuti fa</item>
+    </plurals>
+
+    <plurals name="hours_ago">
+        <item quantity="one">%d ora fa</item>
+        <item quantity="many">%d ore fa</item>
+    </plurals>
+
+    <plurals name="days_ago">
+        <item quantity="one">%d giorno fa</item>
+        <item quantity="many">%d giorni fa</item>
+    </plurals>
 </resources>

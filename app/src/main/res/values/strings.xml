@@ -32,6 +32,22 @@
         <item quantity="other">Search %d apps</item>
     </plurals>
 
+    <!-- Modern plurals for time formatting -->
+    <plurals name="minutes_ago">
+        <item quantity="one">%d minute ago</item>
+        <item quantity="other">%d minutes ago</item>
+    </plurals>
+
+    <plurals name="hours_ago">
+        <item quantity="one">%d hour ago</item>
+        <item quantity="other">%d hours ago</item>
+    </plurals>
+
+    <plurals name="days_ago">
+        <item quantity="one">%d day ago</item>
+        <item quantity="other">%d days ago</item>
+    </plurals>
+
     <string name="sync_every">Sync every %d %s</string>
     <string name="sync_disabled">Sync is disabled</string>
 
@@ -64,5 +80,9 @@
     <string name="main_title">Apps</string>
     <string name="logs_title">Logs</string>
     <string name="settings_title">Settings</string>
+
+    <!-- Time formatting -->
+    <string name="just_now">Just now</string>
+    <string name="never">Never</string>
 
 </resources>

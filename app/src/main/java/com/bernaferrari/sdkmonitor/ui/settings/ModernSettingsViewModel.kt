@@ -142,16 +142,25 @@ class ModernSettingsViewModel @Inject constructor(
     }
 
     private fun parseSyncInterval(interval: String): Pair<String, TimeUnit> {
-        // Parse interval like "30m", "1h", "2d" into number and unit
+        // Parse interval like "30m", "1h", "2d", "7d", "30d" into number and unit
         return try {
             when {
                 interval.endsWith("m") -> Pair(interval.dropLast(1), TimeUnit.MINUTES)
                 interval.endsWith("h") -> Pair(interval.dropLast(1), TimeUnit.HOURS)
                 interval.endsWith("d") -> Pair(interval.dropLast(1), TimeUnit.DAYS)
-                else -> Pair("30", TimeUnit.MINUTES)
+                // Handle legacy formats without unit suffix
+                interval.toIntOrNull() != null -> {
+                    val value = interval.toInt()
+                    when {
+                        value <= 24 -> Pair(interval, TimeUnit.HOURS)
+                        value <= 168 -> Pair((value / 24).toString(), TimeUnit.DAYS)
+                        else -> Pair("7", TimeUnit.DAYS)
+                    }
+                }
+                else -> Pair("7", TimeUnit.DAYS) // Default to weekly
             }
         } catch (e: Exception) {
-            Pair("30", TimeUnit.MINUTES)
+            Pair("7", TimeUnit.DAYS) // Default to weekly on any error
         }
     }
 

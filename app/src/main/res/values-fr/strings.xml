@@ -1,56 +1,59 @@
 <resources>
-    <string name="app_name">SDK Monitor</string>
+    <string name="app_name">Moniteur SDK</string>
 
     <string name="empty_search">Aucun résultat trouvé</string>
     <string name="empty_logs">Aucun changement détecté</string>
-    <string name="target_history">Historique des SDK cibles</string>
-    <string name="background_sync">Synchronisation en arrière-plan</string>
-    <string name="sync_interval">Intervalle de synchronisation</string>
+    <string name="target_history">Historique TargetSDK</string>
+    <string name="background_sync">Synchronisation en Arrière-plan</string>
+    <string name="sync_interval">Intervalle de Synchronisation</string>
     <string name="constraints">Contraintes</string>
-    <string name="charging">En charge</string>
-    <string name="batter_not_low">Batterie non faible</string>
+    <string name="charging">Rechargement</string>
+    <string name="batter_not_low">Batterie pas faible</string>
 
     <string name="min">min</string>
     <string name="hour">1 heure</string>
     <string name="hours">heures</string>
     <string name="days">jours</string>
 
-    <string-array name="singularTime">
-        <item>minute</item>
-        <item>heure</item>
-        <item>jour</item>
-    </string-array>
+    <string name="sync_every">Synchroniser toutes les %d %s</string>
+    <string name="sync_disabled">Synchronisation désactivée</string>
 
-    <string-array name="pluralTime">
-        <item>minutes</item>
-        <item>heures</item>
-        <item>jours</item>
-    </string-array>
+    <string name="dismiss">Ignorer</string>
+    <string name="contact">Contact</string>
+    <string name="about_title">Moniteur SDK v%1$s</string>
 
-    <plurals name="searchApps">
-        <item quantity="one">Rechercher parmi %d appli</item>
-        <item quantity="other">Rechercher parmi %d applis</item>
+    <string name="background_sync_description">Vérifier périodiquement si le targetSDK a changé, car les applications sont toujours mises à jour.</string>
+    <string name="home">Accueil</string>
+    <string name="logs">Journaux</string>
+    <string name="settings">Paramètres</string>
+    <string name="loading">Chargement..</string>
+
+    <string name="target_sdk_logs">Journaux TargetSDK</string>
+    <string name="no_logs_yet">Aucun Journal Encore</string>
+    <string name="app_changes_will_appear">Les changements d\'application apparaîtront ici au fur et à mesure</string>
+    <string name="failed_to_load_logs">Échec du Chargement des Journaux</string>
+    <string name="loading_logs">Chargement des journaux...</string>
+    <string name="retry">Réessayer</string>
+    
+    <string name="main_title">Apps</string>
+    <string name="logs_title">Journaux</string>
+    <string name="settings_title">Paramètres</string>
+
+    <!-- Time formatting -->
+    <string name="just_now">À l\'instant</string>
+
+    <plurals name="minutes_ago">
+        <item quantity="one">Il y a %d minute</item>
+        <item quantity="many">Il y a %d minutes</item>
     </plurals>
 
-    <string name="sync_every">Synchroniser tou(te)s les %d %s</string>
-    <string name="sync_disabled">La synchronisation est désactivée</string>
+    <plurals name="hours_ago">
+        <item quantity="one">Il y a %d heure</item>
+        <item quantity="many">Il y a %d heures</item>
+    </plurals>
 
-    <string name="dismiss">Fermer</string>
-    <string name="contact">Contact</string>
-    <string name="about_title">SDK Monitor v%1$s</string>
-    <string name="about_body"><![CDATA[
-        Conçu &amp; développé par <b>Bernardo Ferrari</b>.<br/>
-        <a href=\'https://github.com/bernaferrari\'>GitHub</a>&nbsp;&nbsp;
-        <a href=\'https://www.reddit.com/user/bernaferrari\'>Reddit</a>&nbsp;&nbsp;
-        <a href=\'https://www.linkedin.com/in/bernaferrari\'>LinkedIn</a><br/><br/>
-        Ce projet est <a href=\'https://github.com/bernaferrari/SDKMonitor\'>open source</a>, et est
-        sous licence Apache 2.0.</a>
-  ]]></string>
-
-    <string name="background_sync_description">Vérifie de façon périodique si des SDK cibles ont changé, compte tenu des mises à jour d’applications.</string>
-    <string name="home">Accueil</string>
-    <string name="logs">Journal</string>
-    <string name="settings">Paramètres</string>
-    <string name="loading">Chargement…</string>
-
+    <plurals name="days_ago">
+        <item quantity="one">Il y a %d jour</item>
+        <item quantity="many">Il y a %d jours</item>
+    </plurals>
 </resources>

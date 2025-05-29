@@ -1,10 +1,12 @@
 package com.bernaferrari.sdkmonitor.ui.details
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bernaferrari.sdkmonitor.core.ModernAppManager
 import com.bernaferrari.sdkmonitor.domain.repository.AppsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -19,7 +21,8 @@ import javax.inject.Inject
 @HiltViewModel
 class DetailsViewModel @Inject constructor(
     private val appsRepository: AppsRepository,
-    private val modernAppManager: ModernAppManager
+    private val modernAppManager: ModernAppManager,
+    @ApplicationContext private val context: Context
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<DetailsUiState>(DetailsUiState.Loading)
@@ -36,15 +39,20 @@ class DetailsViewModel @Inject constructor(
 
                 // Get app from repository
                 val app = appsRepository.getApp(packageName)
-                
+
                 // If app exists, fetch its versions and create AppDetails
                 if (app != null) {
                     val versions = appsRepository.getAppVersions(packageName)
-                    
+
                     // Use ModernAppManager to get complete AppDetails
                     val appDetails = modernAppManager.getAppDetails(packageName)
-                    val appVersionList = versions.map { it.toAppVersion(appDetails) } // Changed from toVersionInfo to toAppVersion
-                    
+                    val appVersionList = versions.map {
+                        it.toAppVersion(
+                            appDetails,
+                            context
+                        )
+                    } // Changed from toVersionInfo to toAppVersion
+
                     // Update UI state with success
                     _uiState.value = DetailsUiState.Success(
                         appDetails = appDetails,
@@ -55,7 +63,7 @@ class DetailsViewModel @Inject constructor(
                     val packageInfo = modernAppManager.getPackageInfo(packageName)
                     if (packageInfo != null) {
                         val appDetails = modernAppManager.getAppDetails(packageName)
-                        
+
                         // Update UI state with success but empty version history
                         _uiState.value = DetailsUiState.Success(
                             appDetails = appDetails,

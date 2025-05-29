@@ -1,5 +1,7 @@
 package com.bernaferrari.sdkmonitor.ui.details
 
+import android.content.Context
+import com.bernaferrari.sdkmonitor.R
 import com.bernaferrari.sdkmonitor.data.Version
 import com.bernaferrari.sdkmonitor.domain.model.AppDetails
 import com.bernaferrari.sdkmonitor.domain.model.AppVersion
@@ -33,13 +35,13 @@ data class VersionInfo(
 /**
  * Extension function to convert Version to AppVersion
  */
-fun Version.toAppVersion(appDetails: AppDetails) = AppVersion(
+fun Version.toAppVersion(appDetails: AppDetails, context: Context) = AppVersion(
     packageName = this.packageName,
     title = appDetails.title,
     sdkVersion = this.targetSdk,
     versionName = this.versionName,
     versionCode = this.version,
-    lastUpdateTime = formatTimestamp(this.lastUpdateTime)
+    lastUpdateTime = formatTimestamp(this.lastUpdateTime, context)
 )
 
 /**
@@ -54,17 +56,26 @@ fun Version.toVersionInfo() = VersionInfo(
 )
 
 /**
- * Helper function to format timestamp to readable string
+ * Helper function to format timestamp to readable string with multilingual support
  */
-private fun formatTimestamp(timestamp: Long): String {
+private fun formatTimestamp(timestamp: Long, context: Context): String {
     val now = System.currentTimeMillis()
     val diff = now - timestamp
 
     return when {
-        diff < 60 * 1000 -> "Just now"
-        diff < 60 * 60 * 1000 -> "${diff / (60 * 1000)} minutes ago"
-        diff < 24 * 60 * 60 * 1000 -> "${diff / (60 * 60 * 1000)} hours ago"
-        diff < 7 * 24 * 60 * 60 * 1000 -> "${diff / (24 * 60 * 60 * 1000)} days ago"
+        diff < 60 * 1000 -> context.getString(R.string.just_now)
+        diff < 60 * 60 * 1000 -> {
+            val minutes = (diff / (60 * 1000)).toInt()
+            context.resources.getQuantityString(R.plurals.minutes_ago, minutes, minutes)
+        }
+        diff < 24 * 60 * 60 * 1000 -> {
+            val hours = (diff / (60 * 60 * 1000)).toInt()
+            context.resources.getQuantityString(R.plurals.hours_ago, hours, hours)
+        }
+        diff < 7 * 24 * 60 * 60 * 1000 -> {
+            val days = (diff / (24 * 60 * 60 * 1000)).toInt()
+            context.resources.getQuantityString(R.plurals.days_ago, days, days)
+        }
         else -> {
             val date = java.util.Date(timestamp)
             val formatter = java.text.SimpleDateFormat("MMM dd, yyyy", java.util.Locale.getDefault())

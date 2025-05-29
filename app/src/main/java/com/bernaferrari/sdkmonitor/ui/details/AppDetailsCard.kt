@@ -166,7 +166,7 @@ private fun BeautifulSdkSection(
                 Text(
                     text = appDetails.targetSdk.apiToVersion(),
                     style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    color = sdkColor,
                     textAlign = TextAlign.Center,
                     maxLines = 1
                 )

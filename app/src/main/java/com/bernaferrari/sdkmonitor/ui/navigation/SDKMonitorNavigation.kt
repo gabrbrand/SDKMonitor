@@ -1,10 +1,9 @@
 package com.bernaferrari.sdkmonitor.ui.navigation
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Apps
 import androidx.compose.material.icons.filled.History
@@ -125,8 +124,9 @@ fun SDKMonitorNavigation(
             
             composable(Screen.Logs.route) {
                 LogsScreen(
-                    onNavigateBack = {
-                        navController.popBackStack()
+                    onNavigateBack = { navController.popBackStack() },
+                    onNavigateToAppDetails = { packageName ->
+                        navController.navigate(Screen.Details.createRoute(packageName))
                     }
                 )
             }
