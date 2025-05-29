@@ -1,13 +1,17 @@
-package com.bernaferrari.sdkmonitor.settings
+package com.bernaferrari.sdkmonitor.ui.settings
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bernaferrari.sdkmonitor.domain.model.AppFilter
-import com.bernaferrari.sdkmonitor.domain.repository.PreferencesRepository
+import com.bernaferrari.sdkmonitor.domain.model.ThemeMode
 import com.bernaferrari.sdkmonitor.domain.repository.AppsRepository
-import com.bernaferrari.sdkmonitor.ui.components.SdkDistribution
+import com.bernaferrari.sdkmonitor.domain.repository.PreferencesRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -42,20 +46,20 @@ class ModernSettingsViewModel @Inject constructor(
                     .collect { userPreferences ->
                         val (interval, timeUnit) = parseSyncInterval(userPreferences.syncInterval)
                         val preferences = SettingsPreferences(
-                            lightMode = userPreferences.lightMode,
-                            appFilter = userPreferences.appFilter, // FIXED: Use appFilter from UserPreferences
+                            themeMode = userPreferences.themeMode,
+                            appFilter = userPreferences.appFilter,
                             backgroundSync = userPreferences.backgroundSync,
                             orderBySdk = userPreferences.orderBySdk,
                             syncInterval = interval,
                             syncTimeUnit = timeUnit
                         )
-                        
+
                         _uiState.value = _uiState.value.copy(
                             isLoading = false,
                             preferences = preferences,
                             errorMessage = null
                         )
-                        
+
                         // Refresh analytics when preferences change
                         loadAnalytics()
                     }
@@ -73,14 +77,14 @@ class ModernSettingsViewModel @Inject constructor(
             try {
                 val appFilter = _uiState.value.preferences.appFilter
                 val allApps = appsRepository.getAllAppsAsAppVersions()
-                
+
                 // Filter apps based on current app filter preference - FIXED LOGIC
                 val filteredApps = when (appFilter) {
                     AppFilter.USER_APPS -> allApps.filter { it.isFromPlayStore } // User apps
                     AppFilter.SYSTEM_APPS -> allApps.filter { !it.isFromPlayStore } // System apps  
                     AppFilter.ALL_APPS -> allApps // All apps
                 }
-                
+
                 val distribution = filteredApps
                     .groupBy { it.sdkVersion }
                     .map { (sdk, appList) ->
@@ -121,6 +125,22 @@ class ModernSettingsViewModel @Inject constructor(
         }
     }
 
+    /**
+     * 🎨 Update theme mode with beautiful animations
+     */
+    fun updateThemeMode(themeMode: ThemeMode) {
+        viewModelScope.launch {
+            try {
+                preferencesRepository.updateThemeMode(themeMode)
+            } catch (e: Exception) {
+                _uiState.value = _uiState.value.copy(
+//                    hasError = true,
+                    errorMessage = "Failed to update theme: ${e.localizedMessage}"
+                )
+            }
+        }
+    }
+
     private fun parseSyncInterval(interval: String): Pair<String, TimeUnit> {
         // Parse interval like "30m", "1h", "2d" into number and unit
         return try {
@@ -153,22 +173,6 @@ class ModernSettingsViewModel @Inject constructor(
             )
         }
         // No finally block needed since we're not tracking loading states
-    }
-
-    /**
-     * Toggle light mode preference
-     */
-    fun toggleLightMode() {
-        viewModelScope.launch {
-            try {
-                val current = _uiState.value.preferences.lightMode
-                preferencesRepository.updateLightMode(!current)
-            } catch (e: Exception) {
-                _uiState.value = _uiState.value.copy(
-                    errorMessage = "Failed to update light mode: ${e.message}"
-                )
-            }
-        }
     }
 
     /**

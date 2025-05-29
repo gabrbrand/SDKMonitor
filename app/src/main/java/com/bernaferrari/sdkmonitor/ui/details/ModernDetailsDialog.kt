@@ -1,4 +1,4 @@
-package com.bernaferrari.sdkmonitor.details
+package com.bernaferrari.sdkmonitor.ui.details
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -23,7 +23,6 @@ import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -130,21 +129,6 @@ fun ModernDetailsDialog(
                         .padding(24.dp),
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    if (app.isFromPlayStore) {
-                        FilledTonalButton(
-                            onClick = onPlayStoreClick,
-                            modifier = Modifier.weight(1f)
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.PlayArrow,
-                                contentDescription = null,
-                                modifier = Modifier.size(18.dp)
-                            )
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Text("Play Store")
-                        }
-                    }
-
                     OutlinedButton(
                         onClick = onAppInfoClick,
                         modifier = Modifier.weight(1f)
@@ -156,6 +140,21 @@ fun ModernDetailsDialog(
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Text("App Info")
+                    }
+
+                    if (app.isFromPlayStore) {
+                        OutlinedButton(
+                            onClick = onPlayStoreClick,
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.PlayArrow,
+                                contentDescription = null,
+                                modifier = Modifier.size(18.dp)
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text("Play Store")
+                        }
                     }
                 }
 
@@ -198,10 +197,12 @@ fun ModernDetailsDialog(
                         }
 
                         items(versions) { version ->
-                            VersionHistoryItem(version = DialogVersionInfo(
-                                targetSdk = version.targetSdk,
-                                lastUpdateTime = version.lastUpdateTime
-                            ))
+                            VersionHistoryItem(
+                                version = DialogVersionInfo(
+                                    targetSdk = version.targetSdk,
+                                    lastUpdateTime = version.lastUpdateTime
+                                )
+                            )
                         }
                     }
                 }

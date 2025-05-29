@@ -1,8 +1,8 @@
-package com.bernaferrari.sdkmonitor.settings
+package com.bernaferrari.sdkmonitor.ui.settings
 
 import com.bernaferrari.sdkmonitor.domain.model.AppFilter
 import com.bernaferrari.sdkmonitor.domain.model.AppVersion
-import com.bernaferrari.sdkmonitor.ui.components.SdkDistribution
+import com.bernaferrari.sdkmonitor.domain.model.ThemeMode
 
 /**
  * Modern UI state for Settings screen with granular control
@@ -21,8 +21,8 @@ data class SettingsUiState(
 }
 
 data class SettingsPreferences(
-    val lightMode: Boolean = false,
-    val appFilter: AppFilter = AppFilter.ALL_APPS, // Changed default to ALL_APPS
+    val themeMode: ThemeMode = ThemeMode.MATERIAL_YOU,
+    val appFilter: AppFilter = AppFilter.ALL_APPS,
     val backgroundSync: Boolean = false,
     val orderBySdk: Boolean = false,
     val syncInterval: String = "30",

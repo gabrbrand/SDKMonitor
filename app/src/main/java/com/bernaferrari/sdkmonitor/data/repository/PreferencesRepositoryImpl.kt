@@ -5,6 +5,8 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
+import com.bernaferrari.sdkmonitor.domain.model.AppFilter
+import com.bernaferrari.sdkmonitor.domain.model.ThemeMode
 import com.bernaferrari.sdkmonitor.domain.model.UserPreferences
 import com.bernaferrari.sdkmonitor.domain.repository.PreferencesRepository
 import kotlinx.coroutines.flow.Flow
@@ -18,8 +20,9 @@ class PreferencesRepositoryImpl @Inject constructor(
 ) : PreferencesRepository {
 
     companion object {
-        private val LIGHT_MODE_KEY = booleanPreferencesKey("light_mode")
-        private val SHOW_SYSTEM_APPS_KEY = booleanPreferencesKey("show_system_apps")
+        private val THEME_MODE_KEY = stringPreferencesKey("theme_mode")
+        private val APP_FILTER_KEY =
+            stringPreferencesKey("app_filter")
         private val BACKGROUND_SYNC_KEY = booleanPreferencesKey("background_sync")
         private val ORDER_BY_SDK_KEY = booleanPreferencesKey("order_by_sdk")
         private val SYNC_INTERVAL_KEY = stringPreferencesKey("sync_interval")
@@ -28,8 +31,12 @@ class PreferencesRepositoryImpl @Inject constructor(
     override fun getUserPreferences(): Flow<UserPreferences> {
         return dataStore.data.map { preferences ->
             UserPreferences(
-                lightMode = preferences[LIGHT_MODE_KEY] ?: true,
-                showSystemApps = preferences[SHOW_SYSTEM_APPS_KEY] ?: false,
+                themeMode = ThemeMode.valueOf(
+                    preferences[THEME_MODE_KEY] ?: ThemeMode.MATERIAL_YOU.name
+                ),
+                appFilter = AppFilter.valueOf(
+                    preferences[APP_FILTER_KEY] ?: AppFilter.USER_APPS.name
+                ),
                 backgroundSync = preferences[BACKGROUND_SYNC_KEY] ?: false,
                 orderBySdk = preferences[ORDER_BY_SDK_KEY] ?: false,
                 syncInterval = preferences[SYNC_INTERVAL_KEY] ?: "301"
@@ -37,15 +44,9 @@ class PreferencesRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun updateLightMode(enabled: Boolean) {
+    override suspend fun updateAppFilter(filter: AppFilter) {
         dataStore.edit { preferences ->
-            preferences[LIGHT_MODE_KEY] = enabled
-        }
-    }
-
-    override suspend fun updateShowSystemApps(enabled: Boolean) {
-        dataStore.edit { preferences ->
-            preferences[SHOW_SYSTEM_APPS_KEY] = enabled
+            preferences[APP_FILTER_KEY] = filter.name
         }
     }
 
@@ -64,6 +65,12 @@ class PreferencesRepositoryImpl @Inject constructor(
     override suspend fun updateSyncInterval(interval: String) {
         dataStore.edit { preferences ->
             preferences[SYNC_INTERVAL_KEY] = interval
+        }
+    }
+
+    override suspend fun updateThemeMode(themeMode: ThemeMode) {
+        dataStore.edit { preferences ->
+            preferences[THEME_MODE_KEY] = themeMode.name
         }
     }
 }

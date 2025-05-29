@@ -7,8 +7,10 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Modifier
 import androidx.core.view.WindowCompat
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.bernaferrari.sdkmonitor.ui.navigation.SDKMonitorNavigation
 import com.bernaferrari.sdkmonitor.ui.theme.SDKMonitorTheme
+import com.bernaferrari.sdkmonitor.ui.theme.ThemeViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -20,10 +22,15 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         
         // Ensure the app draws behind system bars
-        WindowCompat.setDecorFitsSystemWindows(window, true)
+        WindowCompat.setDecorFitsSystemWindows(window, false)
         
         setContent {
-            SDKMonitorTheme {
+            // Get theme view model to manage global theme state
+            val themeViewModel: ThemeViewModel = hiltViewModel()
+            
+            SDKMonitorTheme(
+                themeViewModel = themeViewModel
+            ) {
                 SDKMonitorNavigation(
                     modifier = Modifier.fillMaxSize()
                 )

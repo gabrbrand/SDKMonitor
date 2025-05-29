@@ -104,7 +104,7 @@ fun SDKMonitorNavigation(
                     onNavigateToLogs = {
                         navController.navigate(Screen.Logs.route)
                     },
-                    onNavigateToDetails = { packageName ->
+                    onNavigateToAppDetails = { packageName ->
                         navController.navigate(Screen.Details.createRoute(packageName))
                     }
                 )

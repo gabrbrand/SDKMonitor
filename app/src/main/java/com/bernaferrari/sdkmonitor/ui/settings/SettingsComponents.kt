@@ -1,4 +1,4 @@
-package com.bernaferrari.sdkmonitor.ui.components
+package com.bernaferrari.sdkmonitor.ui.settings
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable

@@ -1,10 +1,9 @@
-package com.bernaferrari.sdkmonitor.logs
+package com.bernaferrari.sdkmonitor.ui.logs
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bernaferrari.sdkmonitor.domain.model.LogEntry
 import com.bernaferrari.sdkmonitor.domain.repository.AppsRepository
-import com.bernaferrari.sdkmonitor.extensions.convertTimestampToDate
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch

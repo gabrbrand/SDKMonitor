@@ -1,4 +1,4 @@
-package com.bernaferrari.sdkmonitor.ui.components
+package com.bernaferrari.sdkmonitor.ui.main
 
 import android.content.pm.PackageManager
 import androidx.compose.foundation.background

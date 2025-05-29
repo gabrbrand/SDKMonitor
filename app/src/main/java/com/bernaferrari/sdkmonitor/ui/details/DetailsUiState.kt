@@ -1,6 +1,5 @@
-package com.bernaferrari.sdkmonitor.details
+package com.bernaferrari.sdkmonitor.ui.details
 
-import com.bernaferrari.sdkmonitor.data.App
 import com.bernaferrari.sdkmonitor.data.Version
 import com.bernaferrari.sdkmonitor.domain.model.AppDetails
 import com.bernaferrari.sdkmonitor.domain.model.AppVersion

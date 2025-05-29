@@ -1,5 +1,7 @@
 package com.bernaferrari.sdkmonitor.domain.repository
 
+import com.bernaferrari.sdkmonitor.domain.model.AppFilter
+import com.bernaferrari.sdkmonitor.domain.model.ThemeMode
 import com.bernaferrari.sdkmonitor.domain.model.UserPreferences
 import kotlinx.coroutines.flow.Flow
 
@@ -12,17 +14,7 @@ interface PreferencesRepository {
      * Get user preferences as a Flow
      */
     fun getUserPreferences(): Flow<UserPreferences>
-    
-    /**
-     * Update light mode preference
-     */
-    suspend fun updateLightMode(enabled: Boolean)
-    
-    /**
-     * Update show system apps preference
-     */
-    suspend fun updateShowSystemApps(enabled: Boolean)
-    
+
     /**
      * Update background sync preference
      */
@@ -37,4 +29,14 @@ interface PreferencesRepository {
      * Update sync interval preference
      */
     suspend fun updateSyncInterval(interval: String)
+
+    /**
+     * Update app filter preference (User/System/All apps)
+     */
+    suspend fun updateAppFilter(filter: AppFilter)
+
+    /**
+     * Update theme mode preference (Material You/Light/Dark/System)
+     */
+    suspend fun updateThemeMode(themeMode: ThemeMode)
 }

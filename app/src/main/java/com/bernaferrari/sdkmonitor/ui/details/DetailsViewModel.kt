@@ -1,4 +1,4 @@
-package com.bernaferrari.sdkmonitor.details
+package com.bernaferrari.sdkmonitor.ui.details
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

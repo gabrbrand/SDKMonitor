@@ -1,5 +1,6 @@
-package com.bernaferrari.sdkmonitor.ui.logs
+package com.bernaferrari.sdkmonitor.ui.main
 
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -8,7 +9,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -18,17 +18,16 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.LineHeightStyle
@@ -36,27 +35,30 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil3.compose.AsyncImage
+import coil3.request.ImageRequest
+import coil3.request.crossfade
 import com.bernaferrari.sdkmonitor.R
-import com.bernaferrari.sdkmonitor.domain.model.LogEntry
+import com.bernaferrari.sdkmonitor.domain.model.AppVersion
 import com.bernaferrari.sdkmonitor.extensions.apiToColor
 import com.bernaferrari.sdkmonitor.extensions.apiToVersion
-import com.bernaferrari.sdkmonitor.extensions.convertTimestampToDate
 import com.bernaferrari.sdkmonitor.ui.theme.SDKMonitorTheme
 
 /**
- * Modern, beautiful LogsCard component with Material Design 3
+ * Modern, beautiful MainAppCard component with Material Design 3
  * Showcases the pinnacle of Android Compose development
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LogsCard(
+fun MainAppCard(
     modifier: Modifier = Modifier,
-    logEntry: LogEntry,
+    appVersion: AppVersion,
     appIcon: Bitmap? = null,
     onClick: () -> Unit = {},
 ) {
-    val apiColor = Color(logEntry.newSdk.apiToColor())
-    val apiDescription = logEntry.newSdk.apiToVersion()
+    val context = LocalContext.current
+    val apiColor = Color(appVersion.sdkVersion.apiToColor())
+    val apiDescription = appVersion.sdkVersion.apiToVersion()
 
     Card(
         onClick = onClick,
@@ -78,33 +80,34 @@ fun LogsCard(
                 .padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // App Icon with beautiful shadow
-            Card(
-                modifier = Modifier.size(48.dp),
-                shape = RoundedCornerShape(12.dp),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceContainerHighest
-                ),
-                elevation = CardDefaults.cardElevation(4.dp)
+            // App Icon - clean and larger
+            Box(
+                modifier = Modifier
+                    .size(56.dp)
+                    .clip(RoundedCornerShape(14.dp)),
+                contentAlignment = Alignment.Center
             ) {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    if (appIcon != null) {
-                        Image(
-                            bitmap = appIcon.asImageBitmap(),
-                            contentDescription = "App icon for ${logEntry.appName}",
-                            modifier = Modifier.size(32.dp)
-                        )
-                    } else {
-                        Icon(
-                            imageVector = ImageVector.vectorResource(R.drawable.ic_apps_24dp),
-                            contentDescription = "Default app icon",
-                            modifier = Modifier.size(24.dp),
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
+                if (appIcon != null) {
+                    Image(
+                        bitmap = appIcon.asImageBitmap(),
+                        contentDescription = "App icon for ${appVersion.title}",
+                        modifier = Modifier.size(56.dp)
+                    )
+                } else {
+                    AsyncImage(
+                        model = ImageRequest.Builder(context)
+                            .data(remember(appVersion.packageName) {
+                                try {
+                                    context.packageManager.getApplicationIcon(appVersion.packageName)
+                                } catch (e: PackageManager.NameNotFoundException) {
+                                    R.drawable.ic_apps_24dp
+                                }
+                            })
+                            .crossfade(true)
+                            .build(),
+                        contentDescription = "App icon for ${appVersion.title}",
+                        modifier = Modifier.size(56.dp)
+                    )
                 }
             }
 
@@ -115,7 +118,7 @@ fun LogsCard(
                 modifier = Modifier.weight(1f)
             ) {
                 Text(
-                    text = logEntry.appName,
+                    text = appVersion.title,
                     style = MaterialTheme.typography.titleMedium.copy(
                         fontWeight = FontWeight.SemiBold
                     ),
@@ -127,7 +130,7 @@ fun LogsCard(
                 Spacer(modifier = Modifier.height(4.dp))
 
                 Text(
-                    text = logEntry.timestamp.convertTimestampToDate(),
+                    text = appVersion.lastUpdateTime,
                     style = MaterialTheme.typography.bodySmall.copy(
                         fontFamily = FontFamily.Monospace
                     ),
@@ -171,7 +174,7 @@ fun LogsCard(
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = logEntry.newSdk.toString(),
+                        text = appVersion.sdkVersion.toString(),
                         modifier = Modifier.padding(horizontal = 16.dp),
                         style = MaterialTheme.typography.titleMedium.copy(
                             fontWeight = FontWeight.Bold,
@@ -191,18 +194,15 @@ fun LogsCard(
 
 @Preview(showBackground = true)
 @Composable
-private fun LogsCardPreview() {
+private fun MainAppCardPreview() {
     SDKMonitorTheme {
-        LogsCard(
-            logEntry = LogEntry(
-                id = 1L,
+        MainAppCard(
+            appVersion = AppVersion(
                 packageName = "com.whatsapp",
-                appName = "WhatsApp Messenger",
-                oldSdk = null,
-                newSdk = 33,
-                oldVersion = null,
-                newVersion = "2.24.1.75",
-                timestamp = System.currentTimeMillis() - (3 * 7 * 24 * 60 * 60 * 1000L)
+                title = "WhatsApp Messenger",
+                sdkVersion = 33,
+                lastUpdateTime = "3 weeks ago",
+                versionName = "2.24.1.75"
             )
         )
     }
@@ -210,18 +210,15 @@ private fun LogsCardPreview() {
 
 @Preview(showBackground = true)
 @Composable
-private fun LogsCardDarkPreview() {
+private fun MainAppCardDarkPreview() {
     SDKMonitorTheme(darkTheme = true) {
-        LogsCard(
-            logEntry = LogEntry(
-                id = 2L,
+        MainAppCard(
+            appVersion = AppVersion(
                 packageName = "com.instagram.android",
-                appName = "Instagram",
-                oldSdk = null,
-                newSdk = 28,
-                oldVersion = null,
-                newVersion = "305.0.0.37.120",
-                timestamp = System.currentTimeMillis() - (24 * 60 * 60 * 1000L)
+                title = "Instagram",
+                sdkVersion = 28,
+                lastUpdateTime = "1 day ago",
+                versionName = "305.0.0.37.120"
             )
         )
     }
@@ -229,18 +226,15 @@ private fun LogsCardDarkPreview() {
 
 @Preview(showBackground = true)
 @Composable
-private fun LogsCardLongTitlePreview() {
+private fun MainAppCardLongTitlePreview() {
     SDKMonitorTheme {
-        LogsCard(
-            logEntry = LogEntry(
-                id = 3L,
+        MainAppCard(
+            appVersion = AppVersion(
                 packageName = "com.supercellveryverylongpackagename.clashofclans",
-                appName = "Clash of Clans - Epic Strategy Game with Very Long Title",
-                oldSdk = null,
-                newSdk = 31,
-                oldVersion = null,
-                newVersion = "15.0.4",
-                timestamp = System.currentTimeMillis() - (2 * 30 * 24 * 60 * 60 * 1000L)
+                title = "Clash of Clans - Epic Strategy Game with Very Long Title",
+                sdkVersion = 31,
+                lastUpdateTime = "2 months ago",
+                versionName = "15.0.4"
             )
         )
     }

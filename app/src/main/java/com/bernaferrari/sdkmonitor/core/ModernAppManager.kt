@@ -16,6 +16,7 @@ import com.bernaferrari.sdkmonitor.R
 import com.bernaferrari.sdkmonitor.data.App
 import com.bernaferrari.sdkmonitor.data.Version
 import com.bernaferrari.sdkmonitor.domain.model.AppDetails
+import com.bernaferrari.sdkmonitor.domain.model.AppFilter
 import com.bernaferrari.sdkmonitor.domain.repository.AppsRepository
 import com.bernaferrari.sdkmonitor.domain.repository.PreferencesRepository
 import com.bernaferrari.sdkmonitor.extensions.convertTimestampToDate
@@ -128,7 +129,7 @@ class ModernAppManager @Inject constructor(
 
     suspend fun getPackagesWithUserPrefs(): List<PackageInfo> {
         val preferences = preferencesRepository.getUserPreferences().first()
-        return if (preferences.showSystemApps) {
+        return if (preferences.appFilter === AppFilter.USER_APPS) {
             getPackages()
         } else {
             getPackagesWithOrigin()
