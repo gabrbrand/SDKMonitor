@@ -43,12 +43,12 @@ class DetailsViewModel @Inject constructor(
                     
                     // Use ModernAppManager to get complete AppDetails
                     val appDetails = modernAppManager.getAppDetails(packageName)
-                    val versionInfoList = versions.map { it.toVersionInfo() }
+                    val appVersionList = versions.map { it.toAppVersion(appDetails) } // Changed from toVersionInfo to toAppVersion
                     
                     // Update UI state with success
                     _uiState.value = DetailsUiState.Success(
                         appDetails = appDetails,
-                        versions = versionInfoList
+                        versions = appVersionList // Changed from versionInfoList to appVersionList
                     )
                 } else {
                     // If app doesn't exist in database, try to get it from package manager
