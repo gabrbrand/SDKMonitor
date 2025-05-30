@@ -32,7 +32,6 @@
         <item quantity="other">Search %d apps</item>
     </plurals>
 
-    <!-- Modern plurals for time formatting -->
     <plurals name="minutes_ago">
         <item quantity="one">%d minute ago</item>
         <item quantity="other">%d minutes ago</item>

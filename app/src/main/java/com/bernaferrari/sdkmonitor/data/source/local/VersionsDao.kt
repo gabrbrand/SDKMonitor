@@ -8,10 +8,6 @@ import androidx.room.Query
 import com.bernaferrari.sdkmonitor.data.Version
 import kotlinx.coroutines.flow.Flow
 
-/**
- * Data Access Object for the versions table.
- * Modernized with Flow and Coroutines support.
- */
 @Dao
 interface VersionsDao {
 

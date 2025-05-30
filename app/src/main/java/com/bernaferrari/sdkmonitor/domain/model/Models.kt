@@ -21,7 +21,7 @@ data class AppDetails(
 
 /**
  * Domain model representing an app with its current SDK version and metadata
- * This is the main AppVersion model used throughout the modern app
+ * This is the main AppVersion model used throughout the app
  */
 data class AppVersion(
     val packageName: String,

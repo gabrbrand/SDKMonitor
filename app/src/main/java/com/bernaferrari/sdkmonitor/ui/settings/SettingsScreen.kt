@@ -178,7 +178,6 @@ fun SettingsScreen(
 
                     }
 
-                    // Analytics Section - Using new component
                     if (uiState.sdkDistribution.isNotEmpty()) {
                         AnalyticsSection(
                             title = "App Analytics",

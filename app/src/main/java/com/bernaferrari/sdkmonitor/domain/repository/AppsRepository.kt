@@ -3,13 +3,12 @@ package com.bernaferrari.sdkmonitor.domain.repository
 import androidx.paging.PagingData
 import com.bernaferrari.sdkmonitor.data.App
 import com.bernaferrari.sdkmonitor.data.Version
-import com.bernaferrari.sdkmonitor.domain.model.AppDetails
 import com.bernaferrari.sdkmonitor.domain.model.AppVersion
 import com.bernaferrari.sdkmonitor.domain.model.LogEntry
 import kotlinx.coroutines.flow.Flow
 
 /**
- * Modern repository interface using Flow and coroutines
+ * Repository interface using Flow and coroutines
  */
 interface AppsRepository {
     

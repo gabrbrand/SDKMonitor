@@ -20,6 +20,7 @@ import androidx.compose.material.icons.outlined.Apps
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -30,6 +31,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.LineHeightStyle
@@ -45,11 +47,6 @@ import com.bernaferrari.sdkmonitor.extensions.apiToColor
 import com.bernaferrari.sdkmonitor.extensions.apiToVersion
 import com.bernaferrari.sdkmonitor.ui.theme.SDKMonitorTheme
 
-/**
- * Modern, beautiful MainAppCard component with Material Design 3
- * Showcases the pinnacle of Android Compose development
- */
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainAppCard(
     modifier: Modifier = Modifier,
@@ -59,6 +56,7 @@ fun MainAppCard(
     onClick: () -> Unit = {},
 ) {
     val context = LocalContext.current
+    val isPreview = LocalInspectionMode.current
     val apiColor = Color(appVersion.sdkVersion.apiToColor())
     val apiDescription = appVersion.sdkVersion.apiToVersion()
 
@@ -94,6 +92,14 @@ fun MainAppCard(
                         bitmap = appIcon.asImageBitmap(),
                         contentDescription = "App icon for ${appVersion.title}",
                         modifier = Modifier.size(56.dp)
+                    )
+                } else if (isPreview) {
+                    // Fallback for preview mode
+                    Icon(
+                        imageVector = Icons.Outlined.Apps,
+                        contentDescription = "App icon for ${appVersion.title}",
+                        modifier = Modifier.size(56.dp),
+                        tint = MaterialTheme.colorScheme.primary
                     )
                 } else {
                     AsyncImage(
@@ -224,22 +230,6 @@ private fun MainAppCardDarkPreview() {
                 sdkVersion = 28,
                 lastUpdateTime = "1 day ago",
                 versionName = "305.0.0.37.120"
-            )
-        )
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun MainAppCardLongTitlePreview() {
-    SDKMonitorTheme {
-        MainAppCard(
-            appVersion = AppVersion(
-                packageName = "com.supercellveryverylongpackagename.clashofclans",
-                title = "Clash of Clans - Epic Strategy Game with Very Long Title",
-                sdkVersion = 31,
-                lastUpdateTime = "2 months ago",
-                versionName = "15.0.4"
             )
         )
     }

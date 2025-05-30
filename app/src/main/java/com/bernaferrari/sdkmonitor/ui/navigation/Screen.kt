@@ -5,7 +5,7 @@ import androidx.navigation.NavType
 import androidx.navigation.navArgument
 
 /**
- * Modern navigation screens with proper argument definitions
+ * Navigation screens with proper argument definitions
  */
 sealed class Screen(val route: String) {
     data object Main : Screen("main")

@@ -2,7 +2,11 @@ package com.bernaferrari.sdkmonitor.core
 
 import android.content.Context
 import androidx.hilt.work.HiltWorker
-import androidx.work.*
+import androidx.work.CoroutineWorker
+import androidx.work.Data
+import androidx.work.OneTimeWorkRequest
+import androidx.work.WorkManager
+import androidx.work.WorkerParameters
 import com.bernaferrari.sdkmonitor.domain.repository.AppsRepository
 import com.orhanobut.logger.Logger
 import dagger.assisted.Assisted
@@ -10,16 +14,11 @@ import dagger.assisted.AssistedInject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-/**
- * Modern PackageService showcasing the absolute pinnacle of Android background processing
- * Uses Hilt dependency injection and coroutines for perfect async operations
- * Complete elimination of legacy Injector and blocking patterns
- */
 @HiltWorker
 class PackageService @AssistedInject constructor(
     @Assisted context: Context,
     @Assisted workerParameters: WorkerParameters,
-    private val modernAppManager: AppManager,
+    private val appManager: AppManager,
     private val appsRepository: AppsRepository
 ) : CoroutineWorker(context, workerParameters) {
 
@@ -50,18 +49,18 @@ class PackageService @AssistedInject constructor(
     }
 
     private suspend fun handleActionFetchUpdate(packageName: String) {
-        if (modernAppManager.doesAppHasOrigin(packageName)) {
-            val packageInfo = modernAppManager.getPackageInfo(packageName) ?: return
-            modernAppManager.insertNewVersion(packageInfo)
+        if (appManager.doesAppHasOrigin(packageName)) {
+            val packageInfo = appManager.getPackageInfo(packageName) ?: return
+            appManager.insertNewVersion(packageInfo)
             Logger.d("🔄 Updated package: $packageName")
         }
     }
 
     private suspend fun handleActionInsert(packageName: String) {
-        if (modernAppManager.doesAppHasOrigin(packageName)) {
-            val packageInfo = modernAppManager.getPackageInfo(packageName) ?: return
-            modernAppManager.insertNewApp(packageInfo)
-            modernAppManager.insertNewVersion(packageInfo)
+        if (appManager.doesAppHasOrigin(packageName)) {
+            val packageInfo = appManager.getPackageInfo(packageName) ?: return
+            appManager.insertNewApp(packageInfo)
+            appManager.insertNewVersion(packageInfo)
             Logger.d("➕ Inserted new package: $packageName")
         }
     }

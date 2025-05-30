@@ -31,9 +31,6 @@ import com.bernaferrari.sdkmonitor.extensions.apiToColor
 import com.bernaferrari.sdkmonitor.extensions.apiToVersion
 import com.bernaferrari.sdkmonitor.ui.theme.SDKMonitorTheme
 
-/**
- * Beautiful timeline version entry - part of a unified version history design
- */
 @Composable
 fun VersionTimelineEntry(
     versionInfo: AppVersion,

@@ -8,7 +8,6 @@ import com.bernaferrari.sdkmonitor.domain.model.AppVersion
 
 /**
  * Sealed class representing the UI state for the Details screen
- * Modern approach using sealed classes for type-safe state management
  */
 sealed class DetailsUiState {
     data object Loading : DetailsUiState()

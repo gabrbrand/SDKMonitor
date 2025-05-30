@@ -70,7 +70,6 @@ fun SdkDetailDialog(
             Column(
                 modifier = Modifier.fillMaxSize()
             ) {
-                // Beautiful Header with gradient
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()

@@ -25,10 +25,6 @@ import androidx.compose.ui.unit.dp
 import com.bernaferrari.sdkmonitor.domain.model.ThemeMode
 import com.bernaferrari.sdkmonitor.ui.theme.SDKMonitorTheme
 
-/**
- * 🎨 ABSOLUTELY STUNNING Theme Option Card - The Most Beautiful Theme Selector Ever!
- * Features breathtaking animations, gorgeous gradients, and divine visual feedback
- */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ThemeModeToggle(
@@ -96,7 +92,7 @@ fun ThemeModeToggle(
 
 @Preview(showBackground = true)
 @Composable
-private fun StunningThemeOptionPreview() {
+private fun ThemeOptionPreview() {
     SDKMonitorTheme {
         Row(
             modifier = Modifier.padding(16.dp),
@@ -120,7 +116,7 @@ private fun StunningThemeOptionPreview() {
 
 @Preview(showBackground = true)
 @Composable
-private fun StunningThemeOptionDarkPreview() {
+private fun ThemeOptionDarkPreview() {
     SDKMonitorTheme(darkTheme = true) {
         Row(
             modifier = Modifier.padding(16.dp),

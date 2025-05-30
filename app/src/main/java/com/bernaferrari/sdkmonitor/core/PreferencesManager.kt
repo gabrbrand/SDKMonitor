@@ -14,7 +14,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 /**
- * Modern preferences manager using DataStore instead of legacy SharedPreferences/RxPrefs
+ * Preferences manager using DataStore
  * Provides type-safe, coroutine-based preference management with Flow
  */
 @Singleton

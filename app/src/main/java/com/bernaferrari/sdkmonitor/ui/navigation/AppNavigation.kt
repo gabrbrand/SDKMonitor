@@ -31,11 +31,6 @@ import com.bernaferrari.sdkmonitor.ui.logs.LogsScreen
 import com.bernaferrari.sdkmonitor.ui.main.MainScreen
 import com.bernaferrari.sdkmonitor.ui.settings.SettingsScreen
 
-/**
- * Modern navigation using Jetpack Compose Navigation
- * Complete elimination of legacy Fragment navigation
- * Proper edge-to-edge handling with window insets
- */
 @Composable
 fun AppNavigation(
     modifier: Modifier = Modifier

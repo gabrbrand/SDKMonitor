@@ -48,11 +48,6 @@ import androidx.compose.ui.unit.dp
 import com.bernaferrari.sdkmonitor.domain.model.AppFilter
 import com.bernaferrari.sdkmonitor.ui.theme.SDKMonitorTheme
 
-/**
- * Beautiful Settings Screen Components using pure Compose
- * Stunning Material Design 3 implementation with gradients and animations
- */
-
 @Composable
 fun SettingsItem(
     modifier: Modifier = Modifier,
@@ -177,7 +172,7 @@ fun SettingsSection(
 }
 
 /**
- * Modern Switch Preference with stunning Material Design 3 styling
+ * Switch Preference with Material Design 3 styling
  */
 @Composable
 fun SwitchPreference(
@@ -267,7 +262,7 @@ fun SwitchPreference(
 }
 
 /**
- * Modern Text Preference for clickable settings options
+ * Text Preference for clickable settings options
  */
 @Composable
 fun TextPreference(

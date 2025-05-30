@@ -11,7 +11,6 @@ import kotlinx.coroutines.flow.Flow
 
 /**
  * Data Access Object for the apps table.
- * Modernized with Flow and Coroutines support.
  */
 @Dao
 interface AppsDao {

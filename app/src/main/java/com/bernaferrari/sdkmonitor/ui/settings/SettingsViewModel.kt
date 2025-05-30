@@ -109,9 +109,6 @@ class SettingsViewModel @Inject constructor(
         }
     }
 
-    /**
-     * Update app filter preference - BEAUTIFUL PERSISTENT SETTING!
-     */
     fun updateAppFilter(filter: AppFilter) {
         viewModelScope.launch {
             try {
@@ -125,9 +122,6 @@ class SettingsViewModel @Inject constructor(
         }
     }
 
-    /**
-     * 🎨 Update theme mode with beautiful animations
-     */
     fun updateThemeMode(themeMode: ThemeMode) {
         viewModelScope.launch {
             try {
@@ -170,23 +164,6 @@ class SettingsViewModel @Inject constructor(
             TimeUnit.MINUTES -> "${interval}m"
             TimeUnit.HOURS -> "${interval}h"
             TimeUnit.DAYS -> "${interval}d"
-        }
-    }
-
-
-    /**
-     * Toggle order by SDK preference
-     */
-    fun toggleOrderBySdk() {
-        viewModelScope.launch {
-            try {
-                val current = _uiState.value.preferences.orderBySdk
-                preferencesRepository.updateOrderBySdk(!current)
-            } catch (e: Exception) {
-                _uiState.value = _uiState.value.copy(
-                    errorMessage = "Failed to update order by SDK: ${e.message}"
-                )
-            }
         }
     }
 

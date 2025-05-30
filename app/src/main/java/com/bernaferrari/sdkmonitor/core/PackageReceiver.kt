@@ -5,11 +5,6 @@ import android.content.Context
 import android.content.Intent
 import com.orhanobut.logger.Logger
 
-/**
- * Modern PackageReceiver showcasing the pinnacle of Android broadcast handling
- * Efficiently processes package install/update/remove events with proper error handling
- * Designed for 10+ years of maintainability and future Android API compatibility
- */
 class PackageReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {

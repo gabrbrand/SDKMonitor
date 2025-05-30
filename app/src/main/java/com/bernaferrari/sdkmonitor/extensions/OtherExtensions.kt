@@ -8,10 +8,6 @@ import com.bernaferrari.sdkmonitor.R
 import java.text.SimpleDateFormat
 import java.util.*
 
-/**
- * Modern extension functions for the SDK Monitor app
- */
-
 internal fun Long.convertTimestampToDate(context: Context): String {
     return if (this == 0L) {
         "Never" // You might want to add this to strings.xml too

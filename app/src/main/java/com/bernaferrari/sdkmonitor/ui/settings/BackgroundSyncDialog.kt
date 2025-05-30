@@ -431,7 +431,7 @@ private fun ElegantSyncToggleWithDescription(
 
 @Preview(showBackground = true)
 @Composable
-private fun ModernBackgroundSyncDialogPreview() {
+private fun BackgroundSyncDialogPreview() {
     SDKMonitorTheme {
         BackgroundSyncDialog(
             isEnabled = true,

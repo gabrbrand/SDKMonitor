@@ -287,7 +287,6 @@ private fun InfoRow(
     }
 }
 
-// Beautiful utility functions
 private fun formatSize(sizeInBytes: Long): String {
     val kb = 1024
     val mb = kb * 1024
@@ -301,7 +300,6 @@ private fun formatSize(sizeInBytes: Long): String {
     }
 }
 
-// Divine preview
 @Preview(showBackground = true)
 @Composable
 private fun AppDetailsCardPreview() {

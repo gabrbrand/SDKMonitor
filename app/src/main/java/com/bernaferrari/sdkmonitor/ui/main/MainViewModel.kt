@@ -10,7 +10,13 @@ import com.bernaferrari.sdkmonitor.domain.repository.AppsRepository
 import com.bernaferrari.sdkmonitor.domain.repository.PreferencesRepository
 import com.bernaferrari.sdkmonitor.extensions.normalizeString
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -27,9 +33,9 @@ sealed class MainUiState {
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    private val appsRepository: AppsRepository,
+    appsRepository: AppsRepository,
     private val preferencesRepository: PreferencesRepository,
-    private val modernAppManager: AppManager
+    private val appManager: AppManager
 ) : ViewModel() {
 
     private val _searchQuery = MutableStateFlow("")
@@ -142,9 +148,9 @@ class MainViewModel @Inject constructor(
         try {
             val preferences = preferencesRepository.getUserPreferences().first()
             val installedApps = if (preferences.appFilter === AppFilter.ALL_APPS) {
-                modernAppManager.getPackages()
+                appManager.getPackages()
             } else {
-                modernAppManager.getPackagesWithUserPrefs()
+                appManager.getPackagesWithUserPrefs()
             }
 
             // If no apps found (probably emulator), show system apps
@@ -154,8 +160,8 @@ class MainViewModel @Inject constructor(
 
             // Insert apps into database
             installedApps.forEach { packageInfo ->
-                modernAppManager.insertNewApp(packageInfo)
-                modernAppManager.insertNewVersion(packageInfo)
+                appManager.insertNewApp(packageInfo)
+                appManager.insertNewVersion(packageInfo)
             }
         } catch (e: Exception) {
             // Handle error - could emit error state

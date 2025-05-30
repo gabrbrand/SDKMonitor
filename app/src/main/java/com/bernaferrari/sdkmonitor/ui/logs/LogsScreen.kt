@@ -442,7 +442,6 @@ private fun LogsContent(
             )
         }
 
-        // Beautiful bottom spacer
         item {
             Spacer(modifier = Modifier.height(32.dp))
         }
@@ -519,7 +518,6 @@ private fun TimelineHeader(
 
             }
 
-            // Beautiful divider
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -648,7 +646,6 @@ private fun EnhancedProgressIndicator(
                     color = MaterialTheme.colorScheme.onSurface
                 )
 
-                // Beautiful count badge
                 Surface(
                     shape = RoundedCornerShape(12.dp),
                     color = backgroundColor.copy(alpha = 0.8f)
@@ -752,7 +749,6 @@ private fun ClearDialog(
     )
 }
 
-// Beautiful utility function
 fun formatLogTime(timestamp: Long): String {
     val now = System.currentTimeMillis()
     val diff = now - timestamp

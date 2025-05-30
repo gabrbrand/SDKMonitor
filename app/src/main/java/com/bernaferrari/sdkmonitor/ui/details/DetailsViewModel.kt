@@ -13,15 +13,10 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-/**
- * Modern Details ViewModel showcasing the pinnacle of Android architecture
- * Uses StateFlow and sealed classes for perfect state management
- * Complete elimination of legacy RxJava and MvRx patterns
- */
 @HiltViewModel
 class DetailsViewModel @Inject constructor(
     private val appsRepository: AppsRepository,
-    private val modernAppManager: AppManager,
+    private val appManager: AppManager,
     @ApplicationContext private val context: Context
 ) : ViewModel() {
 
@@ -44,8 +39,8 @@ class DetailsViewModel @Inject constructor(
                 if (app != null) {
                     val versions = appsRepository.getAppVersions(packageName)
 
-                    // Use ModernAppManager to get complete AppDetails
-                    val appDetails = modernAppManager.getAppDetails(packageName)
+                    // Use appManager to get complete AppDetails
+                    val appDetails = appManager.getAppDetails(packageName)
                     val appVersionList = versions.map {
                         it.toAppVersion(
                             appDetails,
@@ -60,9 +55,9 @@ class DetailsViewModel @Inject constructor(
                     )
                 } else {
                     // If app doesn't exist in database, try to get it from package manager
-                    val packageInfo = modernAppManager.getPackageInfo(packageName)
+                    val packageInfo = appManager.getPackageInfo(packageName)
                     if (packageInfo != null) {
-                        val appDetails = modernAppManager.getAppDetails(packageName)
+                        val appDetails = appManager.getAppDetails(packageName)
 
                         // Update UI state with success but empty version history
                         _uiState.value = DetailsUiState.Success(

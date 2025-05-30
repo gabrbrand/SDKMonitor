@@ -13,15 +13,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 
-/**
- * Modern SyncWorker showcasing the absolute pinnacle of Android background processing
- * Uses Hilt dependency injection and coroutines for perfect async operations
- */
 @HiltWorker
 class SyncWorker @AssistedInject constructor(
     @Assisted context: Context,
     @Assisted workerParameters: WorkerParameters,
-    private val modernAppManager: AppManager,
+    private val appManager: AppManager,
     private val preferencesRepository: PreferencesRepository,
     private val notificationManager: NotificationManager
 ) : CoroutineWorker(context, workerParameters) {
@@ -30,7 +26,7 @@ class SyncWorker @AssistedInject constructor(
 
     override suspend fun doWork(): Result = withContext(Dispatchers.IO) {
         try {
-            Logger.d("🚀 Starting modern background sync with world-class architecture!")
+            Logger.d("🚀 Starting background sync")
             
             performHeavyWork()
             
@@ -49,13 +45,13 @@ class SyncWorker @AssistedInject constructor(
         val preferences = preferencesRepository.getUserPreferences().first()
         val isDebugEnabled = preferences.backgroundSync // Use background sync preference for debug logging
         
-        val packages = modernAppManager.getPackagesWithUserPrefs()
-        debugLog.appendLine("📱 Found ${packages.size} packages to process")
+        val packages = appManager.getPackagesWithUserPrefs()
+        debugLog.appendLine("📱 Found ${packages.size} apps to process")
 
         packages.forEach { packageInfo ->
             try {
-                modernAppManager.insertNewApp(packageInfo)
-                modernAppManager.insertNewVersion(packageInfo)
+                appManager.insertNewApp(packageInfo)
+                appManager.insertNewVersion(packageInfo)
                 debugLog.appendLine("✅ Processed: ${packageInfo.packageName}")
             } catch (e: Exception) {
                 debugLog.appendLine("❌ Failed to process: ${packageInfo.packageName} - ${e.message}")
@@ -65,8 +61,8 @@ class SyncWorker @AssistedInject constructor(
 
         if (isDebugEnabled) {
             notificationManager.showDebugSyncNotification(
-                title = "🔄 Modern Sync Complete",
-                text = "Processed ${packages.size} apps with modern architecture",
+                title = "🔄 Sync Complete",
+                text = "Processed ${packages.size} apps with",
                 bigText = debugLog.toString()
             )
         }

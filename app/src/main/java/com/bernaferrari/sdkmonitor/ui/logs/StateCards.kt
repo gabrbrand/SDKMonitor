@@ -31,9 +31,6 @@ import androidx.compose.ui.unit.dp
 import com.bernaferrari.sdkmonitor.R
 import com.bernaferrari.sdkmonitor.ui.theme.SDKMonitorTheme
 
-/**
- * Beautiful empty state component for when there's no content to display
- */
 @Composable
 fun EmptyStateCard(
     title: String,
@@ -60,7 +57,6 @@ fun EmptyStateCard(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(24.dp)
         ) {
-            // Icon with beautiful background
             Surface(
                 modifier = Modifier.size(80.dp),
                 shape = RoundedCornerShape(20.dp),
