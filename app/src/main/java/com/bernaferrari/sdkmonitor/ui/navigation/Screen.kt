@@ -8,10 +8,10 @@ import androidx.navigation.navArgument
  * Modern navigation screens with proper argument definitions
  */
 sealed class Screen(val route: String) {
-    object Main : Screen("main")
-    object Settings : Screen("settings") 
-    object Logs : Screen("logs")
-    object Details : Screen("details/{packageName}") {
+    data object Main : Screen("main")
+    data object Settings : Screen("settings")
+    data object Logs : Screen("logs")
+    data object Details : Screen("details/{packageName}") {
         fun createRoute(packageName: String) = "details/$packageName"
         
         val arguments: List<NamedNavArgument> = listOf(

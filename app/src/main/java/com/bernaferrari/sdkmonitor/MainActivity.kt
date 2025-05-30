@@ -8,7 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Modifier
 import androidx.core.view.WindowCompat
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.bernaferrari.sdkmonitor.ui.navigation.SDKMonitorNavigation
+import com.bernaferrari.sdkmonitor.ui.navigation.AppNavigation
 import com.bernaferrari.sdkmonitor.ui.theme.SDKMonitorTheme
 import com.bernaferrari.sdkmonitor.ui.theme.ThemeViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -26,7 +26,7 @@ class MainActivity : ComponentActivity() {
             SDKMonitorTheme(
                 themeViewModel = themeViewModel
             ) {
-                SDKMonitorNavigation(
+                AppNavigation(
                     modifier = Modifier.fillMaxSize()
                 )
             }

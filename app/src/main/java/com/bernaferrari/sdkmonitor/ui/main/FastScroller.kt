@@ -3,6 +3,7 @@ package com.bernaferrari.sdkmonitor.ui.main
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -69,6 +70,19 @@ fun FastScroller(
     var scrollerSize by remember { mutableStateOf(IntSize.Zero) }
 
 
+    // Function to handle position and select letter
+    fun handlePositionAndSelectLetter(yPosition: Float) {
+        val progress = (yPosition / scrollerSize.height).coerceIn(0f, 1f)
+        val letterIndex = (progress * (letters.size - 1)).toInt()
+            .coerceIn(0, letters.size - 1)
+
+        if (letters.isNotEmpty()) {
+            val selectedLetter = letters[letterIndex]
+            onLetterSelected(selectedLetter)
+            scrollToLetter(selectedLetter)
+        }
+    }
+
     // Function to scroll to letter
     fun scrollToLetter(letter: String) {
         letterToIndex[letter]?.let { index ->
@@ -82,10 +96,6 @@ fun FastScroller(
         modifier = modifier
             .fillMaxHeight()
             .wrapContentWidth(Alignment.CenterHorizontally)
-
-//        shape = RoundedCornerShape(18.dp),
-//        color = MaterialTheme.colorScheme.surfaceContainer.copy(alpha = 0.9f),
-//        shadowElevation = if (isDragging) 8.dp else 4.dp
     ) {
         Box(
             modifier = Modifier
@@ -93,36 +103,21 @@ fun FastScroller(
                 .padding(horizontal = 12.dp)
                 .onGloballyPositioned { scrollerSize = it.size }
                 .pointerInput(letters) {
+                    detectTapGestures { offset ->
+                        handlePositionAndSelectLetter(offset.y)
+                    }
+                }
+                .pointerInput(letters) {
                     detectDragGestures(
                         onDragStart = { offset ->
                             isDragging = true
                             currentDragPosition = offset.y
-
-                            // Calculate which letter we're on
-                            val progress = (offset.y / scrollerSize.height).coerceIn(0f, 1f)
-                            val letterIndex = (progress * (letters.size - 1)).toInt()
-                                .coerceIn(0, letters.size - 1)
-
-                            if (letters.isNotEmpty()) {
-                                val selectedLetter = letters[letterIndex]
-                                onLetterSelected(selectedLetter)
-                                scrollToLetter(selectedLetter)
-                            }
+                            handlePositionAndSelectLetter(offset.y)
                         },
                         onDrag = { change, offset ->
                             currentDragPosition = (currentDragPosition + offset.y)
                                 .coerceIn(0f, scrollerSize.height.toFloat())
-
-                            // Calculate which letter we're on
-                            val progress = (currentDragPosition / scrollerSize.height).coerceIn(0f, 1f)
-                            val letterIndex = (progress * (letters.size - 1)).toInt()
-                                .coerceIn(0, letters.size - 1)
-
-                            if (letters.isNotEmpty()) {
-                                val selectedLetter = letters[letterIndex]
-                                onLetterSelected(selectedLetter)
-                                scrollToLetter(selectedLetter)
-                            }
+                            handlePositionAndSelectLetter(currentDragPosition)
                         },
                         onDragEnd = {
                             isDragging = false
