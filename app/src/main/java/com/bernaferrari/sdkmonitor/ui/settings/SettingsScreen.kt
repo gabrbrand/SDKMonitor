@@ -22,6 +22,7 @@ import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Sync
+import androidx.compose.material.icons.filled.SyncDisabled
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -58,7 +59,7 @@ import com.bernaferrari.sdkmonitor.domain.model.ThemeMode
 fun SettingsScreen(
     onNavigateBack: () -> Unit,
     onNavigateToAppDetails: (String) -> Unit, // <-- add this parameter
-    viewModel: ModernSettingsViewModel = hiltViewModel()
+    viewModel: SettingsViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
     var showSyncDialog by remember { mutableStateOf(false) }
@@ -358,7 +359,7 @@ fun SettingsScreen(
                             } else {
                                 "Tap to configure automatic updates"
                             },
-                            icon = Icons.Default.Sync,
+                            icon = if (prefs.backgroundSync) Icons.Default.Sync else Icons.Default.SyncDisabled,
                             onClick = { showSyncDialog = true }
                         )
                     }
@@ -371,7 +372,7 @@ fun SettingsScreen(
 
     // Background Sync Dialog - NOW HANDLES EVERYTHING
     if (showSyncDialog) {
-        ModernBackgroundSyncDialog(
+        BackgroundSyncDialog(
             isEnabled = uiState.preferences.backgroundSync,
             currentInterval = uiState.preferences.syncInterval,
             currentUnit = uiState.preferences.syncTimeUnit,

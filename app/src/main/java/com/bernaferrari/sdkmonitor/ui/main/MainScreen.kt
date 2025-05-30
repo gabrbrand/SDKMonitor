@@ -103,13 +103,11 @@ fun MainScreen(
         // Compact header card with title, search, and dropdowns
         Card(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 8.dp),
+                .fillMaxWidth(),
             shape = RoundedCornerShape(20.dp),
             colors = CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.surfaceContainer
             ),
-            elevation = CardDefaults.cardElevation(2.dp)
         ) {
             Column(
                 modifier = Modifier.padding(16.dp),
@@ -147,6 +145,7 @@ fun MainScreen(
                                 )
                             }
                         }
+
                         else -> {
                             Spacer(modifier = Modifier.width(1.dp))
                         }
@@ -255,7 +254,7 @@ fun MainScreen(
                                 color = MaterialTheme.colorScheme.primary,
                                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
                             )
-                            
+
                             AppFilter.entries.forEach { filter ->
                                 DropdownMenuItem(
                                     text = {
@@ -343,7 +342,7 @@ fun MainScreen(
                                 color = MaterialTheme.colorScheme.primary,
                                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
                             )
-                            
+
                             SortOption.values().forEach { option ->
                                 DropdownMenuItem(
                                     text = {
@@ -543,7 +542,7 @@ fun MainScreen(
                                 modifier = Modifier.fillMaxSize(),
                                 contentPadding = PaddingValues(
                                     start = 0.dp,
-                                    end = if (showFastScroller) 20.dp else 0.dp,
+                                    end = if (showFastScroller) 22.dp else 0.dp,
                                     top = 8.dp,
                                     bottom = 8.dp
                                 ),
@@ -576,7 +575,7 @@ fun MainScreen(
                                     },
                                     modifier = Modifier
                                         .align(Alignment.CenterEnd)
-                                        .padding(end = 2.dp)
+                                        .padding(start= 2.dp, end = 2.dp)
                                 )
                             }
 

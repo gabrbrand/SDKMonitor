@@ -52,7 +52,7 @@ import com.bernaferrari.sdkmonitor.ui.theme.SDKMonitorTheme
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ModernDetailsDialog(
+fun DetailsDialog(
     app: App,
     appDetails: List<DialogAppDetails> = emptyList(),
     versions: List<DialogVersionInfo> = emptyList(),
@@ -329,9 +329,9 @@ data class DialogVersionInfo(
 
 @Preview(showBackground = true)
 @Composable
-private fun ModernDetailsDialogPreview() {
+private fun DetailsDialogPreview() {
     SDKMonitorTheme {
-        ModernDetailsDialog(
+        DetailsDialog(
             app = App(
                 packageName = "com.whatsapp",
                 title = "WhatsApp Messenger",

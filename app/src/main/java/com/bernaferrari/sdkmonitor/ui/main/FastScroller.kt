@@ -21,7 +21,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
@@ -69,12 +68,6 @@ fun FastScroller(
     var currentDragPosition by remember { mutableFloatStateOf(0f) }
     var scrollerSize by remember { mutableStateOf(IntSize.Zero) }
 
-    // Animation for the scroller appearance
-    val scrollerAlpha by animateFloatAsState(
-        targetValue = if (isDragging) 1f else 0.6f,
-        animationSpec = spring(),
-        label = "scroller_alpha"
-    )
 
     // Function to scroll to letter
     fun scrollToLetter(letter: String) {
@@ -88,8 +81,8 @@ fun FastScroller(
     Surface(
         modifier = modifier
             .fillMaxHeight()
-            .alpha(scrollerAlpha)
-            .wrapContentWidth(Alignment.CenterHorizontally),
+            .wrapContentWidth(Alignment.CenterHorizontally)
+
 //        shape = RoundedCornerShape(18.dp),
 //        color = MaterialTheme.colorScheme.surfaceContainer.copy(alpha = 0.9f),
 //        shadowElevation = if (isDragging) 8.dp else 4.dp

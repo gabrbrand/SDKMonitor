@@ -3,7 +3,7 @@ package com.bernaferrari.sdkmonitor.ui.details
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.bernaferrari.sdkmonitor.core.ModernAppManager
+import com.bernaferrari.sdkmonitor.core.AppManager
 import com.bernaferrari.sdkmonitor.domain.repository.AppsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -21,7 +21,7 @@ import javax.inject.Inject
 @HiltViewModel
 class DetailsViewModel @Inject constructor(
     private val appsRepository: AppsRepository,
-    private val modernAppManager: ModernAppManager,
+    private val modernAppManager: AppManager,
     @ApplicationContext private val context: Context
 ) : ViewModel() {
 

@@ -2,7 +2,7 @@ package com.bernaferrari.sdkmonitor.ui.main
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.bernaferrari.sdkmonitor.core.ModernAppManager
+import com.bernaferrari.sdkmonitor.core.AppManager
 import com.bernaferrari.sdkmonitor.domain.model.AppFilter
 import com.bernaferrari.sdkmonitor.domain.model.AppVersion
 import com.bernaferrari.sdkmonitor.domain.model.SortOption
@@ -29,7 +29,7 @@ sealed class MainUiState {
 class MainViewModel @Inject constructor(
     private val appsRepository: AppsRepository,
     private val preferencesRepository: PreferencesRepository,
-    private val modernAppManager: ModernAppManager
+    private val modernAppManager: AppManager
 ) : ViewModel() {
 
     private val _searchQuery = MutableStateFlow("")

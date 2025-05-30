@@ -18,7 +18,7 @@ import javax.inject.Singleton
  * Provides type-safe, coroutine-based preference management with Flow
  */
 @Singleton
-class ModernPreferencesManager @Inject constructor(
+class PreferencesManager @Inject constructor(
     @ApplicationContext private val context: Context
 ) {
     

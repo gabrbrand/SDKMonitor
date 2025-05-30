@@ -157,7 +157,7 @@ fun SdkDetailDialog(
                         modifier = Modifier
                             .fillMaxSize(),
                         contentPadding = PaddingValues(vertical = 20.dp),
-                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         items(apps.sortedBy { it.title.lowercase() }) { app ->
                             MainAppCard(

@@ -5,7 +5,7 @@ import com.bernaferrari.sdkmonitor.domain.model.AppVersion
 import com.bernaferrari.sdkmonitor.domain.model.ThemeMode
 
 /**
- * Modern UI state for Settings screen with granular control
+ * UI state for Settings screen with granular control
  * Each preference can be updated independently while maintaining overall state consistency
  */
 data class SettingsUiState(
@@ -17,7 +17,6 @@ data class SettingsUiState(
     val allAppsForSdk: List<AppVersion> = emptyList(),
 ) {
     val hasError: Boolean get() = errorMessage != null
-    val isFullyLoaded: Boolean get() = !isLoading && !hasError
 }
 
 data class SettingsPreferences(
@@ -29,13 +28,6 @@ data class SettingsPreferences(
     val syncTimeUnit: TimeUnit = TimeUnit.MINUTES
 )
 
-enum class SettingType {
-    LIGHT_MODE,
-    APP_FILTER, // Use APP_FILTER instead of SHOW_SYSTEM_APPS
-    BACKGROUND_SYNC,
-    ORDER_BY_SDK,
-    SYNC_INTERVAL
-}
 
 enum class TimeUnit(val displayName: String, val code: Int) {
     MINUTES("Minutes", 0),

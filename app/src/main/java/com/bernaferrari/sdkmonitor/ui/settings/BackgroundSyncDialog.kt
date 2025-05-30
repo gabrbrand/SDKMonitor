@@ -22,7 +22,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.CalendarToday
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material3.Card
@@ -33,7 +32,6 @@ import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedCard
@@ -81,7 +79,7 @@ enum class SyncPreset(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ModernBackgroundSyncDialog(
+fun BackgroundSyncDialog(
     isEnabled: Boolean = false,
     currentInterval: String = "30",
     currentUnit: TimeUnit = TimeUnit.MINUTES,
@@ -124,34 +122,7 @@ fun ModernBackgroundSyncDialog(
                     .padding(20.dp),
                 verticalArrangement = Arrangement.spacedBy(20.dp)
             ) {
-                // Simplified Header - no duplication
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Column {
-                        Text(
-                            text = "Background Sync",
-                            style = MaterialTheme.typography.headlineSmall.copy(
-                                fontWeight = FontWeight.Bold
-                            ),
-                            color = MaterialTheme.colorScheme.onSurface
-                        )
-                        Text(
-                            text = "Configure automatic app updates",
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-
-                    IconButton(onClick = onDismiss) {
-                        Icon(
-                            imageVector = Icons.Default.Close,
-                            contentDescription = "Close"
-                        )
-                    }
-                }
+            
 
                 // Fully Clickable Enable/Disable Card
                 Card(
@@ -462,7 +433,7 @@ private fun ElegantSyncToggleWithDescription(
 @Composable
 private fun ModernBackgroundSyncDialogPreview() {
     SDKMonitorTheme {
-        ModernBackgroundSyncDialog(
+        BackgroundSyncDialog(
             isEnabled = true,
             currentInterval = "7",
             currentUnit = TimeUnit.DAYS

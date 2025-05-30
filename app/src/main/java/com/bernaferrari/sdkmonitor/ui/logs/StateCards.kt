@@ -1,4 +1,4 @@
-package com.bernaferrari.sdkmonitor.ui.components
+package com.bernaferrari.sdkmonitor.ui.logs
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box

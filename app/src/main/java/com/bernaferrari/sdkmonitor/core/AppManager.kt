@@ -16,7 +16,7 @@ import com.bernaferrari.sdkmonitor.domain.repository.AppsRepository
 import com.bernaferrari.sdkmonitor.domain.repository.PreferencesRepository
 import com.bernaferrari.sdkmonitor.extensions.convertTimestampToDate
 import com.bernaferrari.sdkmonitor.extensions.darken
-import com.bernaferrari.sdkmonitor.notifications.ModernNotificationManager
+import com.bernaferrari.sdkmonitor.notifications.NotificationManager
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
@@ -25,11 +25,11 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class ModernAppManager @Inject constructor(
+class AppManager @Inject constructor(
     @ApplicationContext private val context: Context,
     private val appsRepository: AppsRepository,
     private val preferencesRepository: PreferencesRepository,
-    private val notificationManager: ModernNotificationManager
+    private val notificationManager: NotificationManager
 ) {
 
     private companion object {

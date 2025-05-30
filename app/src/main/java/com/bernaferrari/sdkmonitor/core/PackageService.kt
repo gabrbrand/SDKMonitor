@@ -19,7 +19,7 @@ import kotlinx.coroutines.withContext
 class PackageService @AssistedInject constructor(
     @Assisted context: Context,
     @Assisted workerParameters: WorkerParameters,
-    private val modernAppManager: ModernAppManager,
+    private val modernAppManager: AppManager,
     private val appsRepository: AppsRepository
 ) : CoroutineWorker(context, workerParameters) {
 

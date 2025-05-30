@@ -20,7 +20,7 @@ import javax.inject.Inject
  * Each preference update is handled independently with proper loading states
  */
 @HiltViewModel
-class ModernSettingsViewModel @Inject constructor(
+class SettingsViewModel @Inject constructor(
     private val preferencesRepository: PreferencesRepository,
     private val appsRepository: AppsRepository
 ) : ViewModel() {
@@ -157,6 +157,7 @@ class ModernSettingsViewModel @Inject constructor(
                         else -> Pair("7", TimeUnit.DAYS)
                     }
                 }
+
                 else -> Pair("7", TimeUnit.DAYS) // Default to weekly
             }
         } catch (e: Exception) {
@@ -172,17 +173,6 @@ class ModernSettingsViewModel @Inject constructor(
         }
     }
 
-    private suspend fun updateSetting(settingType: SettingType, action: suspend () -> Unit) {
-        try {
-            // Remove the loading state update since these are local preferences
-            action()
-        } catch (e: Exception) {
-            _uiState.value = _uiState.value.copy(
-                errorMessage = "Failed to update ${settingType.name}: ${e.message}"
-            )
-        }
-        // No finally block needed since we're not tracking loading states
-    }
 
     /**
      * Toggle order by SDK preference

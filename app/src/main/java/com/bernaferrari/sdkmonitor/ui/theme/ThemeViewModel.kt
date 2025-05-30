@@ -1,6 +1,5 @@
 package com.bernaferrari.sdkmonitor.ui.theme
 
-import android.content.Context
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
@@ -11,19 +10,20 @@ import androidx.lifecycle.viewModelScope
 import com.bernaferrari.sdkmonitor.domain.model.ThemeMode
 import com.bernaferrari.sdkmonitor.domain.repository.PreferencesRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class ThemeViewModel @Inject constructor(
-    @ApplicationContext private val context: Context,
     private val preferencesRepository: PreferencesRepository
 ) : ViewModel() {
 
     private val _themeMode = MutableStateFlow(ThemeMode.MATERIAL_YOU)
-    val themeMode: StateFlow<ThemeMode> = _themeMode.asStateFlow()
+    private val themeMode: StateFlow<ThemeMode> = _themeMode.asStateFlow()
 
     init {
         observeThemePreferences()
