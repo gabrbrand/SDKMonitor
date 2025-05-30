@@ -1,50 +1,36 @@
 package com.bernaferrari.sdkmonitor.ui.main
 
-import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.FastOutSlowInEasing
-import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.spring
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutHorizontally
-import androidx.compose.animation.slideOutVertically
-import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Android
 import androidx.compose.material.icons.filled.Apps
-import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Error
-import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.SearchOff
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -52,18 +38,13 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
-import androidx.compose.material3.FilterChip
-import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -72,11 +53,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.bernaferrari.sdkmonitor.domain.model.AppFilter
@@ -100,526 +82,514 @@ fun MainScreen(
         viewModel.loadApps()
     }
 
-    // Add state for sort menu
+    // Add state for sort menu and fast scroller
     var showSortMenu by remember { mutableStateOf(false) }
+    var isScrollerActive by remember { mutableStateOf(false) }
+    var currentScrollLetter by remember { mutableStateOf("") }
 
-    // Delightful animation for the entire content
-    val contentVisible by remember { mutableStateOf(true) }
-    val contentAnimation = animateFloatAsState(
-        targetValue = if (contentVisible) 1f else 0f,
-        animationSpec = tween(durationMillis = 800, easing = FastOutSlowInEasing),
-        label = "content_animation"
-    )
+    // Add state for filter menu
+    var showFilterMenu by remember { mutableStateOf(false) }
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    // Animated title with delightful bounce
-                    AnimatedContent(
-                        targetState = "SDK Monitor",
-                        transitionSpec = {
-                            slideInVertically { -it } + fadeIn() togetherWith
-                                    slideOutVertically { it } + fadeOut()
-                        },
-                        label = "title_animation"
-                    ) { title ->
-                        Text(
-                            text = title,
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onSurface
-                        )
-                    }
-                },
-                actions = {
-                    // Delightful staggered animation for action buttons
-                    val buttonsVisible by remember { mutableStateOf(true) }
-                    
-                    AnimatedVisibility(
-                        visible = buttonsVisible,
-                        enter = slideInHorizontally { it } + fadeIn(),
-                        exit = slideOutHorizontally { it } + fadeOut()
-                    ) {
-                        Row {
-                            IconButton(onClick = onNavigateToLogs) {
-                                Icon(
-                                    imageVector = Icons.Default.History,
-                                    contentDescription = "View logs",
-                                    tint = MaterialTheme.colorScheme.onSurfaceVariant
-                                )
-                            }
-                            IconButton(onClick = onNavigateToSettings) {
-                                Icon(
-                                    imageVector = Icons.Default.Settings,
-                                    contentDescription = "Settings",
-                                    tint = MaterialTheme.colorScheme.onSurfaceVariant
-                                )
-                            }
-                        }
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.surface
-                )
-            )
-        }
-    ) { paddingValues ->
-        Column(
+    // State for LazyColumn
+    val listState = rememberLazyListState()
+
+    // Clean, minimal design with proper status bar handling
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .windowInsetsPadding(WindowInsets.statusBars)
+    ) {
+        // Compact header card with title, search, and dropdowns
+        Card(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .graphicsLayer(alpha = contentAnimation.value)
+                .fillMaxWidth()
+                .padding(vertical = 8.dp),
+            shape = RoundedCornerShape(20.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surfaceContainer
+            ),
+            elevation = CardDefaults.cardElevation(2.dp)
         ) {
-            // Ultra-Beautiful Filled Search Field - Material Design 3 Perfection
-            TextField(
-                value = searchQuery,
-                onValueChange = viewModel::updateSearchQuery,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 12.dp),
-                placeholder = { 
+            Column(
+                modifier = Modifier.padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                // Title and app count row
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
                     Text(
-                        "Search apps...",
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
-                    ) 
-                },
-                leadingIcon = {
-                    Icon(
-                        imageVector = Icons.Default.Search,
-                        contentDescription = "Search",
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.size(20.dp)
+                        text = "SDK Monitor",
+                        style = MaterialTheme.typography.titleLarge.copy(
+                            fontWeight = FontWeight.Bold
+                        ),
+                        color = MaterialTheme.colorScheme.onSurface
                     )
-                },
-                trailingIcon = if (searchQuery.isNotEmpty()) {
-                    {
-                        IconButton(onClick = { viewModel.updateSearchQuery("") }) {
-                            Icon(
-                                imageVector = Icons.Default.Clear,
-                                contentDescription = "Clear search",
-                                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                                modifier = Modifier.size(18.dp)
-                            )
+
+                    // App count
+                    when (val state = uiState) {
+                        is MainUiState.Success -> {
+                            Surface(
+                                shape = RoundedCornerShape(12.dp),
+                                color = MaterialTheme.colorScheme.primaryContainer,
+                                modifier = Modifier.padding(0.dp)
+                            ) {
+                                Text(
+                                    text = "${state.filteredApps.size} apps",
+                                    style = MaterialTheme.typography.labelMedium.copy(
+                                        fontWeight = FontWeight.SemiBold
+                                    ),
+                                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
+                                )
+                            }
+                        }
+                        else -> {
+                            Spacer(modifier = Modifier.width(1.dp))
                         }
                     }
-                } else null,
-                singleLine = true,
-                shape = RoundedCornerShape(28.dp),
-                colors = TextFieldDefaults.colors(
-                    focusedIndicatorColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent,
-                    disabledIndicatorColor = Color.Transparent,
-                    focusedContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
-                    unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
-                    focusedTextColor = MaterialTheme.colorScheme.onSurface,
-                    unfocusedTextColor = MaterialTheme.colorScheme.onSurface
-                ),
-                textStyle = MaterialTheme.typography.bodyLarge
-            )
+                }
 
-            // Clean filter chips without elastic animations
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 8.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                AppFilter.entries.forEachIndexed { index, filter ->
-                    val isSelected = appFilter == filter
-                    
-                    FilterChip(
-                        onClick = { 
-                            viewModel.updateAppFilter(filter) 
-                        },
-                        label = {
+                // Search and dropdown buttons row
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    // Search field takes most space
+                    TextField(
+                        value = searchQuery,
+                        onValueChange = viewModel::updateSearchQuery,
+                        modifier = Modifier.weight(1f),
+
+                        placeholder = {
                             Text(
-                                text = filter.displayName,
-                                style = MaterialTheme.typography.labelLarge.copy(
-                                    fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Medium
-                                )
+                                "Search apps...",
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
                             )
                         },
-                        selected = isSelected,
                         leadingIcon = {
                             Icon(
-                                imageVector = when (filter) {
+                                imageVector = Icons.Default.Search,
+                                contentDescription = "Search",
+                                tint = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.size(20.dp)
+                            )
+                        },
+                        trailingIcon = if (searchQuery.isNotEmpty()) {
+                            {
+                                IconButton(
+                                    onClick = { viewModel.updateSearchQuery("") },
+                                    modifier = Modifier.size(32.dp)
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Clear,
+                                        contentDescription = "Clear search",
+                                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                                        modifier = Modifier.size(16.dp)
+                                    )
+                                }
+                            }
+                        } else null,
+                        singleLine = true,
+                        shape = RoundedCornerShape(
+                            topStart = 20.dp,
+                            bottomStart = 20.dp,
+                            topEnd = 10.dp,
+                            bottomEnd = 10.dp
+                        ),
+                        colors = TextFieldDefaults.colors(
+                            focusedIndicatorColor = Color.Transparent,
+                            unfocusedIndicatorColor = Color.Transparent,
+                            disabledIndicatorColor = Color.Transparent,
+                            focusedContainerColor = MaterialTheme.colorScheme.surface,
+                            unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+                            focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                            unfocusedTextColor = MaterialTheme.colorScheme.onSurface
+                        ),
+                        textStyle = MaterialTheme.typography.bodyMedium.copy(
+                            fontWeight = FontWeight.Medium
+                        )
+                    )
+
+                    // Filter dropdown button
+                    Box {
+                        IconButton(
+                            onClick = { showFilterMenu = true },
+                            modifier = Modifier
+                                .background(
+                                    MaterialTheme.colorScheme.surface,
+                                    RoundedCornerShape(10.dp)
+                                )
+                                .width(48.dp)
+                                .height(56.dp)
+                        ) {
+                            Icon(
+                                imageVector = when (appFilter) {
                                     AppFilter.ALL_APPS -> Icons.Default.Apps
                                     AppFilter.USER_APPS -> Icons.Default.Person
                                     AppFilter.SYSTEM_APPS -> Icons.Default.Android
                                 },
-                                contentDescription = filter.displayName,
-                                modifier = Modifier.size(16.dp)
+                                contentDescription = "Filter: ${appFilter.displayName}",
+                                modifier = Modifier.size(18.dp),
+                                tint = MaterialTheme.colorScheme.onSurface
                             )
-                        },
-                        colors = FilterChipDefaults.filterChipColors(),
-                        shape = RoundedCornerShape(16.dp),
-                        modifier = Modifier.height(40.dp)
-                    )
-                }
-            }
+                        }
 
-            // Perfect Sort & Count Row
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 4.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                // Elegant Sort Dropdown
-                Box {
-                    FilterChip(
-                        onClick = { showSortMenu = true },
-                        label = {
-                            Text(
-                                text = "Sort: ${sortOption.displayName}",
-                                style = MaterialTheme.typography.labelLarge.copy(
-                                    fontWeight = FontWeight.Medium
+                        DropdownMenu(
+                            expanded = showFilterMenu,
+                            onDismissRequest = { showFilterMenu = false },
+                            shape = RoundedCornerShape(12.dp),
+                            containerColor = MaterialTheme.colorScheme.surface
+                        ) {
+                            AppFilter.entries.forEach { filter ->
+                                DropdownMenuItem(
+                                    text = {
+                                        Row(
+                                            verticalAlignment = Alignment.CenterVertically,
+                                            horizontalArrangement = Arrangement.spacedBy(12.dp)
+                                        ) {
+                                            Icon(
+                                                imageVector = when (filter) {
+                                                    AppFilter.ALL_APPS -> Icons.Default.Apps
+                                                    AppFilter.USER_APPS -> Icons.Default.Person
+                                                    AppFilter.SYSTEM_APPS -> Icons.Default.Android
+                                                },
+                                                contentDescription = null,
+                                                modifier = Modifier.size(18.dp),
+                                                tint = if (appFilter == filter) {
+                                                    MaterialTheme.colorScheme.primary
+                                                } else {
+                                                    MaterialTheme.colorScheme.onSurfaceVariant
+                                                }
+                                            )
+                                            Text(
+                                                text = filter.displayName,
+                                                style = MaterialTheme.typography.bodyMedium.copy(
+                                                    fontWeight = if (appFilter == filter) {
+                                                        FontWeight.SemiBold
+                                                    } else {
+                                                        FontWeight.Normal
+                                                    }
+                                                ),
+                                                color = if (appFilter == filter) {
+                                                    MaterialTheme.colorScheme.primary
+                                                } else {
+                                                    MaterialTheme.colorScheme.onSurface
+                                                }
+                                            )
+                                        }
+                                    },
+                                    onClick = {
+                                        viewModel.updateAppFilter(filter)
+                                        showFilterMenu = false
+                                    }
                                 )
-                            )
-                        },
-                        selected = false,
-                        leadingIcon = {
+                            }
+                        }
+                    }
+
+                    // Sort dropdown button
+                    Box {
+                        IconButton(
+                            onClick = { showSortMenu = true },
+                            modifier = Modifier
+                                .background(
+                                    MaterialTheme.colorScheme.surface,
+                                    RoundedCornerShape(
+                                        topStart = 10.dp,
+                                        bottomStart = 10.dp,
+                                        topEnd = 20.dp,
+                                        bottomEnd = 20.dp
+                                    )
+                                )
+                                .width(48.dp)
+                                .height(56.dp)
+                        ) {
                             Icon(
                                 imageVector = sortOption.icon,
-                                contentDescription = "Sort options",
-                                modifier = Modifier.size(16.dp)
+                                contentDescription = "Sort: ${sortOption.displayName}",
+                                modifier = Modifier.size(18.dp),
+                                tint = MaterialTheme.colorScheme.onSurface
                             )
-                        },
-                        trailingIcon = {
-                            Icon(
-                                imageVector = Icons.Default.ArrowDropDown,
-                                contentDescription = "Expand sort options",
-                                modifier = Modifier.size(18.dp)
-                            )
-                        },
-                        colors = FilterChipDefaults.filterChipColors(
-                        ),
-                        shape = RoundedCornerShape(20.dp),
-                        modifier = Modifier.height(36.dp)
-                    )
+                        }
 
-                    DropdownMenu(
-                        expanded = showSortMenu,
-                        onDismissRequest = { showSortMenu = false },
-                        shape = RoundedCornerShape(16.dp),
-                        containerColor = MaterialTheme.colorScheme.surfaceContainer,
-                        shadowElevation = 8.dp
-                    ) {
-                        SortOption.values().forEach { option ->
-                            DropdownMenuItem(
-                                text = {
-                                    Row(
-                                        verticalAlignment = Alignment.CenterVertically,
-                                        horizontalArrangement = Arrangement.spacedBy(12.dp)
-                                    ) {
-                                        Icon(
-                                            imageVector = option.icon,
-                                            contentDescription = null,
-                                            modifier = Modifier.size(20.dp),
-                                            tint = if (sortOption == option) {
-                                                MaterialTheme.colorScheme.primary
-                                            } else {
-                                                MaterialTheme.colorScheme.onSurfaceVariant
-                                            }
-                                        )
-                                        Text(
-                                            text = option.displayName,
-                                            style = MaterialTheme.typography.bodyLarge.copy(
-                                                fontWeight = if (sortOption == option) {
-                                                    FontWeight.SemiBold
-                                                } else {
-                                                    FontWeight.Normal
-                                                }
-                                            ),
-                                            color = if (sortOption == option) {
-                                                MaterialTheme.colorScheme.primary
-                                            } else {
-                                                MaterialTheme.colorScheme.onSurface
-                                            }
-                                        )
-                                        if (sortOption == option) {
-                                            Spacer(modifier = Modifier.weight(1f))
+                        DropdownMenu(
+                            expanded = showSortMenu,
+                            onDismissRequest = { showSortMenu = false },
+                            shape = RoundedCornerShape(12.dp),
+                            containerColor = MaterialTheme.colorScheme.surface
+                        ) {
+                            SortOption.values().forEach { option ->
+                                DropdownMenuItem(
+                                    text = {
+                                        Row(
+                                            verticalAlignment = Alignment.CenterVertically,
+                                            horizontalArrangement = Arrangement.spacedBy(12.dp)
+                                        ) {
                                             Icon(
-                                                imageVector = Icons.Default.Check,
-                                                contentDescription = "Selected",
-                                                modifier = Modifier.size(16.dp),
-                                                tint = MaterialTheme.colorScheme.primary
+                                                imageVector = option.icon,
+                                                contentDescription = null,
+                                                modifier = Modifier.size(18.dp),
+                                                tint = if (sortOption == option) {
+                                                    MaterialTheme.colorScheme.primary
+                                                } else {
+                                                    MaterialTheme.colorScheme.onSurfaceVariant
+                                                }
+                                            )
+                                            Text(
+                                                text = option.displayName,
+                                                style = MaterialTheme.typography.bodyMedium.copy(
+                                                    fontWeight = if (sortOption == option) {
+                                                        FontWeight.SemiBold
+                                                    } else {
+                                                        FontWeight.Normal
+                                                    }
+                                                ),
+                                                color = if (sortOption == option) {
+                                                    MaterialTheme.colorScheme.primary
+                                                } else {
+                                                    MaterialTheme.colorScheme.onSurface
+                                                }
                                             )
                                         }
+                                    },
+                                    onClick = {
+                                        viewModel.updateSortOption(option)
+                                        showSortMenu = false
                                     }
-                                },
-                                onClick = {
-                                    viewModel.updateSortOption(option)
-                                    showSortMenu = false
-                                },
-                                modifier = Modifier.height(48.dp)
-                            )
+                                )
+                            }
                         }
                     }
                 }
+            }
+        }
 
-                // Beautiful App Count Badge
-                when (val state = uiState) {
-                    is MainUiState.Success -> {
-                        val countScale by animateFloatAsState(
-                            targetValue = 1f,
-                            animationSpec = spring(
-                                dampingRatio = Spring.DampingRatioMediumBouncy
-                            ),
-                            label = "count_scale"
+        // Content states with functional fast scroller
+        when (val state = uiState) {
+            is MainUiState.Loading -> {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(40.dp),
+                            color = MaterialTheme.colorScheme.primary
                         )
-                        
-                        Surface(
-                            shape = RoundedCornerShape(20.dp),
-                            color = MaterialTheme.colorScheme.primaryContainer,
-                            shadowElevation = 2.dp,
-                            modifier = Modifier.graphicsLayer(
-                                scaleX = countScale,
-                                scaleY = countScale
-                            )
-                        ) {
-                            Text(
-                                text = "${state.filteredApps.size} ${
-                                    when (appFilter) {
-                                        AppFilter.ALL_APPS -> "apps"
-                                        AppFilter.USER_APPS -> "user apps"
-                                        AppFilter.SYSTEM_APPS -> "system apps"
-                                    }
-                                }",
-                                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-                                style = MaterialTheme.typography.labelLarge.copy(
-                                    fontWeight = FontWeight.SemiBold
-                                ),
-                                color = MaterialTheme.colorScheme.onPrimaryContainer
-                            )
-                        }
+                        Text(
+                            text = "Loading apps...",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
                     }
-                    else -> {}
                 }
             }
 
-            // Perfect Content States
-            when (val state = uiState) {
-                is MainUiState.Loading -> {
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
+            is MainUiState.Error -> {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Card(
+                        modifier = Modifier.padding(24.dp),
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.errorContainer
+                        ),
+                        shape = RoundedCornerShape(16.dp)
                     ) {
                         Column(
+                            modifier = Modifier.padding(24.dp),
                             horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.spacedBy(16.dp)
+                            verticalArrangement = Arrangement.spacedBy(12.dp)
                         ) {
-                            // Pulsing loading indicator
-                            val loadingScale by animateFloatAsState(
-                                targetValue = 1.2f,
-                                animationSpec = infiniteRepeatable(
-                                    animation = tween(1000),
-                                    repeatMode = RepeatMode.Reverse
-                                ),
-                                label = "loading_scale"
-                            )
-                            
-                            CircularProgressIndicator(
-                                modifier = Modifier
-                                    .size(48.dp)
-                                    .graphicsLayer(scaleX = loadingScale, scaleY = loadingScale),
-                                color = MaterialTheme.colorScheme.primary,
-                                strokeWidth = 4.dp
+                            Icon(
+                                imageVector = Icons.Default.Error,
+                                contentDescription = "Error",
+                                modifier = Modifier.size(40.dp),
+                                tint = MaterialTheme.colorScheme.onErrorContainer
                             )
                             Text(
-                                text = "Loading your beautiful apps...",
-                                style = MaterialTheme.typography.bodyLarge,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                                text = "Something went wrong",
+                                style = MaterialTheme.typography.titleMedium.copy(
+                                    fontWeight = FontWeight.Bold
+                                ),
+                                color = MaterialTheme.colorScheme.onErrorContainer
                             )
-                        }
-                    }
-                }
-
-                is MainUiState.Error -> {
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Card(
-                            modifier = Modifier.padding(24.dp),
-                            colors = CardDefaults.cardColors(
-                                containerColor = MaterialTheme.colorScheme.errorContainer
-                            ),
-                            shape = RoundedCornerShape(20.dp),
-                            elevation = CardDefaults.cardElevation(8.dp)
-                        ) {
-                            Column(
-                                modifier = Modifier.padding(24.dp),
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                verticalArrangement = Arrangement.spacedBy(16.dp)
+                            Text(
+                                text = state.message,
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onErrorContainer.copy(alpha = 0.8f),
+                                textAlign = TextAlign.Center
+                            )
+                            FilledTonalButton(
+                                onClick = { viewModel.retryLoadApps() }
                             ) {
                                 Icon(
-                                    imageVector = Icons.Default.Error,
-                                    contentDescription = "Error",
-                                    modifier = Modifier.size(48.dp),
-                                    tint = MaterialTheme.colorScheme.onErrorContainer
+                                    imageVector = Icons.Default.Refresh,
+                                    contentDescription = "Retry",
+                                    modifier = Modifier.size(16.dp)
                                 )
-                                Text(
-                                    text = "Oops! Something went wrong",
-                                    style = MaterialTheme.typography.headlineSmall.copy(
-                                        fontWeight = FontWeight.Bold
-                                    ),
-                                    color = MaterialTheme.colorScheme.onErrorContainer
-                                )
-                                Text(
-                                    text = state.message,
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = MaterialTheme.colorScheme.onErrorContainer.copy(alpha = 0.8f),
-                                    textAlign = TextAlign.Center
-                                )
-                                FilledTonalButton(
-                                    onClick = { viewModel.retryLoadApps() },
-                                    colors = ButtonDefaults.filledTonalButtonColors(
-                                        containerColor = MaterialTheme.colorScheme.onErrorContainer,
-                                        contentColor = MaterialTheme.colorScheme.errorContainer
-                                    )
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.Default.Refresh,
-                                        contentDescription = "Retry",
-                                        modifier = Modifier.size(18.dp)
-                                    )
-                                    Spacer(modifier = Modifier.width(8.dp))
-                                    Text("Retry")
-                                }
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text("Retry")
                             }
                         }
                     }
                 }
+            }
 
-                is MainUiState.Success -> {
-                    when {
-                        state.filteredApps.isEmpty() && searchQuery.isNotBlank() -> {
-                            // Enhanced empty search state...
-                            Box(
-                                modifier = Modifier.fillMaxSize(),
-                                contentAlignment = Alignment.Center
+            is MainUiState.Success -> {
+                when {
+                    state.filteredApps.isEmpty() && searchQuery.isNotBlank() -> {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.spacedBy(12.dp)
                             ) {
-                                Column(
-                                    horizontalAlignment = Alignment.CenterHorizontally,
-                                    verticalArrangement = Arrangement.spacedBy(16.dp)
-                                ) {
-                                    Surface(
-                                        modifier = Modifier.size(80.dp),
-                                        shape = RoundedCornerShape(24.dp),
-                                        color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5f)
-                                    ) {
-                                        Box(
-                                            modifier = Modifier.fillMaxSize(),
-                                            contentAlignment = Alignment.Center
-                                        ) {
-                                            Icon(
-                                                imageVector = Icons.Default.SearchOff,
-                                                contentDescription = "No results",
-                                                modifier = Modifier.size(32.dp),
-                                                tint = MaterialTheme.colorScheme.primary
-                                            )
-                                        }
-                                    }
-                                    Text(
-                                        text = "No apps found",
-                                        style = MaterialTheme.typography.headlineSmall.copy(
-                                            fontWeight = FontWeight.Bold
-                                        ),
-                                        color = MaterialTheme.colorScheme.onSurface
-                                    )
-                                    Text(
-                                        text = "Try searching for \"$searchQuery\" with different filters",
-                                        style = MaterialTheme.typography.bodyMedium,
-                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                        textAlign = TextAlign.Center
-                                    )
-                                }
+                                Icon(
+                                    imageVector = Icons.Default.SearchOff,
+                                    contentDescription = "No results",
+                                    modifier = Modifier.size(48.dp),
+                                    tint = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                                Text(
+                                    text = "No apps found",
+                                    style = MaterialTheme.typography.titleMedium.copy(
+                                        fontWeight = FontWeight.Bold
+                                    ),
+                                    color = MaterialTheme.colorScheme.onSurface
+                                )
+                                Text(
+                                    text = "Try searching with different terms",
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    textAlign = TextAlign.Center
+                                )
                             }
                         }
-                        
-                        state.filteredApps.isEmpty() -> {
-                            // Enhanced empty state...
-                            Box(
-                                modifier = Modifier.fillMaxSize(),
-                                contentAlignment = Alignment.Center
+                    }
+
+                    state.filteredApps.isEmpty() -> {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.spacedBy(12.dp)
                             ) {
-                                Column(
-                                    horizontalAlignment = Alignment.CenterHorizontally,
-                                    verticalArrangement = Arrangement.spacedBy(16.dp)
-                                ) {
-                                    Surface(
-                                        modifier = Modifier.size(80.dp),
-                                        shape = RoundedCornerShape(24.dp),
-                                        color = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.5f)
-                                    ) {
-                                        Box(
-                                            modifier = Modifier.fillMaxSize(),
-                                            contentAlignment = Alignment.Center
-                                        ) {
-                                            Icon(
-                                                imageVector = Icons.Default.Apps,
-                                                contentDescription = "No apps",
-                                                modifier = Modifier.size(32.dp),
-                                                tint = MaterialTheme.colorScheme.secondary
-                                            )
-                                        }
-                                    }
-                                    Text(
-                                        text = "No ${appFilter.displayName.lowercase()} found",
-                                        style = MaterialTheme.typography.headlineSmall.copy(
-                                            fontWeight = FontWeight.Bold
-                                        ),
-                                        color = MaterialTheme.colorScheme.onSurface
-                                    )
-                                    Text(
-                                        text = "Try changing your filter or refreshing",
-                                        style = MaterialTheme.typography.bodyMedium,
-                                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                                    )
-                                }
+                                Icon(
+                                    imageVector = Icons.Default.Apps,
+                                    contentDescription = "No apps",
+                                    modifier = Modifier.size(48.dp),
+                                    tint = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                                Text(
+                                    text = "No ${appFilter.displayName.lowercase()} found",
+                                    style = MaterialTheme.typography.titleMedium.copy(
+                                        fontWeight = FontWeight.Bold
+                                    ),
+                                    color = MaterialTheme.colorScheme.onSurface
+                                )
+                                Text(
+                                    text = "Try changing your filter",
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
                             }
                         }
-                        
-                        else -> {
+                    }
+
+                    else -> {
+                        // Only show fast scroller when sorting by name and has apps
+                        val showFastScroller = sortOption == SortOption.NAME &&
+                                state.filteredApps.size > 15 &&
+                                searchQuery.isBlank()
+
+                        Box(modifier = Modifier.fillMaxSize()) {
                             LazyColumn(
+                                state = listState,
                                 modifier = Modifier.fillMaxSize(),
-                                contentPadding = PaddingValues(vertical = 8.dp),
+                                contentPadding = PaddingValues(
+                                    start = 0.dp,
+                                    end = if (showFastScroller) 20.dp else 0.dp,
+                                    top = 8.dp,
+                                    bottom = 8.dp
+                                ),
                                 verticalArrangement = Arrangement.spacedBy(6.dp)
                             ) {
                                 itemsIndexed(state.filteredApps) { index, appVersion ->
-                                    // Staggered animation for each item
-                                    val itemVisible by remember { mutableStateOf(true) }
-                                    val itemDelay = (index * 50).coerceAtMost(300)
-                                    
-                                    AnimatedVisibility(
-                                        visible = itemVisible,
-                                        enter = slideInVertically(
-                                            animationSpec = tween(
-                                                durationMillis = 400,
-                                                delayMillis = itemDelay,
-                                                easing = FastOutSlowInEasing
-                                            )
-                                        ) { it } + fadeIn(
-                                            animationSpec = tween(
-                                                durationMillis = 400,
-                                                delayMillis = itemDelay
-                                            )
-                                        )
-                                    ) {
-                                        MainAppCard(
-                                            appVersion = appVersion,
-                                            onClick = { onNavigateToAppDetails(appVersion.packageName) }
-                                        )
-                                    }
+                                    MainAppCard(
+                                        appVersion = appVersion,
+                                        onClick = { onNavigateToAppDetails(appVersion.packageName) }
+                                    )
                                 }
-                                
-                                // Beautiful bottom spacing
+
                                 item {
                                     Spacer(modifier = Modifier.height(16.dp))
+                                }
+                            }
+
+                            // Functional Fast Scroller
+                            if (showFastScroller) {
+                                FastScroller(
+                                    apps = state.filteredApps,
+                                    listState = listState,
+                                    onLetterSelected = { letter ->
+                                        currentScrollLetter = letter
+                                        isScrollerActive = true
+                                    },
+                                    onScrollFinished = {
+                                        isScrollerActive = false
+                                        currentScrollLetter = ""
+                                    },
+                                    modifier = Modifier
+                                        .align(Alignment.CenterEnd)
+                                        .padding(end = 2.dp)
+                                )
+                            }
+
+                            // Large letter overlay when scrolling - More DRAMATIC!
+                            if (isScrollerActive && currentScrollLetter.isNotEmpty()) {
+                                val overlayScale by animateFloatAsState(
+                                    targetValue = 1f,
+                                    animationSpec = spring(
+                                        dampingRatio = 0.6f,
+                                        stiffness = 800f
+                                    ),
+                                    label = "overlay_scale"
+                                )
+
+                                Box(
+                                    modifier = Modifier
+                                        .align(Alignment.Center)
+                                        .size(140.dp) // Even larger!
+                                        .scale(overlayScale)
+                                        .background(
+                                            MaterialTheme.colorScheme.surface.copy(alpha = 0.98f),
+                                            RoundedCornerShape(32.dp)
+                                        ),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Text(
+                                        text = currentScrollLetter,
+                                        style = MaterialTheme.typography.displayLarge.copy( // Even bigger text!
+                                            fontWeight = FontWeight.Black,
+                                            fontSize = 72.sp
+                                        ),
+                                        color = MaterialTheme.colorScheme.primary
+                                    )
                                 }
                             }
                         }
@@ -627,5 +597,6 @@ fun MainScreen(
                 }
             }
         }
+
     }
 }
