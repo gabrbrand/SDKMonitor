@@ -246,6 +246,16 @@ fun MainScreen(
                             shape = RoundedCornerShape(12.dp),
                             containerColor = MaterialTheme.colorScheme.surface
                         ) {
+                            // Filter menu title
+                            Text(
+                                text = "Filter Apps",
+                                style = MaterialTheme.typography.labelLarge.copy(
+                                    fontWeight = FontWeight.Bold
+                                ),
+                                color = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                            )
+                            
                             AppFilter.entries.forEach { filter ->
                                 DropdownMenuItem(
                                     text = {
@@ -324,6 +334,16 @@ fun MainScreen(
                             shape = RoundedCornerShape(12.dp),
                             containerColor = MaterialTheme.colorScheme.surface
                         ) {
+                            // Sort menu title
+                            Text(
+                                text = "Sort By",
+                                style = MaterialTheme.typography.labelLarge.copy(
+                                    fontWeight = FontWeight.Bold
+                                ),
+                                color = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                            )
+                            
                             SortOption.values().forEach { option ->
                                 DropdownMenuItem(
                                     text = {

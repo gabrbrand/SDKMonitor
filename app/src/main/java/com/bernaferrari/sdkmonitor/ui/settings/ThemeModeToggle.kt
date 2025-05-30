@@ -55,7 +55,7 @@ fun ThemeModeToggle(
             border = androidx.compose.foundation.BorderStroke(
                 width = if (isSelected) 2.dp else 1.dp,
                 color = if (isSelected) {
-                    MaterialTheme.colorScheme.primary
+                    MaterialTheme.colorScheme.inversePrimary
                 } else {
                     MaterialTheme.colorScheme.outlineVariant
                 }
@@ -70,12 +70,7 @@ fun ThemeModeToggle(
                     contentDescription = themeMode.displayName,
                     modifier = Modifier.size(24.dp),
                     tint = if (isSelected) {
-                        when (themeMode) {
-                            ThemeMode.MATERIAL_YOU -> MaterialTheme.colorScheme.primary
-                            ThemeMode.LIGHT -> MaterialTheme.colorScheme.secondary
-                            ThemeMode.DARK -> MaterialTheme.colorScheme.tertiary
-                            ThemeMode.SYSTEM -> MaterialTheme.colorScheme.onSurface
-                        }
+                        MaterialTheme.colorScheme.primary
                     } else {
                         MaterialTheme.colorScheme.onSurfaceVariant
                     }
@@ -99,7 +94,6 @@ fun ThemeModeToggle(
     }
 }
 
-// Divine previews
 @Preview(showBackground = true)
 @Composable
 private fun StunningThemeOptionPreview() {
