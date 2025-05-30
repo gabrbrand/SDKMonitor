@@ -104,7 +104,7 @@ private fun SDKInfoSection(appDetails: AppDetails) {
                 Text(
                     text = appDetails.targetSdk.apiToVersion(),
                     style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    color = targetSdkColor,
                     textAlign = TextAlign.Center,
                     maxLines = 1
                 )

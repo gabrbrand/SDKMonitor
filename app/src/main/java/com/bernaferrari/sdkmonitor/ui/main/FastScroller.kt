@@ -65,10 +65,18 @@ fun FastScroller(
         mapping
     }
 
-    var isDragging by remember { mutableStateOf(false) }
+    var isInteracting by remember { mutableStateOf(false) }
     var currentDragPosition by remember { mutableFloatStateOf(0f) }
     var scrollerSize by remember { mutableStateOf(IntSize.Zero) }
 
+    // Function to scroll to letter
+    fun scrollToLetter(letter: String) {
+        letterToIndex[letter]?.let { index ->
+            coroutineScope.launch {
+                listState.scrollToItem(index.coerceAtMost(apps.size - 1))
+            }
+        }
+    }
 
     // Function to handle position and select letter
     fun handlePositionAndSelectLetter(yPosition: Float) {
@@ -82,16 +90,7 @@ fun FastScroller(
             scrollToLetter(selectedLetter)
         }
     }
-
-    // Function to scroll to letter
-    fun scrollToLetter(letter: String) {
-        letterToIndex[letter]?.let { index ->
-            coroutineScope.launch {
-                listState.scrollToItem(index.coerceAtMost(apps.size - 1))
-            }
-        }
-    }
-
+    
     Surface(
         modifier = modifier
             .fillMaxHeight()
@@ -103,14 +102,21 @@ fun FastScroller(
                 .padding(horizontal = 12.dp)
                 .onGloballyPositioned { scrollerSize = it.size }
                 .pointerInput(letters) {
-                    detectTapGestures { offset ->
-                        handlePositionAndSelectLetter(offset.y)
-                    }
+                    detectTapGestures(
+                        onPress = { offset ->
+                            isInteracting = true
+                            currentDragPosition = offset.y
+                            handlePositionAndSelectLetter(offset.y)
+                            tryAwaitRelease()
+                            isInteracting = false
+                            onScrollFinished()
+                        }
+                    )
                 }
                 .pointerInput(letters) {
                     detectDragGestures(
                         onDragStart = { offset ->
-                            isDragging = true
+                            isInteracting = true
                             currentDragPosition = offset.y
                             handlePositionAndSelectLetter(offset.y)
                         },
@@ -120,7 +126,7 @@ fun FastScroller(
                             handlePositionAndSelectLetter(currentDragPosition)
                         },
                         onDragEnd = {
-                            isDragging = false
+                            isInteracting = false
                             onScrollFinished()
                         }
                     )
@@ -148,7 +154,7 @@ fun FastScroller(
 
                     // Scale based on proximity when dragging
                     val scale by animateFloatAsState(
-                        targetValue = if (isDragging) {
+                        targetValue = if (isInteracting) {
                             when {
                                 distance < 0.05f -> 1.6f  // Very close
                                 distance < 0.1f -> 1.3f   // Close
@@ -161,7 +167,7 @@ fun FastScroller(
                     )
 
                     val alpha by animateFloatAsState(
-                        targetValue = if (isDragging) {
+                        targetValue = if (isInteracting) {
                             when {
                                 distance < 0.05f -> 1.0f
                                 distance < 0.1f -> 0.9f

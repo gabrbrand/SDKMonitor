@@ -13,25 +13,39 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.Android
+import androidx.compose.material.icons.filled.Apps
 import androidx.compose.material.icons.filled.ChevronRight
+import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.LightMode
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Sync
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalMinimumInteractiveComponentSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.bernaferrari.sdkmonitor.domain.model.AppFilter
 import com.bernaferrari.sdkmonitor.ui.theme.SDKMonitorTheme
 
 /**
@@ -155,7 +169,7 @@ fun SettingsSection(
             style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.primary,
             fontWeight = FontWeight.SemiBold,
-            modifier = Modifier.padding(bottom = 12.dp, start = 4.dp)
+            modifier = Modifier.padding(bottom = 12.dp)
         )
 
         content()
@@ -334,6 +348,154 @@ fun TextPreference(
     }
 }
 
+/**
+ * Analytics Section Header with Filter Dropdown
+ */
+@Composable
+fun AnalyticsSection(
+    title: String,
+    currentFilter: AppFilter,
+    onFilterChange: (AppFilter) -> Unit,
+    modifier: Modifier = Modifier,
+    content: @Composable ColumnScope.() -> Unit
+) {
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 8.dp)
+    ) {
+        // Section header with filter dropdown
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 12.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.primary,
+                fontWeight = FontWeight.SemiBold
+            )
+
+            // Filter dropdown - styled like main screen
+            var showFilterMenu by remember { mutableStateOf(false) }
+
+            Box {
+                CompositionLocalProvider(
+                    LocalMinimumInteractiveComponentSize provides Dp.Unspecified
+                ) {
+                    Surface(
+                        onClick = { showFilterMenu = true },
+                        shape = RoundedCornerShape(12.dp),
+                        color = MaterialTheme.colorScheme.surface,
+                    ) {
+                        Row(
+                            modifier = Modifier.padding(
+                                horizontal = 12.dp,
+                                vertical = 8.dp
+                            ),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(6.dp)
+                        ) {
+                            Icon(
+                                imageVector = when (currentFilter) {
+                                    AppFilter.ALL_APPS -> Icons.Default.Apps
+                                    AppFilter.USER_APPS -> Icons.Default.Person
+                                    AppFilter.SYSTEM_APPS -> Icons.Default.Android
+                                },
+                                contentDescription = null,
+                                modifier = Modifier.size(16.dp),
+                                tint = MaterialTheme.colorScheme.onSurface
+                            )
+                            Text(
+                                text = currentFilter.displayName,
+                                style = MaterialTheme.typography.labelMedium.copy(
+                                    fontWeight = FontWeight.SemiBold
+                                ),
+                                color = MaterialTheme.colorScheme.onSurface
+                            )
+                            Icon(
+                                imageVector = Icons.Default.ExpandMore,
+                                contentDescription = "Filter options",
+                                modifier = Modifier.size(14.dp),
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    }
+
+                    DropdownMenu(
+                        expanded = showFilterMenu,
+                        onDismissRequest = { showFilterMenu = false },
+                        shape = RoundedCornerShape(12.dp),
+                        containerColor = MaterialTheme.colorScheme.surface
+                    ) {
+                        Text(
+                            text = "Filter Apps",
+                            style = MaterialTheme.typography.labelLarge.copy(
+                                fontWeight = FontWeight.Bold
+                            ),
+                            color = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.padding(
+                                horizontal = 16.dp,
+                                vertical = 8.dp
+                            )
+                        )
+
+                        AppFilter.entries.forEach { filter ->
+                            DropdownMenuItem(
+                                text = {
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                                    ) {
+                                        Icon(
+                                            imageVector = when (filter) {
+                                                AppFilter.ALL_APPS -> Icons.Default.Apps
+                                                AppFilter.USER_APPS -> Icons.Default.Person
+                                                AppFilter.SYSTEM_APPS -> Icons.Default.Android
+                                            },
+                                            contentDescription = null,
+                                            modifier = Modifier.size(18.dp),
+                                            tint = if (currentFilter == filter) {
+                                                MaterialTheme.colorScheme.primary
+                                            } else {
+                                                MaterialTheme.colorScheme.onSurfaceVariant
+                                            }
+                                        )
+                                        Text(
+                                            text = filter.displayName,
+                                            style = MaterialTheme.typography.bodyMedium.copy(
+                                                fontWeight = if (currentFilter == filter) {
+                                                    FontWeight.SemiBold
+                                                } else {
+                                                    FontWeight.Normal
+                                                }
+                                            ),
+                                            color = if (currentFilter == filter) {
+                                                MaterialTheme.colorScheme.primary
+                                            } else {
+                                                MaterialTheme.colorScheme.onSurface
+                                            }
+                                        )
+                                    }
+                                },
+                                onClick = {
+                                    onFilterChange(filter)
+                                    showFilterMenu = false
+                                }
+                            )
+                        }
+                    }
+                }
+            }
+        }
+
+        content()
+    }
+}
+
 @Preview(showBackground = true)
 @Composable
 private fun SettingsItemPreview() {
@@ -402,6 +564,32 @@ fun SettingsSectionPreview() {
                 summary = "Current: Blue",
                 onClick = {}
             )
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun AnalyticsSectionPreview() {
+    SDKMonitorTheme {
+        AnalyticsSection(
+            title = "App Analytics",
+            currentFilter = AppFilter.ALL_APPS,
+            onFilterChange = {}
+        ) {
+            // Placeholder content
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceContainer
+                )
+            ) {
+                Text(
+                    text = "Analytics Card Content Here",
+                    modifier = Modifier.padding(16.dp),
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            }
         }
     }
 }

@@ -15,19 +15,12 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Android
-import androidx.compose.material.icons.filled.Apps
-import androidx.compose.material.icons.filled.ExpandMore
-import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Sync
 import androidx.compose.material.icons.filled.SyncDisabled
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilledTonalButton
@@ -51,7 +44,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.bernaferrari.sdkmonitor.domain.model.AppFilter
 import com.bernaferrari.sdkmonitor.domain.model.ThemeMode
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
@@ -169,8 +161,6 @@ fun SettingsScreen(
                 ) {
                     val prefs = uiState.preferences
 
-                    Spacer(modifier = Modifier.height(16.dp))
-
                     SettingsSection(title = "Appearance") {
                         Row(
                             modifier = Modifier.fillMaxWidth(),
@@ -188,9 +178,13 @@ fun SettingsScreen(
 
                     }
 
-                    // Analytics Section - NEW!
+                    // Analytics Section - Using new component
                     if (uiState.sdkDistribution.isNotEmpty()) {
-                        SettingsSection(title = "App Analytics") {
+                        AnalyticsSection(
+                            title = "App Analytics",
+                            currentFilter = prefs.appFilter,
+                            onFilterChange = { filter -> viewModel.updateAppFilter(filter) }
+                        ) {
                             SdkAnalyticsCard(
                                 sdkDistribution = uiState.sdkDistribution,
                                 totalApps = uiState.totalApps,
@@ -200,147 +194,6 @@ fun SettingsScreen(
                                 }
                             )
                         }
-
-                        Spacer(modifier = Modifier.height(16.dp))
-                    }
-
-
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    // App Management Section - SIMPLE DROPDOWN!
-                    SettingsSection(title = "App Management") {
-                        var showFilterMenu by remember { mutableStateOf(false) }
-                        
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(8.dp)
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.FilterList,
-                                    contentDescription = null,
-                                    modifier = Modifier.size(16.dp),
-                                    tint = MaterialTheme.colorScheme.primary
-                                )
-                                Text(
-                                    text = "Filter Apps",
-                                    style = MaterialTheme.typography.labelLarge.copy(
-                                        fontWeight = FontWeight.SemiBold
-                                    ),
-                                    color = MaterialTheme.colorScheme.primary
-                                )
-                            }
-
-                            // Filter dropdown button
-                            Box {
-                                Card(
-                                    onClick = { showFilterMenu = true },
-                                    colors = CardDefaults.cardColors(
-                                        containerColor = MaterialTheme.colorScheme.surfaceVariant
-                                    ),
-                                    elevation = CardDefaults.cardElevation(2.dp),
-                                    shape = RoundedCornerShape(12.dp)
-                                ) {
-                                    Row(
-                                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
-                                        verticalAlignment = Alignment.CenterVertically,
-                                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                                    ) {
-                                        Icon(
-                                            imageVector = when (prefs.appFilter) {
-                                                AppFilter.ALL_APPS -> Icons.Default.Apps
-                                                AppFilter.USER_APPS -> Icons.Default.Person
-                                                AppFilter.SYSTEM_APPS -> Icons.Default.Android
-                                            },
-                                            contentDescription = null,
-                                            modifier = Modifier.size(18.dp),
-                                            tint = MaterialTheme.colorScheme.onSurfaceVariant
-                                        )
-                                        Text(
-                                            text = prefs.appFilter.displayName,
-                                            style = MaterialTheme.typography.labelMedium.copy(
-                                                fontWeight = FontWeight.Medium
-                                            ),
-                                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                                        )
-                                        Icon(
-                                            imageVector = Icons.Default.ExpandMore,
-                                            contentDescription = null,
-                                            modifier = Modifier.size(16.dp),
-                                            tint = MaterialTheme.colorScheme.onSurfaceVariant
-                                        )
-                                    }
-                                }
-
-                                DropdownMenu(
-                                    expanded = showFilterMenu,
-                                    onDismissRequest = { showFilterMenu = false },
-                                    shape = RoundedCornerShape(12.dp),
-                                    containerColor = MaterialTheme.colorScheme.surface
-                                ) {
-                                    AppFilter.entries.forEach { filter ->
-                                        DropdownMenuItem(
-                                            text = {
-                                                Row(
-                                                    verticalAlignment = Alignment.CenterVertically,
-                                                    horizontalArrangement = Arrangement.spacedBy(12.dp)
-                                                ) {
-                                                    Icon(
-                                                        imageVector = when (filter) {
-                                                            AppFilter.ALL_APPS -> Icons.Default.Apps
-                                                            AppFilter.USER_APPS -> Icons.Default.Person
-                                                            AppFilter.SYSTEM_APPS -> Icons.Default.Android
-                                                        },
-                                                        contentDescription = null,
-                                                        modifier = Modifier.size(18.dp),
-                                                        tint = if (prefs.appFilter == filter) {
-                                                            MaterialTheme.colorScheme.primary
-                                                        } else {
-                                                            MaterialTheme.colorScheme.onSurfaceVariant
-                                                        }
-                                                    )
-                                                    Text(
-                                                        text = filter.displayName,
-                                                        style = MaterialTheme.typography.bodyMedium.copy(
-                                                            fontWeight = if (prefs.appFilter == filter) {
-                                                                FontWeight.SemiBold
-                                                            } else {
-                                                                FontWeight.Normal
-                                                            }
-                                                        ),
-                                                        color = if (prefs.appFilter == filter) {
-                                                            MaterialTheme.colorScheme.primary
-                                                        } else {
-                                                            MaterialTheme.colorScheme.onSurface
-                                                        }
-                                                    )
-                                                }
-                                            },
-                                            onClick = {
-                                                viewModel.updateAppFilter(filter)
-                                                showFilterMenu = false
-                                            }
-                                        )
-                                    }
-                                }
-                            }
-                        }
-
-                        // Simple description
-                        Text(
-                            text = when (prefs.appFilter) {
-                                AppFilter.ALL_APPS -> "Showing all applications on your device"
-                                AppFilter.USER_APPS -> "Showing apps installed from Play Store and other sources"
-                                AppFilter.SYSTEM_APPS -> "Showing pre-installed system applications"
-                            },
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            modifier = Modifier.padding(horizontal = 4.dp, vertical = 8.dp)
-                        )
                     }
 
                     Spacer(modifier = Modifier.height(16.dp))

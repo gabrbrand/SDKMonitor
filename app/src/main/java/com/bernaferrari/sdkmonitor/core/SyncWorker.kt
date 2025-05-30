@@ -1,10 +1,9 @@
-package com.bernaferrari.sdkmonitor
+package com.bernaferrari.sdkmonitor.core
 
 import android.content.Context
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import com.bernaferrari.sdkmonitor.core.AppManager
 import com.bernaferrari.sdkmonitor.domain.repository.PreferencesRepository
 import com.bernaferrari.sdkmonitor.notifications.NotificationManager
 import com.orhanobut.logger.Logger
