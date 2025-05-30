@@ -25,7 +25,6 @@ import androidx.compose.material.icons.filled.Apps
 import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material.icons.filled.Sync
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -58,12 +57,12 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.bernaferrari.sdkmonitor.domain.model.AppFilter
 import com.bernaferrari.sdkmonitor.domain.model.ThemeMode
-import com.bernaferrari.sdkmonitor.ui.components.SdkDetailDialog
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun SettingsScreen(
     onNavigateBack: () -> Unit,
+    onNavigateToAppDetails: (String) -> Unit, // <-- add this parameter
     viewModel: ModernSettingsViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -407,9 +406,9 @@ fun SettingsScreen(
             sdkVersion = selectedSdkVersion,
             apps = appsWithSdk,
             onDismiss = { showSdkDialog = false },
-            onAppClick = {
-                // Navigate to app details
+            onAppClick = { packageName ->
                 showSdkDialog = false
+                onNavigateToAppDetails(packageName)
             }
         )
     }

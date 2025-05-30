@@ -33,6 +33,9 @@ fun AppNavigation(navController: NavHostController) {
             SettingsScreen(
                 onNavigateBack = {
                     navController.popBackStack()
+                },
+                onNavigateToAppDetails = { packageName ->
+                    navController.navigate(Screen.Details.createRoute(packageName))
                 }
             )
         }

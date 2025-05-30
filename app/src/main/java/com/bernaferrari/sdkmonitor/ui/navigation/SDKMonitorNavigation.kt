@@ -113,15 +113,18 @@ fun SDKMonitorNavigation(
                     }
                 )
             }
-            
+
             composable(Screen.Settings.route) {
                 SettingsScreen(
                     onNavigateBack = {
                         navController.popBackStack()
+                    },
+                    onNavigateToAppDetails = { packageName ->
+                        navController.navigate(Screen.Details.createRoute(packageName))
                     }
                 )
             }
-            
+
             composable(Screen.Logs.route) {
                 LogsScreen(
                     onNavigateBack = { navController.popBackStack() },
@@ -130,7 +133,7 @@ fun SDKMonitorNavigation(
                     }
                 )
             }
-            
+
             composable(
                 route = Screen.Details.route,
                 arguments = Screen.Details.arguments
@@ -154,5 +157,6 @@ private sealed class BottomNavItem(
 ) {
     data object Main : BottomNavItem(Screen.Main.route, Icons.Default.Apps, R.string.main_title)
     data object Logs : BottomNavItem(Screen.Logs.route, Icons.Default.History, R.string.logs_title)
-    data object Settings : BottomNavItem(Screen.Settings.route, Icons.Default.Settings, R.string.settings_title)
+    data object Settings :
+        BottomNavItem(Screen.Settings.route, Icons.Default.Settings, R.string.settings_title)
 }

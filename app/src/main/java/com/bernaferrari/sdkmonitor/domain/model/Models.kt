@@ -52,11 +52,6 @@ data class UserPreferences(
     val themeMode: ThemeMode = ThemeMode.MATERIAL_YOU
 )
 
-enum class SortOrder {
-    ALPHABETICAL,
-    TARGET_SDK,
-    LAST_UPDATE
-}
 
 /**
  * Sort options for the main screen

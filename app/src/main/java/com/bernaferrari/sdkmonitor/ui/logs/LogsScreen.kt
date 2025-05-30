@@ -1,6 +1,5 @@
 package com.bernaferrari.sdkmonitor.ui.logs
 
-import android.content.pm.PackageManager
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloatAsState
@@ -24,7 +23,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Error
 import androidx.compose.material.icons.filled.History
@@ -55,28 +53,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import coil3.compose.AsyncImage
-import coil3.request.ImageRequest
-import coil3.request.crossfade
-import com.bernaferrari.sdkmonitor.R
 import com.bernaferrari.sdkmonitor.domain.model.LogEntry
-import com.bernaferrari.sdkmonitor.extensions.apiToColor
-import com.bernaferrari.sdkmonitor.extensions.apiToVersion
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
 /**
- * 🏆 AWARD-WINNING Logs Screen - The Most Beautiful Change Log UI Ever Created!
- * Features breathtaking Material Design 3, hypnotic animations, and divine visual hierarchy
+ * Logs Screen - Change Log UI
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -87,7 +76,6 @@ fun LogsScreen(
 ) {
     val uiState: LogsUiState by viewModel.uiState.collectAsStateWithLifecycle()
     var showClearDialog by remember { mutableStateOf(false) }
-
 
     Scaffold(
         topBar = {
@@ -109,14 +97,12 @@ fun LogsScreen(
                     }
                 },
                 actions = {
-
                     IconButton(onClick = { showClearDialog = true }) {
                         Icon(
                             Icons.Default.Delete,
                             contentDescription = "Clear logs",
                             tint = MaterialTheme.colorScheme.error
                         )
-
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -131,7 +117,7 @@ fun LogsScreen(
         ) {
             when (val state = uiState) {
                 is LogsUiState.Loading -> {
-                    StunningLoadingState(
+                    LoadingState(
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(paddingValues)
@@ -139,7 +125,7 @@ fun LogsScreen(
                 }
 
                 is LogsUiState.Error -> {
-                    BeautifulErrorState(
+                    ErrorState(
                         message = state.message,
                         modifier = Modifier
                             .fillMaxSize()
@@ -149,13 +135,13 @@ fun LogsScreen(
 
                 is LogsUiState.Success -> {
                     if (state.logs.isEmpty()) {
-                        MagicalEmptyLogsContent(
+                        EmptyLogsContent(
                             modifier = Modifier
                                 .fillMaxSize()
                                 .padding(paddingValues)
                         )
                     } else {
-                        GorgeousLogsContent(
+                        LogsContent(
                             logs = state.logs,
                             onNavigateToAppDetails = onNavigateToAppDetails,
                             modifier = Modifier.padding(paddingValues)
@@ -166,9 +152,8 @@ fun LogsScreen(
         }
     }
 
-    // Divine confirmation dialog
     if (showClearDialog) {
-        StunningClearDialog(
+        ClearDialog(
             onConfirm = {
                 viewModel.clearAllLogs()
                 showClearDialog = false
@@ -179,7 +164,7 @@ fun LogsScreen(
 }
 
 @Composable
-private fun StunningLoadingState(
+private fun LoadingState(
     modifier: Modifier = Modifier
 ) {
     Box(
@@ -237,7 +222,7 @@ private fun StunningLoadingState(
 }
 
 @Composable
-private fun BeautifulErrorState(
+private fun ErrorState(
     message: String,
     modifier: Modifier = Modifier
 ) {
@@ -313,7 +298,7 @@ private fun BeautifulErrorState(
 }
 
 @Composable
-private fun MagicalEmptyLogsContent(
+private fun EmptyLogsContent(
     modifier: Modifier = Modifier
 ) {
     Box(
@@ -429,7 +414,7 @@ private fun MagicalEmptyLogsContent(
 }
 
 @Composable
-private fun GorgeousLogsContent(
+private fun LogsContent(
     logs: List<LogEntry>,
     onNavigateToAppDetails: (String) -> Unit,
     modifier: Modifier = Modifier
@@ -439,9 +424,8 @@ private fun GorgeousLogsContent(
         contentPadding = PaddingValues(vertical = 16.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        // Beautiful timeline header
         item {
-            BeautifulTimelineHeader(
+            TimelineHeader(
                 totalLogs = logs.size,
                 recentLogs = logs.count {
                     System.currentTimeMillis() - it.timestamp < 7 * 24 * 60 * 60 * 1000L
@@ -450,9 +434,8 @@ private fun GorgeousLogsContent(
             )
         }
 
-        // Divine log entries with staggered animations
         items(logs) { log ->
-            AwardWinningLogCard(
+            LogCard(
                 log = log,
                 onClick = { onNavigateToAppDetails(log.packageName) },
                 modifier = Modifier.fillMaxWidth()
@@ -467,7 +450,7 @@ private fun GorgeousLogsContent(
 }
 
 @Composable
-private fun BeautifulTimelineHeader(
+private fun TimelineHeader(
     totalLogs: Int,
     recentLogs: Int,
     modifier: Modifier = Modifier
@@ -553,7 +536,7 @@ private fun BeautifulTimelineHeader(
             )
 
             // Enhanced Progress Indicators for three time periods
-            BeautifulProgressSection(
+            ProgressSection(
                 totalLogs = totalLogs,
                 modifier = Modifier.fillMaxWidth()
             )
@@ -562,12 +545,10 @@ private fun BeautifulTimelineHeader(
 }
 
 @Composable
-private fun BeautifulProgressSection(
+private fun ProgressSection(
     totalLogs: Int,
     modifier: Modifier = Modifier
 ) {
-    val now = System.currentTimeMillis()
-
     // Calculate time periods
     val weekMs = 7 * 24 * 60 * 60 * 1000L
     val monthMs = 30 * 24 * 60 * 60 * 1000L
@@ -606,8 +587,8 @@ private fun BeautifulProgressSection(
             label = "Past Month",
             count = monthlyLogs,
             total = totalLogs,
-            color = MaterialTheme.colorScheme.secondary,
-            backgroundColor = MaterialTheme.colorScheme.secondaryContainer,
+            color = MaterialTheme.colorScheme.primary,
+            backgroundColor = MaterialTheme.colorScheme.primaryContainer,
             modifier = Modifier.fillMaxWidth()
         )
 
@@ -616,8 +597,8 @@ private fun BeautifulProgressSection(
             label = "Past 6 Months",
             count = sixMonthLogs,
             total = totalLogs,
-            color = MaterialTheme.colorScheme.tertiary,
-            backgroundColor = MaterialTheme.colorScheme.tertiaryContainer,
+            color = MaterialTheme.colorScheme.primary,
+            backgroundColor = MaterialTheme.colorScheme.primaryContainer,
             modifier = Modifier.fillMaxWidth()
         )
     }
@@ -722,207 +703,7 @@ private fun EnhancedProgressIndicator(
 }
 
 @Composable
-private fun AwardWinningLogCard(
-    log: LogEntry,
-    onClick: () -> Unit = {},
-    modifier: Modifier = Modifier
-) {
-    val context = LocalContext.current
-    val apiColor = Color(log.newSdk.apiToColor())
-    val apiDescription = log.newSdk.apiToVersion()
-    val hasVersionChange = log.oldVersion != log.newVersion
-    val hasSdkChange = log.oldSdk != null && log.oldSdk != log.newSdk
-
-    Card(
-        onClick = onClick,
-        modifier = modifier.padding(horizontal = 16.dp),
-        shape = RoundedCornerShape(20.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceContainer
-        ),
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = 2.dp,
-            pressedElevation = 8.dp
-        )
-    ) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(
-                    brush = Brush.horizontalGradient(
-                        colors = listOf(
-                            MaterialTheme.colorScheme.surface,
-                            apiColor.copy(alpha = 0.03f),
-                            MaterialTheme.colorScheme.surfaceContainerLow
-                        )
-                    )
-                )
-        ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(20.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                // Stunning app icon with floating shadow
-                Card(
-                    modifier = Modifier.size(64.dp),
-                    shape = RoundedCornerShape(18.dp),
-                    colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.surfaceContainerHighest
-                    ),
-                    elevation = CardDefaults.cardElevation(12.dp)
-                ) {
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        AsyncImage(
-                            model = ImageRequest.Builder(context)
-                                .data(remember(log.packageName) {
-                                    try {
-                                        context.packageManager.getApplicationIcon(log.packageName)
-                                    } catch (e: PackageManager.NameNotFoundException) {
-                                        R.drawable.ic_android
-                                    }
-                                })
-                                .crossfade(true)
-                                .build(),
-                            contentDescription = "App icon",
-                            modifier = Modifier.size(40.dp)
-                        )
-                    }
-                }
-
-                // Beautiful app information
-                Column(
-                    modifier = Modifier.weight(1f),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    Text(
-                        text = log.appName,
-                        style = MaterialTheme.typography.titleLarge.copy(
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 18.sp
-                        ),
-                        color = MaterialTheme.colorScheme.onSurface,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
-
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(12.dp)
-                    ) {
-                        Surface(
-                            shape = RoundedCornerShape(8.dp),
-                            color = MaterialTheme.colorScheme.tertiary.copy(alpha = 0.1f)
-                        ) {
-                            Text(
-                                text = formatLogTime(log.timestamp),
-                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
-                                style = MaterialTheme.typography.labelMedium.copy(
-                                    fontWeight = FontWeight.Medium
-                                ),
-                                color = MaterialTheme.colorScheme.tertiary
-                            )
-                        }
-
-                        if (hasVersionChange) {
-                            Surface(
-                                shape = RoundedCornerShape(8.dp),
-                                color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.1f)
-                            ) {
-                                Text(
-                                    text = "v${log.newVersion}",
-                                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
-                                    style = MaterialTheme.typography.labelMedium.copy(
-                                        fontWeight = FontWeight.Bold
-                                    ),
-                                    color = MaterialTheme.colorScheme.secondary
-                                )
-                            }
-                        }
-                    }
-                }
-
-                // Magnificent SDK display
-                Column(
-                    horizontalAlignment = Alignment.End,
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    // Beautiful API version badge
-                    Surface(
-                        shape = RoundedCornerShape(12.dp),
-                        color = apiColor.copy(alpha = 0.12f)
-                    ) {
-                        Text(
-                            text = apiDescription,
-                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
-                            style = MaterialTheme.typography.labelSmall.copy(
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 10.sp
-                            ),
-                            color = apiColor
-                        )
-                    }
-
-                    // Divine SDK change indicator
-                    if (hasSdkChange && log.oldSdk != null) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(8.dp)
-                        ) {
-                            Surface(
-                                shape = RoundedCornerShape(12.dp),
-                                color = MaterialTheme.colorScheme.outline.copy(alpha = 0.2f)
-                            ) {
-                                Text(
-                                    text = log.oldSdk.toString(),
-                                    modifier = Modifier.padding(
-                                        horizontal = 12.dp,
-                                        vertical = 8.dp
-                                    ),
-                                    style = MaterialTheme.typography.titleMedium.copy(
-                                        fontWeight = FontWeight.Bold
-                                    ),
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                                )
-                            }
-
-                            Icon(
-                                imageVector = Icons.AutoMirrored.Filled.ArrowForward,
-                                contentDescription = "Updated to",
-                                modifier = Modifier.size(16.dp),
-                                tint = apiColor
-                            )
-                        }
-                    }
-
-                    // Stunning current SDK badge
-                    Surface(
-                        shape = RoundedCornerShape(16.dp),
-                        color = apiColor,
-                        shadowElevation = 8.dp
-                    ) {
-                        Text(
-                            text = log.newSdk.toString(),
-                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
-                            style = MaterialTheme.typography.titleLarge.copy(
-                                fontWeight = FontWeight.ExtraBold
-                            ),
-                            color = Color.White
-                        )
-                    }
-                }
-            }
-        }
-    }
-}
-
-@Composable
-private fun StunningClearDialog(
+private fun ClearDialog(
     onConfirm: () -> Unit,
     onDismiss: () -> Unit
 ) {
@@ -972,7 +753,7 @@ private fun StunningClearDialog(
 }
 
 // Beautiful utility function
-private fun formatLogTime(timestamp: Long): String {
+fun formatLogTime(timestamp: Long): String {
     val now = System.currentTimeMillis()
     val diff = now - timestamp
 
@@ -988,73 +769,3 @@ private fun formatLogTime(timestamp: Long): String {
         }
     }
 }
-
-// Helper functions for analytics
-private fun generateDailyTrend(logs: List<LogEntry>, days: Int): List<Int> {
-    val now = System.currentTimeMillis()
-    val dayInMs = 24 * 60 * 60 * 1000L
-
-    return (0 until days).map { dayOffset ->
-        val dayStart = now - (dayOffset + 1) * dayInMs
-        val dayEnd = now - dayOffset * dayInMs
-        logs.count { it.timestamp in dayStart..dayEnd }
-    }.reversed()
-}
-
-private fun generateTopUpdatingApps(logs: List<LogEntry>): List<TopUpdatingApp> {
-    return logs
-        .groupBy { it.packageName }
-        .mapValues { (_, logs) -> logs.size }
-        .toList()
-        .sortedByDescending { it.second }
-        .take(5)
-        .map { (packageName, count) ->
-            val appLogs = logs.filter { it.packageName == packageName }
-            val appName = appLogs.firstOrNull()?.appName ?: packageName
-            val lastUpdate = appLogs.maxByOrNull { it.timestamp }?.let { log ->
-                formatLogTime(log.timestamp)
-            } ?: "Unknown"
-
-            TopUpdatingApp(
-                packageName = packageName,
-                appName = appName,
-                updateCount = count,
-                lastUpdate = lastUpdate,
-                trend = if (count > 5) "increasing" else if (count > 2) "stable" else "decreasing"
-            )
-        }
-}
-
-private fun generateRecentSdkMigrations(logs: List<LogEntry>): List<TopUpdatingApp> {
-    // Only show apps that actually had SDK changes, not just version updates
-    val sdkMigrations = logs
-        .asSequence()
-        .filter { it.oldSdk != null && it.newSdk != it.oldSdk }
-        .groupBy { it.packageName }
-        .map { (packageName, appLogs) ->
-            val latestLog = appLogs.maxByOrNull { it.timestamp }!!
-            val appName = latestLog.appName
-            val lastUpdate = formatLogTime(latestLog.timestamp)
-
-            TopUpdatingApp(
-                packageName = packageName,
-                appName = appName,
-                updateCount = appLogs.size,
-                lastUpdate = lastUpdate,
-                trend = "increasing", // All are migrations so they're improving
-                oldSdk = latestLog.oldSdk,
-                newSdk = latestLog.newSdk,
-                hasRecentSdkChange = true
-            )
-        }
-        .sortedWith(
-            compareByDescending<TopUpdatingApp> { it.newSdk ?: 0 }
-                .thenByDescending { it.oldSdk ?: 0 }
-        )
-        .take(5)
-        .toList()
-
-    return sdkMigrations
-}
-
-

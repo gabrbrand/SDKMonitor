@@ -55,6 +55,7 @@ fun MainAppCard(
     modifier: Modifier = Modifier,
     appVersion: AppVersion,
     appIcon: Bitmap? = null,
+    showVersionPill: Boolean = true,
     onClick: () -> Unit = {},
 ) {
     val context = LocalContext.current
@@ -143,52 +144,55 @@ fun MainAppCard(
 
             Spacer(modifier = Modifier.width(16.dp))
 
-            // API Level indicator with beautiful gradient
-            Row(
-                modifier = Modifier
-                    .clip(RoundedCornerShape(topStart = 20.dp, bottomStart = 20.dp))
-                    .background(
-                        apiColor.copy(alpha = 0.1f)
-                    )
-                    .height(36.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(0.dp)
-            ) {
-
-                Text(
-                    text = apiDescription,
-                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
-                    style = MaterialTheme.typography.labelMedium.copy(
-                        fontWeight = FontWeight.Medium,
-                        fontSize = 11.sp
-                    ),
-                    color = apiColor,
-                    maxLines = 1
-                )
-
-                // API Level Number
-                Box(
+            if (showVersionPill) {
+                // API Level indicator with beautiful gradient
+                Row(
                     modifier = Modifier
-                        .clip(RoundedCornerShape(topEnd = 20.dp, bottomEnd = 20.dp))
-                        .background(apiColor)
+                        .clip(RoundedCornerShape(20.dp))
+                        .background(
+                            apiColor.copy(alpha = 0.1f)
+                        )
                         .height(36.dp),
-                    contentAlignment = Alignment.Center
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(0.dp)
                 ) {
-                    Text(
-                        text = appVersion.sdkVersion.toString(),
-                        modifier = Modifier.padding(horizontal = 16.dp),
-                        style = MaterialTheme.typography.titleMedium.copy(
-                            fontWeight = FontWeight.Bold,
-                            lineHeightStyle = LineHeightStyle(
-                                alignment = LineHeightStyle.Alignment.Center,
-                                trim = LineHeightStyle.Trim.Both
-                            )
-                        ),
-                        color = Color.White
-                    )
-                }
 
+                    Text(
+                        text = apiDescription,
+                        modifier = Modifier.padding(start = 12.dp, end = 8.dp),
+                        style = MaterialTheme.typography.labelMedium.copy(
+                            fontWeight = FontWeight.Medium,
+                            fontSize = 11.sp
+                        ),
+                        color = apiColor,
+                        maxLines = 1
+                    )
+
+                    // API Level Number
+                    Box(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(topEnd = 20.dp, bottomEnd = 20.dp))
+                            .background(apiColor)
+                            .height(36.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = appVersion.sdkVersion.toString(),
+                            modifier = Modifier.padding(start = 8.dp, end = 12.dp),
+                            style = MaterialTheme.typography.titleMedium.copy(
+                                fontWeight = FontWeight.Bold,
+                                lineHeightStyle = LineHeightStyle(
+                                    alignment = LineHeightStyle.Alignment.Center,
+                                    trim = LineHeightStyle.Trim.Both
+                                )
+                            ),
+                            color = Color.White
+                        )
+                    }
+
+                }
             }
+
         }
     }
 }
