@@ -1,9 +1,5 @@
 package com.bernaferrari.sdkmonitor.ui.settings
 
-import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.infiniteRepeatable
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,9 +15,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.filled.Sort
 import androidx.compose.material.icons.filled.Android
 import androidx.compose.material.icons.filled.Apps
+import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Person
@@ -29,15 +25,15 @@ import androidx.compose.material.icons.filled.Sync
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilledTonalButton
-import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -50,7 +46,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -211,146 +206,139 @@ fun SettingsScreen(
 
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    // App Filtering & Behavior Section - ULTRA GORGEOUS ENHANCED DESIGN!
+                    // App Management Section - SIMPLE DROPDOWN!
                     SettingsSection(title = "App Management") {
-                        // STUNNING App Filter Selection with Enhanced Animations
-                        Card(
-                            modifier = Modifier.fillMaxWidth(),
-                            shape = RoundedCornerShape(20.dp), // More rounded for beauty
-                            colors = CardDefaults.cardColors(
-                                containerColor = MaterialTheme.colorScheme.surfaceContainer
-                            ),
-                            elevation = CardDefaults.cardElevation(8.dp) // Enhanced elevation
-                        ) {
-                            Column(
-                                modifier = Modifier.padding(24.dp), // More padding for luxury
-                                verticalArrangement = Arrangement.spacedBy(20.dp) // More spacing
-                            ) {
-                                // Beautiful Header with Icon Animation
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.spacedBy(16.dp)
-                                ) {
-                                    // Animated Icon Container
-                                    val iconScale by animateFloatAsState(
-                                        targetValue = 1.1f,
-                                        animationSpec = infiniteRepeatable(
-                                            animation = tween(2000),
-                                            repeatMode = RepeatMode.Reverse
-                                        ),
-                                        label = "icon_pulse"
-                                    )
-
-                                    Surface(
-                                        modifier = Modifier
-                                            .size(48.dp)
-                                            .graphicsLayer(scaleX = iconScale, scaleY = iconScale),
-                                        shape = RoundedCornerShape(14.dp),
-                                        color = MaterialTheme.colorScheme.surfaceContainerHigh,
-                                    ) {
-                                        Box(
-                                            modifier = Modifier.fillMaxSize(),
-                                            contentAlignment = Alignment.Center
-                                        ) {
-                                            Icon(
-                                                imageVector = Icons.Default.FilterList,
-                                                contentDescription = "App Filter",
-                                                tint = MaterialTheme.colorScheme.primary,
-                                                modifier = Modifier.size(24.dp)
-                                            )
-                                        }
-                                    }
-
-                                    Column {
-                                        Text(
-                                            text = "App Filter",
-                                            style = MaterialTheme.typography.titleLarge.copy(
-                                                fontWeight = FontWeight.Bold
-                                            ),
-                                            color = MaterialTheme.colorScheme.onSurface
-                                        )
+                        var showFilterMenu by remember { mutableStateOf(false) }
                         
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.FilterList,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(16.dp),
+                                    tint = MaterialTheme.colorScheme.primary
+                                )
+                                Text(
+                                    text = "Filter Apps",
+                                    style = MaterialTheme.typography.labelLarge.copy(
+                                        fontWeight = FontWeight.SemiBold
+                                    ),
+                                    color = MaterialTheme.colorScheme.primary
+                                )
+                            }
+
+                            // Filter dropdown button
+                            Box {
+                                Card(
+                                    onClick = { showFilterMenu = true },
+                                    colors = CardDefaults.cardColors(
+                                        containerColor = MaterialTheme.colorScheme.surfaceVariant
+                                    ),
+                                    elevation = CardDefaults.cardElevation(2.dp),
+                                    shape = RoundedCornerShape(12.dp)
+                                ) {
+                                    Row(
+                                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                    ) {
+                                        Icon(
+                                            imageVector = when (prefs.appFilter) {
+                                                AppFilter.ALL_APPS -> Icons.Default.Apps
+                                                AppFilter.USER_APPS -> Icons.Default.Person
+                                                AppFilter.SYSTEM_APPS -> Icons.Default.Android
+                                            },
+                                            contentDescription = null,
+                                            modifier = Modifier.size(18.dp),
+                                            tint = MaterialTheme.colorScheme.onSurfaceVariant
+                                        )
+                                        Text(
+                                            text = prefs.appFilter.displayName,
+                                            style = MaterialTheme.typography.labelMedium.copy(
+                                                fontWeight = FontWeight.Medium
+                                            ),
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                                        )
+                                        Icon(
+                                            imageVector = Icons.Default.ExpandMore,
+                                            contentDescription = null,
+                                            modifier = Modifier.size(16.dp),
+                                            tint = MaterialTheme.colorScheme.onSurfaceVariant
+                                        )
                                     }
                                 }
 
-                                // Clean Filter Chips without elastic animations
-                                Row(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                                DropdownMenu(
+                                    expanded = showFilterMenu,
+                                    onDismissRequest = { showFilterMenu = false },
+                                    shape = RoundedCornerShape(12.dp),
+                                    containerColor = MaterialTheme.colorScheme.surface
                                 ) {
                                     AppFilter.entries.forEach { filter ->
-                                        val isSelected = prefs.appFilter == filter
-
-                                        FilterChip(
+                                        DropdownMenuItem(
+                                            text = {
+                                                Row(
+                                                    verticalAlignment = Alignment.CenterVertically,
+                                                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                                                ) {
+                                                    Icon(
+                                                        imageVector = when (filter) {
+                                                            AppFilter.ALL_APPS -> Icons.Default.Apps
+                                                            AppFilter.USER_APPS -> Icons.Default.Person
+                                                            AppFilter.SYSTEM_APPS -> Icons.Default.Android
+                                                        },
+                                                        contentDescription = null,
+                                                        modifier = Modifier.size(18.dp),
+                                                        tint = if (prefs.appFilter == filter) {
+                                                            MaterialTheme.colorScheme.primary
+                                                        } else {
+                                                            MaterialTheme.colorScheme.onSurfaceVariant
+                                                        }
+                                                    )
+                                                    Text(
+                                                        text = filter.displayName,
+                                                        style = MaterialTheme.typography.bodyMedium.copy(
+                                                            fontWeight = if (prefs.appFilter == filter) {
+                                                                FontWeight.SemiBold
+                                                            } else {
+                                                                FontWeight.Normal
+                                                            }
+                                                        ),
+                                                        color = if (prefs.appFilter == filter) {
+                                                            MaterialTheme.colorScheme.primary
+                                                        } else {
+                                                            MaterialTheme.colorScheme.onSurface
+                                                        }
+                                                    )
+                                                }
+                                            },
                                             onClick = {
                                                 viewModel.updateAppFilter(filter)
-                                            },
-                                            label = {
-                                                Text(
-                                                    text = filter.displayName,
-                                                    style = MaterialTheme.typography.labelLarge.copy(
-                                                        fontWeight = if (isSelected) FontWeight.Bold else FontWeight.SemiBold
-                                                    )
-                                                )
-                                            },
-                                            selected = isSelected,
-                                            leadingIcon = {
-                                                Icon(
-                                                    imageVector = when (filter) {
-                                                        AppFilter.ALL_APPS -> Icons.Default.Apps
-                                                        AppFilter.USER_APPS -> Icons.Default.Person
-                                                        AppFilter.SYSTEM_APPS -> Icons.Default.Android
-                                                    },
-                                                    contentDescription = filter.displayName,
-                                                    modifier = Modifier.size(16.dp)
-                                                )
-                                            },
-                                            shape = RoundedCornerShape(16.dp),
+                                                showFilterMenu = false
+                                            }
                                         )
                                     }
-                                }
-
-                                // Beautiful description for current selection with updated order
-                                Surface(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    shape = RoundedCornerShape(12.dp),
-                                    color = when (prefs.appFilter) {
-                                        AppFilter.ALL_APPS -> MaterialTheme.colorScheme.tertiaryContainer.copy(
-                                            alpha = 0.3f
-                                        )
-
-                                        AppFilter.USER_APPS -> MaterialTheme.colorScheme.primaryContainer.copy(
-                                            alpha = 0.3f
-                                        )
-
-                                        AppFilter.SYSTEM_APPS -> MaterialTheme.colorScheme.secondaryContainer.copy(
-                                            alpha = 0.3f
-                                        )
-                                    }
-                                ) {
-                                    Text(
-                                        text = when (prefs.appFilter) {
-                                            AppFilter.ALL_APPS -> "🌟 Showing all applications on your device"
-                                            AppFilter.USER_APPS -> "📱 Showing apps installed from Play Store and other sources"
-                                            AppFilter.SYSTEM_APPS -> "⚙️ Showing pre-installed system applications"
-                                        },
-                                        modifier = Modifier.padding(16.dp),
-                                        style = MaterialTheme.typography.bodyMedium,
-                                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                                    )
                                 }
                             }
                         }
 
-                        Spacer(modifier = Modifier.height(16.dp))
-
-                        SettingsItem(
-                            title = "Sort Order",
-                            subtitle = if (prefs.orderBySdk) "📊 Sorted by target SDK version (highest first)" else "🔤 Sorted alphabetically by name",
-                            icon = Icons.AutoMirrored.Filled.Sort,
-                            isSwitch = true,
-                            switchValue = prefs.orderBySdk,
-                            onSwitchToggle = { viewModel.toggleOrderBySdk() }
+                        // Simple description
+                        Text(
+                            text = when (prefs.appFilter) {
+                                AppFilter.ALL_APPS -> "Showing all applications on your device"
+                                AppFilter.USER_APPS -> "Showing apps installed from Play Store and other sources"
+                                AppFilter.SYSTEM_APPS -> "Showing pre-installed system applications"
+                            },
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.padding(horizontal = 4.dp, vertical = 8.dp)
                         )
                     }
 

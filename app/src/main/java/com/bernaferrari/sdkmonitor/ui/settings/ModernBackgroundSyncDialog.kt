@@ -417,7 +417,7 @@ private fun ElegantSyncToggleWithDescription(
             border = BorderStroke(
                 width = if (isSelected) 2.dp else 1.dp,
                 color = if (isSelected) {
-                    MaterialTheme.colorScheme.primary
+                    MaterialTheme.colorScheme.inversePrimary
                 } else {
                     MaterialTheme.colorScheme.outlineVariant
                 }
