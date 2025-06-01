@@ -6,12 +6,6 @@
 # Print out the full proguard config used for every build
 -printconfiguration build/outputs/fullProguardConfig.pro
 
-# Kotlin specific rules
--keep class kotlin.reflect.jvm.internal.impl.builtins.BuiltInsLoaderImpl
--keep class kotlin.reflect.jvm.internal.impl.load.java.FieldOverridabilityCondition
--keep class kotlin.reflect.jvm.internal.impl.load.java.ErasedOverridabilityCondition
--keep class kotlin.reflect.jvm.internal.impl.load.java.JavaIncompatibilityRulesOverridabilityCondition
-
 # Kotlin metadata and reflection
 -keep class kotlin.Metadata { *; }
 -dontwarn kotlin.**
@@ -28,10 +22,6 @@
 
 # Guarded by a NoClassDefFoundError try/catch and only used when on the classpath.
 -dontwarn kotlin.Unit
-
-# Kotlin reflection for serialization
--keep class kotlin.reflect.jvm.internal.impl.builtins.BuiltInsLoaderImpl
--keep class kotlin.reflect.jvm.internal.impl.serialization.deserialization.builtins.BuiltInsLoaderImpl
 
 -keepclassmembers class kotlin.Metadata {
     public <methods>;

@@ -22,7 +22,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Error
 import androidx.compose.material.icons.filled.History
@@ -33,9 +32,11 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -70,7 +71,6 @@ import java.util.Locale
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LogsScreen(
-    onNavigateBack: () -> Unit,
     onNavigateToAppDetails: (String) -> Unit = {},
     viewModel: LogsViewModel = hiltViewModel()
 ) {
@@ -86,15 +86,6 @@ fun LogsScreen(
                         fontWeight = FontWeight.ExtraBold,
                         style = MaterialTheme.typography.headlineSmall
                     )
-                },
-                navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
-                        Icon(
-                            Icons.AutoMirrored.Default.ArrowBack,
-                            contentDescription = "Back",
-                            tint = MaterialTheme.colorScheme.primary
-                        )
-                    }
                 },
                 actions = {
                     IconButton(onClick = { showClearDialog = true }) {
@@ -426,10 +417,7 @@ private fun LogsContent(
     ) {
         item {
             TimelineHeader(
-                totalLogs = logs.size,
-                recentLogs = logs.count {
-                    System.currentTimeMillis() - it.timestamp < 7 * 24 * 60 * 60 * 1000L
-                },
+                logs = logs,
                 modifier = Modifier.padding(horizontal = 16.dp)
             )
         }
@@ -450,16 +438,11 @@ private fun LogsContent(
 
 @Composable
 private fun TimelineHeader(
-    totalLogs: Int,
-    recentLogs: Int,
+    logs: List<LogEntry>,
     modifier: Modifier = Modifier
 ) {
-    // Calculate different time periods
-    val now = System.currentTimeMillis()
-    val weekMs = 7 * 24 * 60 * 60 * 1000L
-    val monthMs = 30 * 24 * 60 * 60 * 1000L
-    val sixMonthsMs = 6 * monthMs
-
+    val viewModel: LogsViewModel = hiltViewModel()
+    
     Card(
         modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(24.dp),
@@ -474,13 +457,12 @@ private fun TimelineHeader(
                 .padding(24.dp),
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
-            // Header section
+            // Header section with filter status
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                // Icon without elevation
                 Box(
                     modifier = Modifier
                         .size(56.dp)
@@ -509,13 +491,33 @@ private fun TimelineHeader(
                         ),
                         color = MaterialTheme.colorScheme.onSurface
                     )
-                    Text(
-                        text = "Track your app ecosystem evolution",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
+                    
+                    // Show actual filter status
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(6.dp)
+                    ) {
+                        Text(
+                            text = "Showing",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                        
+                        Surface(
+                            shape = RoundedCornerShape(8.dp),
+                            color = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)
+                        ) {
+                            Text(
+                                text = viewModel.getCurrentFilterDisplayName(),
+                                modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
+                                style = MaterialTheme.typography.labelSmall.copy(
+                                    fontWeight = FontWeight.Medium
+                                ),
+                                color = MaterialTheme.colorScheme.primary
+                            )
+                        }
+                    }
                 }
-
             }
 
             Box(
@@ -533,9 +535,9 @@ private fun TimelineHeader(
                     )
             )
 
-            // Enhanced Progress Indicators for three time periods
+            // Calculate actual time-based stats from logs
             ProgressSection(
-                totalLogs = totalLogs,
+                logs = logs,
                 modifier = Modifier.fillMaxWidth()
             )
         }
@@ -544,19 +546,19 @@ private fun TimelineHeader(
 
 @Composable
 private fun ProgressSection(
-    totalLogs: Int,
+    logs: List<LogEntry>,
     modifier: Modifier = Modifier
 ) {
-    // Calculate time periods
+    val now = System.currentTimeMillis()
     val weekMs = 7 * 24 * 60 * 60 * 1000L
     val monthMs = 30 * 24 * 60 * 60 * 1000L
     val sixMonthsMs = 6 * monthMs
 
-    // For demo purposes, let's calculate some sample data
-    // In real implementation, you'd pass the actual logs and calculate these
-    val weeklyLogs = (totalLogs * 0.15f).toInt() // 15% in last week
-    val monthlyLogs = (totalLogs * 0.35f).toInt() // 35% in last month
-    val sixMonthLogs = (totalLogs * 0.80f).toInt() // 80% in last 6 months
+    // Calculate actual counts from logs
+    val weeklyLogs = logs.count { now - it.timestamp < weekMs }
+    val monthlyLogs = logs.count { now - it.timestamp < monthMs }
+    val sixMonthLogs = logs.count { now - it.timestamp < sixMonthsMs }
+    val totalLogs = logs.size
 
     Column(
         modifier = modifier,
@@ -602,6 +604,7 @@ private fun ProgressSection(
     }
 }
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun EnhancedProgressIndicator(
     label: String,
@@ -670,32 +673,15 @@ private fun EnhancedProgressIndicator(
             )
         }
 
-        // Progress bar with beautiful gradient
-        Box(
+        LinearProgressIndicator(
+            progress = { animatedProgress },
+
             modifier = Modifier
                 .fillMaxWidth()
-                .height(12.dp)
-                .background(
-                    color = MaterialTheme.colorScheme.surfaceVariant,
-                    shape = RoundedCornerShape(6.dp)
-                )
-        ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth(animatedProgress)
-                    .height(12.dp)
-                    .background(
-                        brush = Brush.horizontalGradient(
-                            colors = listOf(
-                                color.copy(alpha = 0.8f),
-                                color,
-                                color.copy(alpha = 0.9f)
-                            )
-                        ),
-                        shape = RoundedCornerShape(6.dp)
-                    )
-            )
-        }
+                .height(12.dp),
+            color = color,
+            trackColor = backgroundColor,
+        )
     }
 }
 

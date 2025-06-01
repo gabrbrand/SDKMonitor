@@ -2,8 +2,9 @@ package com.bernaferrari.sdkmonitor.ui.main
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
-import androidx.compose.foundation.gestures.detectDragGestures
-import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.gestures.awaitFirstDown
+import androidx.compose.foundation.gestures.awaitTouchSlopOrCancellation
+import androidx.compose.foundation.gestures.drag
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -14,6 +15,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -25,12 +27,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.bernaferrari.sdkmonitor.domain.model.AppVersion
 import kotlinx.coroutines.launch
+import kotlin.math.abs
 
 @Composable
 fun FastScroller(
@@ -41,6 +45,7 @@ fun FastScroller(
     modifier: Modifier = Modifier
 ) {
     val coroutineScope = rememberCoroutineScope()
+    val density = LocalDensity.current
 
     // Get unique first letters from apps (sorted)
     val letters = remember(apps) {
@@ -55,10 +60,10 @@ fun FastScroller(
     val letterToIndex = remember(apps, letters) {
         val mapping = mutableMapOf<String, Int>()
         letters.forEach { letter ->
-            val index = apps.indexOfFirst {
-                it.title.firstOrNull()?.uppercaseChar()?.toString() == letter
+            val index = apps.indexOfFirst { app ->
+                app.title.firstOrNull()?.uppercaseChar()?.toString() == letter
             }
-            if (index != -1) {
+            if (index >= 0 && index < apps.size) {
                 mapping[letter] = index
             }
         }
@@ -69,28 +74,41 @@ fun FastScroller(
     var currentDragPosition by remember { mutableFloatStateOf(0f) }
     var scrollerSize by remember { mutableStateOf(IntSize.Zero) }
 
+    // Auto-reset when apps list changes
+    LaunchedEffect(apps) {
+        isInteracting = false
+        currentDragPosition = 0f
+    }
+
     // Function to scroll to letter
     fun scrollToLetter(letter: String) {
         letterToIndex[letter]?.let { index ->
             coroutineScope.launch {
-                listState.scrollToItem(index.coerceAtMost(apps.size - 1))
+                val targetIndex = index.coerceIn(0, (apps.size - 1).coerceAtLeast(0))
+                listState.scrollToItem(targetIndex)
             }
         }
     }
 
-    // Function to handle position and select letter
+    // Function to handle position and select letter - FIXED calculation with bounds checking
     fun handlePositionAndSelectLetter(yPosition: Float) {
-        val progress = (yPosition / scrollerSize.height).coerceIn(0f, 1f)
+        if (scrollerSize.height <= 0 || letters.isEmpty()) return
+
+        // Account for the Column's vertical padding (12.dp on top and bottom)
+        val verticalPaddingPx = with(density) { 12.dp.toPx() }
+        val usableHeight = (scrollerSize.height - (verticalPaddingPx * 2)).coerceAtLeast(1f)
+        val adjustedY = (yPosition - verticalPaddingPx).coerceIn(0f, usableHeight)
+
+        val progress = (adjustedY / usableHeight).coerceIn(0f, 1f)
         val letterIndex = (progress * (letters.size - 1)).toInt()
             .coerceIn(0, letters.size - 1)
 
-        if (letters.isNotEmpty()) {
-            val selectedLetter = letters[letterIndex]
-            onLetterSelected(selectedLetter)
-            scrollToLetter(selectedLetter)
-        }
+        val selectedLetter = letters[letterIndex]
+
+        onLetterSelected(selectedLetter)
+        scrollToLetter(selectedLetter)
     }
-    
+
     Surface(
         modifier = modifier
             .fillMaxHeight()
@@ -102,34 +120,35 @@ fun FastScroller(
                 .padding(horizontal = 12.dp)
                 .onGloballyPositioned { scrollerSize = it.size }
                 .pointerInput(letters) {
-                    detectTapGestures(
-                        onPress = { offset ->
+                    awaitPointerEventScope {
+                        while (true) {
+                            // Wait for initial touch
+                            val down = awaitFirstDown()
                             isInteracting = true
-                            currentDragPosition = offset.y
-                            handlePositionAndSelectLetter(offset.y)
-                            tryAwaitRelease()
+                            currentDragPosition = down.position.y
+                            handlePositionAndSelectLetter(down.position.y)
+
+                            // Check if this becomes a drag or stays a tap
+                            val change = awaitTouchSlopOrCancellation(down.id) { change, _ ->
+                                // Consume the change to indicate we accept this as a drag
+                                change.consume()
+                            }
+
+                            if (change != null) {
+                                // It's a drag - handle drag events
+                                drag(change.id) { dragChange ->
+                                    currentDragPosition = dragChange.position.y
+                                        .coerceIn(0f, scrollerSize.height.toFloat())
+                                    handlePositionAndSelectLetter(currentDragPosition)
+                                }
+                            }
+                            // If change is null, it was just a tap (no drag threshold exceeded)
+
+                            // Reset state when gesture ends (both tap and drag end here)
                             isInteracting = false
                             onScrollFinished()
                         }
-                    )
-                }
-                .pointerInput(letters) {
-                    detectDragGestures(
-                        onDragStart = { offset ->
-                            isInteracting = true
-                            currentDragPosition = offset.y
-                            handlePositionAndSelectLetter(offset.y)
-                        },
-                        onDrag = { change, offset ->
-                            currentDragPosition = (currentDragPosition + offset.y)
-                                .coerceIn(0f, scrollerSize.height.toFloat())
-                            handlePositionAndSelectLetter(currentDragPosition)
-                        },
-                        onDragEnd = {
-                            isInteracting = false
-                            onScrollFinished()
-                        }
-                    )
+                    }
                 }
         ) {
             // Letter indicators
@@ -139,18 +158,25 @@ fun FastScroller(
                     .padding(vertical = 12.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
+                // Calculate current position once, outside the loop
+                val verticalPaddingPx = with(density) { 12.dp.toPx() }
+                val usableHeight = (scrollerSize.height - (verticalPaddingPx * 2)).coerceAtLeast(1f)
+                val adjustedDragPosition =
+                    (currentDragPosition - verticalPaddingPx).coerceIn(0f, usableHeight)
+                val currentPosition = if (usableHeight > 0) {
+                    (adjustedDragPosition / usableHeight).coerceIn(0f, 1f)
+                } else {
+                    0f
+                }
+
                 letters.forEachIndexed { index, letter ->
                     val letterPosition = if (letters.size > 1) {
                         index.toFloat() / (letters.size - 1)
                     } else {
                         0.5f
                     }
-                    val currentPosition = if (scrollerSize.height > 0) {
-                        currentDragPosition / scrollerSize.height
-                    } else {
-                        0f
-                    }
-                    val distance = kotlin.math.abs(letterPosition - currentPosition)
+
+                    val distance = abs(letterPosition - currentPosition)
 
                     // Scale based on proximity when dragging
                     val scale by animateFloatAsState(

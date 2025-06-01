@@ -23,7 +23,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
@@ -68,23 +67,16 @@ fun LogCard(
             modifier = Modifier
                 .fillMaxWidth()
                 .background(
-                    brush = Brush.horizontalGradient(
-                        colors = listOf(
-                            MaterialTheme.colorScheme.surface,
-                            apiColor.copy(alpha = 0.03f),
-                            MaterialTheme.colorScheme.surfaceContainerLow
-                        )
-                    )
+                    MaterialTheme.colorScheme.surfaceContainer,
                 )
         ) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(20.dp),
+                    .padding(12.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                // App icon matching MainAppCard style
                 Box(
                     modifier = Modifier
                         .size(56.dp)
@@ -201,14 +193,14 @@ fun LogCard(
                                     ),
                                     color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
                                 )
-                                
+
                                 Icon(
                                     imageVector = Icons.AutoMirrored.Filled.ArrowForward,
                                     contentDescription = "Updated to",
                                     modifier = Modifier.size(12.dp),
                                     tint = apiColor.copy(alpha = 0.8f)
                                 )
-                                
+
                                 Text(
                                     text = log.newSdk.toString(),
                                     style = MaterialTheme.typography.labelLarge.copy(

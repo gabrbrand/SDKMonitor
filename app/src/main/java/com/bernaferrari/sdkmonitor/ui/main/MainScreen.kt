@@ -40,6 +40,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -92,6 +93,11 @@ fun MainScreen(
 
     // State for LazyColumn
     val listState = rememberLazyListState()
+
+    // Reset list state when filter changes
+    LaunchedEffect(appFilter) {
+        listState.scrollToItem(0)
+    }
 
     // Clean, minimal design with proper status bar handling
 
@@ -219,11 +225,11 @@ fun MainScreen(
                     Box {
                         IconButton(
                             onClick = { showFilterMenu = true },
+                            shape = RoundedCornerShape(10.dp),
+                            colors = IconButtonDefaults.filledIconButtonColors(
+                                containerColor = MaterialTheme.colorScheme.surface,
+                            ),
                             modifier = Modifier
-                                .background(
-                                    MaterialTheme.colorScheme.surface,
-                                    RoundedCornerShape(10.dp)
-                                )
                                 .width(48.dp)
                                 .height(56.dp)
                         ) {
@@ -306,16 +312,16 @@ fun MainScreen(
                     Box {
                         IconButton(
                             onClick = { showSortMenu = true },
+                            shape = RoundedCornerShape(
+                                topStart = 10.dp,
+                                bottomStart = 10.dp,
+                                topEnd = 20.dp,
+                                bottomEnd = 20.dp
+                            ),
+                            colors = IconButtonDefaults.filledIconButtonColors(
+                                containerColor = MaterialTheme.colorScheme.surface,
+                            ),
                             modifier = Modifier
-                                .background(
-                                    MaterialTheme.colorScheme.surface,
-                                    RoundedCornerShape(
-                                        topStart = 10.dp,
-                                        bottomStart = 10.dp,
-                                        topEnd = 20.dp,
-                                        bottomEnd = 20.dp
-                                    )
-                                )
                                 .width(48.dp)
                                 .height(56.dp)
                         ) {
@@ -560,7 +566,7 @@ fun MainScreen(
                                 }
                             }
 
-                            // Functional Fast Scroller
+                            // Functional Fast Scroller - now self-healing!
                             if (showFastScroller) {
                                 FastScroller(
                                     apps = state.filteredApps,
@@ -575,7 +581,7 @@ fun MainScreen(
                                     },
                                     modifier = Modifier
                                         .align(Alignment.CenterEnd)
-                                        .padding(start= 2.dp, end = 2.dp)
+                                        .padding(start = 2.dp, end = 2.dp)
                                 )
                             }
 

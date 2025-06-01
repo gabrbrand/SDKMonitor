@@ -111,9 +111,6 @@ fun AppNavigation(
 
             composable(Screen.Settings.route) {
                 SettingsScreen(
-                    onNavigateBack = {
-                        navController.popBackStack()
-                    },
                     onNavigateToAppDetails = { packageName ->
                         navController.navigate(Screen.Details.createRoute(packageName))
                     }
@@ -122,7 +119,6 @@ fun AppNavigation(
 
             composable(Screen.Logs.route) {
                 LogsScreen(
-                    onNavigateBack = { navController.popBackStack() },
                     onNavigateToAppDetails = { packageName ->
                         navController.navigate(Screen.Details.createRoute(packageName))
                     }

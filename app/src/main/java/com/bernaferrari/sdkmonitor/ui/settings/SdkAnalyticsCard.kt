@@ -30,7 +30,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -62,7 +61,7 @@ fun SdkAnalyticsCard(
     totalApps: Int,
     onSdkClick: (Int) -> Unit = {},
 ) {
-    var currentAppFilter by remember { mutableStateOf(AppFilter.ALL_APPS) }
+    val currentAppFilter by remember { mutableStateOf(AppFilter.ALL_APPS) }
 
     // Filter data based on app type - you'll need to add app type info to SdkDistribution
     // For now, showing all data as placeholder
@@ -345,7 +344,7 @@ private fun SdkBarChart(
                     drawText(
                         sdk.appCount.toString(),
                         x + barWidth / 2,
-                        y + 25.dp.toPx(),
+                        y + 16.dp.toPx(),
                         countPaint
                     )
                 }
