@@ -1,5 +1,6 @@
 package com.bernaferrari.sdkmonitor.ui.settings
 
+import android.graphics.Color
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -90,7 +91,7 @@ fun ThemeModeToggle(
     }
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, backgroundColor = Color.WHITE.toLong())
 @Composable
 private fun ThemeOptionPreview() {
     SDKMonitorTheme {

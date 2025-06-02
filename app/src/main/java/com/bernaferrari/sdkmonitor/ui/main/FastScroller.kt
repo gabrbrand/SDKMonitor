@@ -38,11 +38,12 @@ import kotlin.math.abs
 
 @Composable
 fun FastScroller(
+    modifier: Modifier = Modifier,
     apps: List<AppVersion>,
     listState: LazyListState,
     onLetterSelected: (String) -> Unit,
     onScrollFinished: () -> Unit,
-    modifier: Modifier = Modifier
+    onInteractionStart: () -> Unit = {} // Add callback for when interaction starts
 ) {
     val coroutineScope = rememberCoroutineScope()
     val density = LocalDensity.current
@@ -124,6 +125,7 @@ fun FastScroller(
                         while (true) {
                             // Wait for initial touch
                             val down = awaitFirstDown()
+                            onInteractionStart() // Call when interaction starts
                             isInteracting = true
                             currentDragPosition = down.position.y
                             handlePositionAndSelectLetter(down.position.y)

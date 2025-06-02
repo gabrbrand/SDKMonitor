@@ -3,6 +3,7 @@ package com.bernaferrari.sdkmonitor.ui.main
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -48,6 +49,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -56,6 +58,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -78,6 +82,9 @@ fun MainScreen(
     val appFilter by viewModel.appFilter.collectAsStateWithLifecycle()
     val sortOption by viewModel.sortOption.collectAsStateWithLifecycle()
 
+    // Add focus manager for keyboard dismissal
+    val focusManager = LocalFocusManager.current
+
     // Launch effect to load apps when screen first loads
     LaunchedEffect(Unit) {
         viewModel.loadApps()
@@ -93,6 +100,20 @@ fun MainScreen(
 
     // State for LazyColumn
     val listState = rememberLazyListState()
+
+    // Track if list is being scrolled
+    val isScrolling by remember {
+        derivedStateOf {
+            listState.isScrollInProgress
+        }
+    }
+
+    // Dismiss keyboard when scrolling
+    LaunchedEffect(isScrolling) {
+        if (isScrolling) {
+            focusManager.clearFocus()
+        }
+    }
 
     // Reset list state when filter changes
     LaunchedEffect(appFilter) {
@@ -349,7 +370,7 @@ fun MainScreen(
                                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
                             )
 
-                            SortOption.values().forEach { option ->
+                            SortOption.entries.forEach { option ->
                                 DropdownMenuItem(
                                     text = {
                                         Row(
@@ -545,7 +566,15 @@ fun MainScreen(
                         Box(modifier = Modifier.fillMaxSize()) {
                             LazyColumn(
                                 state = listState,
-                                modifier = Modifier.fillMaxSize(),
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .pointerInput(Unit) {
+                                        detectDragGestures(
+                                            onDragStart = {
+                                                focusManager.clearFocus()
+                                            }
+                                        ) { _, _ -> }
+                                    },
                                 contentPadding = PaddingValues(
                                     start = 0.dp,
                                     end = if (showFastScroller) 22.dp else 0.dp,
@@ -579,6 +608,9 @@ fun MainScreen(
                                         isScrollerActive = false
                                         currentScrollLetter = ""
                                     },
+                                    onInteractionStart = {
+                                        focusManager.clearFocus() // Dismiss keyboard on fast scroller touch
+                                    },
                                     modifier = Modifier
                                         .align(Alignment.CenterEnd)
                                         .padding(start = 2.dp, end = 2.dp)
@@ -599,7 +631,7 @@ fun MainScreen(
                                 Box(
                                     modifier = Modifier
                                         .align(Alignment.Center)
-                                        .size(140.dp) // Even larger!
+                                        .size(140.dp)
                                         .scale(overlayScale)
                                         .background(
                                             MaterialTheme.colorScheme.surface.copy(alpha = 0.98f),
@@ -609,7 +641,7 @@ fun MainScreen(
                                 ) {
                                     Text(
                                         text = currentScrollLetter,
-                                        style = MaterialTheme.typography.displayLarge.copy( // Even bigger text!
+                                        style = MaterialTheme.typography.displayLarge.copy(
                                             fontWeight = FontWeight.Black,
                                             fontSize = 72.sp
                                         ),

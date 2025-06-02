@@ -19,9 +19,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Apps
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -32,7 +32,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalInspectionMode
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.text.style.TextOverflow
@@ -59,6 +58,14 @@ fun MainAppCard(
     val isPreview = LocalInspectionMode.current
     val apiColor = Color(appVersion.sdkVersion.apiToColor())
     val apiDescription = appVersion.sdkVersion.apiToVersion()
+//    val scope = rememberCoroutineScope()
+//    var dominantColor by remember { mutableStateOf(Color.Transparent) }
+//
+//    val cardBackgroundColor = if (dominantColor != Color.Transparent) {
+//        dominantColor.copy(alpha = 0.1f)
+//    } else {
+//        MaterialTheme.colorScheme.surfaceContainer
+//    }
 
     Card(
         onClick = onClick,
@@ -67,6 +74,7 @@ fun MainAppCard(
             .padding(horizontal = 16.dp, vertical = 4.dp),
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(
+//            containerColor = cardBackgroundColor
             containerColor = MaterialTheme.colorScheme.surfaceContainer
         ),
         elevation = CardDefaults.cardElevation(
@@ -114,7 +122,25 @@ fun MainAppCard(
                             .crossfade(true)
                             .build(),
                         contentDescription = "App icon for ${appVersion.title}",
-                        modifier = Modifier.size(56.dp)
+                        modifier = Modifier.size(56.dp),
+                        onSuccess = { success ->
+                            // Extract color from the loaded drawable asynchronously
+//                            scope.launch {
+//                                val drawable = success.result.image
+//                                val bitmap = drawable.toBitmap()
+//                                val palette = withContext(Dispatchers.Default) {
+//                                    Palette.from(bitmap).generate()
+//                                }
+//                                palette?.let {
+//                                    val color = it.dominantSwatch?.rgb
+//                                        ?: it.vibrantSwatch?.rgb
+//                                        ?: it.mutedSwatch?.rgb
+//                                    color?.let { colorInt ->
+//                                        dominantColor = Color(colorInt)
+//                                    }
+//                                }
+//                            }
+                        }
                     )
                 }
             }
@@ -135,17 +161,21 @@ fun MainAppCard(
                     overflow = TextOverflow.Ellipsis
                 )
 
-                Spacer(modifier = Modifier.height(4.dp))
+                Spacer(modifier = Modifier.height(2.dp))
 
-                Text(
-                    text = appVersion.lastUpdateTime,
-                    style = MaterialTheme.typography.bodySmall.copy(
-                        fontFamily = FontFamily.Monospace
-                    ),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
+                Surface(
+                    shape = RoundedCornerShape(8.dp),
+                    color = MaterialTheme.colorScheme.tertiary.copy(alpha = 0.1f)
+                ) {
+                    Text(
+                        text = appVersion.lastUpdateTime,
+                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                        style = MaterialTheme.typography.labelMedium.copy(
+                            fontWeight = FontWeight.Medium
+                        ),
+                        color = MaterialTheme.colorScheme.tertiary
+                    )
+                }
             }
 
             Spacer(modifier = Modifier.width(16.dp))

@@ -137,6 +137,7 @@ dependencies {
     // Work Manager
     implementation(libs.androidx.work.runtime.ktx)
 
+    implementation(libs.androidx.palette.ktx)
     implementation(libs.logger)
 
     // UI Utils

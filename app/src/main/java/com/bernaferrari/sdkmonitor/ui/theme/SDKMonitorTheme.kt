@@ -12,7 +12,6 @@ import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
-import androidx.hilt.navigation.compose.hiltViewModel
 
 private val DarkColorScheme = darkColorScheme(
     primary = Indigo80,
@@ -30,7 +29,7 @@ private val LightColorScheme = lightColorScheme(
 fun SDKMonitorTheme(
     darkTheme: Boolean? = null,
     dynamicColor: Boolean? = null,
-    themeViewModel: ThemeViewModel = hiltViewModel(),
+    themeViewModel: ThemeViewModel,
     content: @Composable () -> Unit
 ) {
     val context = LocalContext.current
