@@ -94,6 +94,7 @@ dependencies {
 
     // Android Core
     implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.startup)
 
     // Compose BOM - manages all compose library versions
     implementation(platform(libs.androidx.compose.bom))

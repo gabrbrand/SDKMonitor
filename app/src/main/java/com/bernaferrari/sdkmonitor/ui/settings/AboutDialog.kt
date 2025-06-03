@@ -18,6 +18,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ElevatedButton
+import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -109,14 +110,14 @@ fun AboutDialog(
                         8.dp,
                         alignment = Alignment.CenterHorizontally
                     ),
-                    maxItemsInEachRow = 2,
+                    maxItemsInEachRow = 4,
                     verticalArrangement = Arrangement.spacedBy(8.dp),
                     modifier = Modifier
                         .background(
                             MaterialTheme.colorScheme.surfaceColorAtElevation(6.dp),
                             RoundedCornerShape(16.dp)
                         )
-                        .padding(8.dp)
+                        .padding(vertical = 8.dp)
                         .fillMaxWidth(),
                 ) {
                     SocialLink("GitHub", R.drawable.github_logo) {
@@ -218,10 +219,10 @@ private fun SocialLink(
     @DrawableRes iconRes: Int,
     onClick: () -> Unit
 ) {
-    ElevatedButton(
+    FilledIconButton (
         onClick = onClick,
         modifier = Modifier.animateContentSize(),
-    ) {
+        ) {
         Row(
             horizontalArrangement = Arrangement.spacedBy(4.dp),
             verticalAlignment = Alignment.CenterVertically
@@ -231,10 +232,10 @@ private fun SocialLink(
                 contentDescription = null,
                 modifier = Modifier.size(16.dp)
             )
-            Text(
-                text = text,
-                style = MaterialTheme.typography.labelLarge
-            )
+//            Text(
+//                text = text,
+//                style = MaterialTheme.typography.labelLarge
+//            )
         }
     }
 }

@@ -124,7 +124,7 @@ fun LogCard(
                             color = MaterialTheme.colorScheme.tertiary.copy(alpha = 0.1f)
                         ) {
                             Text(
-                                text = formatLogTime(log.timestamp),
+                                text = formatLogTime(log.timestamp, context),
                                 modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
                                 style = MaterialTheme.typography.labelMedium.copy(
                                     fontWeight = FontWeight.Medium

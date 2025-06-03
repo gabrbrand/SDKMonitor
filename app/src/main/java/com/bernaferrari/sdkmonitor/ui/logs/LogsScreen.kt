@@ -1,5 +1,6 @@
 package com.bernaferrari.sdkmonitor.ui.logs
 
+import android.content.Context
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloatAsState
@@ -61,7 +62,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.bernaferrari.sdkmonitor.domain.model.LogEntry
-import java.text.SimpleDateFormat
+import com.bernaferrari.sdkmonitor.extensions.convertTimestampToDate
 import java.util.Date
 import java.util.Locale
 
@@ -735,19 +736,6 @@ private fun ClearDialog(
     )
 }
 
-fun formatLogTime(timestamp: Long): String {
-    val now = System.currentTimeMillis()
-    val diff = now - timestamp
-
-    return when {
-        diff < 60 * 1000 -> "Just now"
-        diff < 60 * 60 * 1000 -> "${diff / (60 * 1000)}m ago"
-        diff < 24 * 60 * 60 * 1000 -> "${diff / (60 * 60 * 1000)}h ago"
-        diff < 7 * 24 * 60 * 60 * 1000 -> "${diff / (24 * 60 * 60 * 1000)}d ago"
-        else -> {
-            val date = Date(timestamp)
-            val formatter = SimpleDateFormat("MMM dd", Locale.getDefault())
-            formatter.format(date)
-        }
-    }
+fun formatLogTime(timestamp: Long, context: Context): String {
+    return timestamp.convertTimestampToDate(context)
 }

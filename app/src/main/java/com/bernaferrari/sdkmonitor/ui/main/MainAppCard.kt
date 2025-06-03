@@ -4,36 +4,32 @@ import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Apps
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush.Companion.verticalGradient
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -52,61 +48,46 @@ fun MainAppCard(
     appVersion: AppVersion,
     appIcon: Bitmap? = null,
     showVersionPill: Boolean = true,
+    isLast: Boolean = false, // Add parameter to detect last item
     onClick: () -> Unit = {},
 ) {
     val context = LocalContext.current
     val isPreview = LocalInspectionMode.current
     val apiColor = Color(appVersion.sdkVersion.apiToColor())
     val apiDescription = appVersion.sdkVersion.apiToVersion()
-//    val scope = rememberCoroutineScope()
-//    var dominantColor by remember { mutableStateOf(Color.Transparent) }
-//
-//    val cardBackgroundColor = if (dominantColor != Color.Transparent) {
-//        dominantColor.copy(alpha = 0.1f)
-//    } else {
-//        MaterialTheme.colorScheme.surfaceContainer
-//    }
 
-    Card(
-        onClick = onClick,
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 4.dp),
-        shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(
-//            containerColor = cardBackgroundColor
-            containerColor = MaterialTheme.colorScheme.surfaceContainer
-        ),
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = 2.dp,
-            pressedElevation = 8.dp
-        )
-    ) {
+    Column {
         Row(
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxWidth()
-                .padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically
+                .clickable { onClick() } // Move clickable to outer area for larger tap target
+                .padding(
+                    horizontal = 16.dp,
+                    vertical = 16.dp
+                ), // Increased vertical padding for larger tap area
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            // App Icon - clean and larger
+            // App Icon - clean and modern
             Box(
                 modifier = Modifier
                     .size(56.dp)
-                    .clip(RoundedCornerShape(14.dp)),
+                    .clip(RoundedCornerShape(16.dp)),
                 contentAlignment = Alignment.Center
             ) {
                 if (appIcon != null) {
                     Image(
                         bitmap = appIcon.asImageBitmap(),
                         contentDescription = "App icon for ${appVersion.title}",
-                        modifier = Modifier.size(56.dp)
+                        modifier = Modifier
+                            .size(56.dp)
+                            .clip(RoundedCornerShape(16.dp))
                     )
                 } else if (isPreview) {
-                    // Fallback for preview mode
                     Icon(
                         imageVector = Icons.Outlined.Apps,
                         contentDescription = "App icon for ${appVersion.title}",
-                        modifier = Modifier.size(56.dp),
+                        modifier = Modifier.size(32.dp),
                         tint = MaterialTheme.colorScheme.primary
                     )
                 } else {
@@ -122,35 +103,19 @@ fun MainAppCard(
                             .crossfade(true)
                             .build(),
                         contentDescription = "App icon for ${appVersion.title}",
-                        modifier = Modifier.size(56.dp),
-                        onSuccess = { success ->
-                            // Extract color from the loaded drawable asynchronously
-//                            scope.launch {
-//                                val drawable = success.result.image
-//                                val bitmap = drawable.toBitmap()
-//                                val palette = withContext(Dispatchers.Default) {
-//                                    Palette.from(bitmap).generate()
-//                                }
-//                                palette?.let {
-//                                    val color = it.dominantSwatch?.rgb
-//                                        ?: it.vibrantSwatch?.rgb
-//                                        ?: it.mutedSwatch?.rgb
-//                                    color?.let { colorInt ->
-//                                        dominantColor = Color(colorInt)
-//                                    }
-//                                }
-//                            }
-                        }
+                        modifier = Modifier
+                            .size(56.dp)
+                            .clip(RoundedCornerShape(16.dp)),
                     )
                 }
             }
 
-            Spacer(modifier = Modifier.width(16.dp))
-
-            // App info section
+            // Content section - takes up remaining space
             Column(
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(2.dp)
             ) {
+                // App title
                 Text(
                     text = appVersion.title,
                     style = MaterialTheme.typography.titleMedium.copy(
@@ -161,75 +126,83 @@ fun MainAppCard(
                     overflow = TextOverflow.Ellipsis
                 )
 
-                Spacer(modifier = Modifier.height(2.dp))
-
-                Surface(
-                    shape = RoundedCornerShape(8.dp),
-                    color = MaterialTheme.colorScheme.tertiary.copy(alpha = 0.1f)
+                // Bottom row with date and API pill
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
+                    // Date - subtle and clean
                     Text(
                         text = appVersion.lastUpdateTime,
-                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
-                        style = MaterialTheme.typography.labelMedium.copy(
+                        style = MaterialTheme.typography.bodySmall.copy(
                             fontWeight = FontWeight.Medium
                         ),
-                        color = MaterialTheme.colorScheme.tertiary
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
+
                 }
             }
 
-            Spacer(modifier = Modifier.width(16.dp))
-
             if (showVersionPill) {
-                // API Level indicator with beautiful gradient
-                Row(
+                // Refined compact pill with beautiful styling
+                Column(
                     modifier = Modifier
-                        .clip(RoundedCornerShape(20.dp))
+                        .clip(RoundedCornerShape(14.dp))
                         .background(
-                            apiColor.copy(alpha = 0.1f)
+                            verticalGradient(
+                                colors = listOf(
+                                    apiColor.copy(alpha = 0.18f),
+                                    apiColor.copy(alpha = 0.08f)
+                                )
+                            )
                         )
-                        .height(36.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(0.dp)
+                        .padding(horizontal = 8.dp, vertical = 4.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(1.dp)
                 ) {
-
+                    // Compact SDK number with refined typography
                     Text(
-                        text = apiDescription,
-                        modifier = Modifier.padding(start = 12.dp, end = 8.dp),
-                        style = MaterialTheme.typography.labelMedium.copy(
-                            fontWeight = FontWeight.Medium,
-                            fontSize = 11.sp
+                        text = appVersion.sdkVersion.toString(),
+                        style = MaterialTheme.typography.headlineSmall.copy(
+                            fontWeight = FontWeight.Black,
+                            letterSpacing = (-0.8).dp.value.sp
                         ),
-                        color = apiColor,
-                        maxLines = 1
+                        color = apiColor
                     )
 
-                    // API Level Number
+                    // Compact API description with subtle background
                     Box(
                         modifier = Modifier
-                            .clip(RoundedCornerShape(topEnd = 20.dp, bottomEnd = 20.dp))
-                            .background(apiColor)
-                            .height(36.dp),
+                            .clip(RoundedCornerShape(6.dp))
+                            .padding(horizontal = 6.dp, vertical = 1.dp),
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = appVersion.sdkVersion.toString(),
-                            modifier = Modifier.padding(start = 8.dp, end = 12.dp),
-                            style = MaterialTheme.typography.titleMedium.copy(
+                            text = apiDescription,
+                            style = MaterialTheme.typography.labelSmall.copy(
                                 fontWeight = FontWeight.Bold,
-                                lineHeightStyle = LineHeightStyle(
-                                    alignment = LineHeightStyle.Alignment.Center,
-                                    trim = LineHeightStyle.Trim.Both
-                                )
+                                letterSpacing = 0.2.dp.value.sp
                             ),
-                            color = Color.White
+                            color = apiColor,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
                         )
                     }
-
                 }
             }
 
         }
+
+        // Subtle divider line - only show if not last item
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 88.dp, end = 16.dp)
+                .height(0.5.dp)
+                .background(if (!isLast) MaterialTheme.colorScheme.outlineVariant else Color.Transparent)
+        )
+
     }
 }
 

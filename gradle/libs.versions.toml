@@ -28,8 +28,10 @@ ksp = "2.1.21-2.0.1"
 gradle-versions = "0.52.0"
 spotless = "7.0.3"
 version-catalog-update = "1.0.0"
+startup = "1.2.0"
 
 [libraries]
+androidx-startup = { module = "androidx.startup:startup-runtime", version.ref = "startup" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activityCompose" }
 androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
 androidx-compose-bom = { module = "androidx.compose:compose-bom", version.ref = "composeBom" }

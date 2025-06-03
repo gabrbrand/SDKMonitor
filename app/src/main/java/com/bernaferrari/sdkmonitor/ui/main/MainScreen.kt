@@ -1,8 +1,5 @@
 package com.bernaferrari.sdkmonitor.ui.main
 
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.spring
-import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -56,14 +53,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.bernaferrari.sdkmonitor.domain.model.AppFilter
@@ -563,6 +558,36 @@ fun MainScreen(
                                 state.filteredApps.size > 15 &&
                                 searchQuery.isBlank()
 
+                        // Group apps by first letter when sorting alphabetically
+                        val groupedApps = remember(state.filteredApps, sortOption) {
+                            if (sortOption == SortOption.NAME && searchQuery.isBlank()) {
+                                state.filteredApps.groupBy {
+                                    val firstChar = it.title.firstOrNull()?.uppercaseChar()
+                                    if (firstChar?.isLetter() == true) {
+                                        firstChar.toString()
+                                    } else {
+                                        "#" // Group all non-letters (numbers, symbols) under "#"
+                                    }
+                                }.toSortedMap()
+                            } else {
+                                emptyMap()
+                            }
+                        }
+
+                        // Group apps by SDK version when sorting by SDK
+                        val groupedAppsBySdk = remember(state.filteredApps, sortOption) {
+                            if (sortOption == SortOption.SDK && searchQuery.isBlank()) {
+                                state.filteredApps.groupBy { app ->
+                                    "SDK ${app.sdkVersion}"
+                                }.toSortedMap(compareByDescending { key ->
+                                    // Extract SDK number for proper sorting
+                                    key.removePrefix("SDK ").toIntOrNull() ?: 0
+                                })
+                            } else {
+                                emptyMap()
+                            }
+                        }
+
                         Box(modifier = Modifier.fillMaxSize()) {
                             LazyColumn(
                                 state = listState,
@@ -581,13 +606,93 @@ fun MainScreen(
                                     top = 8.dp,
                                     bottom = 8.dp
                                 ),
-                                verticalArrangement = Arrangement.spacedBy(6.dp)
                             ) {
-                                itemsIndexed(state.filteredApps) { index, appVersion ->
-                                    MainAppCard(
-                                        appVersion = appVersion,
-                                        onClick = { onNavigateToAppDetails(appVersion.packageName) }
-                                    )
+                                when {
+                                    groupedApps.isNotEmpty() -> {
+                                        // Show apps with alphabet section headers
+                                        groupedApps.forEach { (letter, appsInSection) ->
+                                            // Section header
+                                            item(key = "header_$letter") {
+                                                Surface(
+                                                    modifier = Modifier
+                                                        .fillMaxWidth()
+                                                        .padding(horizontal = 16.dp, vertical = 8.dp),
+                                                    shape = RoundedCornerShape(12.dp),
+                                                    color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3f)
+                                                ) {
+                                                    Text(
+                                                        text = letter,
+                                                        style = MaterialTheme.typography.titleMedium.copy(
+                                                            fontWeight = FontWeight.Bold
+                                                        ),
+                                                        color = MaterialTheme.colorScheme.primary,
+                                                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                                                    )
+                                                }
+                                            }
+
+                                            // Apps in this section
+                                            itemsIndexed(
+                                                items = appsInSection,
+                                                key = { _, app -> "${letter}_${app.packageName}" }
+                                            ) { index, appVersion ->
+                                                MainAppCard(
+                                                    appVersion = appVersion,
+                                                    isLast = index == appsInSection.lastIndex,
+                                                    onClick = { onNavigateToAppDetails(appVersion.packageName) }
+                                                )
+                                            }
+                                        }
+                                    }
+                                    groupedAppsBySdk.isNotEmpty() -> {
+                                        // Show apps with SDK version section headers
+                                        groupedAppsBySdk.forEach { (sdkHeader, appsInSection) ->
+                                            // SDK Section header
+                                            item(key = "sdk_header_$sdkHeader") {
+                                                Surface(
+                                                    modifier = Modifier
+                                                        .fillMaxWidth()
+                                                        .padding(horizontal = 16.dp, vertical = 8.dp),
+                                                    shape = RoundedCornerShape(12.dp),
+                                                    color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3f)
+                                                ) {
+                                                    Text(
+                                                        text = sdkHeader,
+                                                        style = MaterialTheme.typography.titleMedium.copy(
+                                                            fontWeight = FontWeight.Bold
+                                                        ),
+                                                        color = MaterialTheme.colorScheme.primary,
+                                                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                                                    )
+                                                }
+                                            }
+
+                                            // Apps in this SDK section
+                                            itemsIndexed(
+                                                items = appsInSection,
+                                                key = { _, app -> "${sdkHeader}_${app.packageName}" }
+                                            ) { index, appVersion ->
+                                                MainAppCard(
+                                                    appVersion = appVersion,
+                                                    isLast = index == appsInSection.lastIndex,
+                                                    onClick = { onNavigateToAppDetails(appVersion.packageName) }
+                                                )
+                                            }
+                                        }
+                                    }
+                                    else -> {
+                                        // Show apps without headers (when searching)
+                                        itemsIndexed(
+                                            items = state.filteredApps,
+                                            key = { _, app -> app.packageName }
+                                        ) { index, appVersion ->
+                                            MainAppCard(
+                                                appVersion = appVersion,
+                                                isLast = index == state.filteredApps.lastIndex,
+                                                onClick = { onNavigateToAppDetails(appVersion.packageName) }
+                                            )
+                                        }
+                                    }
                                 }
 
                                 item {
@@ -600,6 +705,7 @@ fun MainScreen(
                                 FastScroller(
                                     apps = state.filteredApps,
                                     listState = listState,
+                                    appFilter = appFilter,
                                     onLetterSelected = { letter ->
                                         currentScrollLetter = letter
                                         isScrollerActive = true
@@ -609,45 +715,10 @@ fun MainScreen(
                                         currentScrollLetter = ""
                                     },
                                     onInteractionStart = {
-                                        focusManager.clearFocus() // Dismiss keyboard on fast scroller touch
+                                        focusManager.clearFocus()
                                     },
-                                    modifier = Modifier
-                                        .align(Alignment.CenterEnd)
-                                        .padding(start = 2.dp, end = 2.dp)
+                                    modifier = Modifier.align(Alignment.CenterEnd)
                                 )
-                            }
-
-                            // Large letter overlay when scrolling - More DRAMATIC!
-                            if (isScrollerActive && currentScrollLetter.isNotEmpty()) {
-                                val overlayScale by animateFloatAsState(
-                                    targetValue = 1f,
-                                    animationSpec = spring(
-                                        dampingRatio = 0.6f,
-                                        stiffness = 800f
-                                    ),
-                                    label = "overlay_scale"
-                                )
-
-                                Box(
-                                    modifier = Modifier
-                                        .align(Alignment.Center)
-                                        .size(140.dp)
-                                        .scale(overlayScale)
-                                        .background(
-                                            MaterialTheme.colorScheme.surface.copy(alpha = 0.98f),
-                                            RoundedCornerShape(32.dp)
-                                        ),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    Text(
-                                        text = currentScrollLetter,
-                                        style = MaterialTheme.typography.displayLarge.copy(
-                                            fontWeight = FontWeight.Black,
-                                            fontSize = 72.sp
-                                        ),
-                                        color = MaterialTheme.colorScheme.primary
-                                    )
-                                }
                             }
                         }
                     }

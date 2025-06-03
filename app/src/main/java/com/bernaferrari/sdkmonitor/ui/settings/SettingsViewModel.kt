@@ -49,7 +49,6 @@ class SettingsViewModel @Inject constructor(
                             themeMode = userPreferences.themeMode,
                             appFilter = userPreferences.appFilter,
                             backgroundSync = userPreferences.backgroundSync,
-                            orderBySdk = userPreferences.orderBySdk,
                             syncInterval = interval,
                             syncTimeUnit = timeUnit
                         )

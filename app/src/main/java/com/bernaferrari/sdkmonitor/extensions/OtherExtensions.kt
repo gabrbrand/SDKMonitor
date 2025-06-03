@@ -29,7 +29,15 @@ internal fun Long.convertTimestampToDate(context: Context): String {
                 val days = (diff / 86_400_000).toInt()
                 context.resources.getQuantityString(R.plurals.days_ago, days, days)
             }
-            else -> SimpleDateFormat("MMM dd, yyyy", Locale.getDefault()).format(Date(this))
+            else -> {
+                val date = Date(this)
+                val currentYear = Calendar.getInstance().get(Calendar.YEAR)
+                val timestampYear = Calendar.getInstance().apply { timeInMillis = this@convertTimestampToDate }.get(Calendar.YEAR)
+                
+                // Only show year if it's different from current year
+                val pattern = if (timestampYear == currentYear) "MMM dd" else "MMM dd, yyyy"
+                SimpleDateFormat(pattern, Locale.getDefault()).format(date)
+            }
         }
     }
 }

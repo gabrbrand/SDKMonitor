@@ -45,10 +45,10 @@ enum class AppFilter(val displayName: String) {
  */
 data class UserPreferences(
     val lightMode: Boolean = true,
-    val appFilter: AppFilter = AppFilter.ALL_APPS, // Changed default to ALL_APPS
+    val appFilter: AppFilter = AppFilter.USER_APPS,
     val backgroundSync: Boolean = false,
     val orderBySdk: Boolean = false,
-    val syncInterval: String = "30m", // Fixed default format,
+    val syncInterval: String = "30m",
     val themeMode: ThemeMode = ThemeMode.MATERIAL_YOU
 )
 
