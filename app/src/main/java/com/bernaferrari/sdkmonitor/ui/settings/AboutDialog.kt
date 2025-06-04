@@ -7,19 +7,19 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.FilledIconButton
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
@@ -30,7 +30,7 @@ import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -49,49 +49,26 @@ fun AboutDialog(
     onDismiss: () -> Unit
 ) {
     val context = LocalContext.current
+    val configuration = LocalConfiguration.current
+    val maxHeight = (configuration.screenHeightDp * 0.7f).dp
+    val minHeight = 200.dp
 
     AlertDialog(
         onDismissRequest = onDismiss,
         containerColor = MaterialTheme.colorScheme.surface,
         shape = RoundedCornerShape(28.dp),
-        title = {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-//                Text(
-//                    text = stringResource(R.string.about_title, VERSION_NAME),
-//                    fontSize = 24.sp,
-//                    fontWeight = FontWeight.Bold,
-//                    color = MaterialTheme.colorScheme.primary,
-//                    fontFamily = FontFamily.SansSerif,
-//                    textAlign = TextAlign.Center
-//                )
-//                Spacer(Modifier.height(8.dp))
-                HorizontalDivider(
-                    modifier = Modifier
-                        .width(32.dp)
-                        .background(
-                            Brush.horizontalGradient(
-                                listOf(
-                                    MaterialTheme.colorScheme.primary.copy(alpha = 0f),
-                                    MaterialTheme.colorScheme.primary,
-                                    MaterialTheme.colorScheme.primary.copy(alpha = 0f)
-                                )
-                            )
-                        )
-                )
-            }
-        },
         text = {
             Column(
-                modifier = Modifier.padding(vertical = 16.dp),
-                verticalArrangement = Arrangement.spacedBy(24.dp),
+                modifier = Modifier
+                    .padding(vertical = 8.dp)
+                    .heightIn(min = minHeight, max = maxHeight)
+                    .verticalScroll(rememberScrollState()),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
                     text = buildAnnotatedString {
-                        append("Designed & developed by\n")
+                        append(stringResource(R.string.designed_developed_by) + "\n")
                         pushStyle(
                             SpanStyle(
                                 fontWeight = FontWeight.Bold,
@@ -99,7 +76,7 @@ fun AboutDialog(
                                 color = MaterialTheme.colorScheme.primary
                             )
                         )
-                        append("Bernardo Ferrari")
+                        append(stringResource(R.string.bernardo_ferrari))
                         pop()
                     },
                     textAlign = TextAlign.Center,
@@ -182,18 +159,7 @@ fun AboutDialog(
                 }
 
                 Text(
-                    text = buildAnnotatedString {
-                        append("This project is ")
-                        pushStyle(
-                            SpanStyle(
-                                color = MaterialTheme.colorScheme.primary,
-                                fontWeight = FontWeight.SemiBold
-                            )
-                        )
-                        append("open source")
-                        pop()
-                        append(" and is licensed under Apache 2.0.")
-                    },
+                    text = stringResource(R.string.open_source_project),
                     style = MaterialTheme.typography.bodyMedium,
                     textAlign = TextAlign.Center,
                     modifier = Modifier

@@ -34,10 +34,10 @@ data class AppVersion(
     val isFromPlayStore: Boolean = false
 )
 
-enum class AppFilter(val displayName: String) {
-    ALL_APPS("All"),
-    USER_APPS("User"),
-    SYSTEM_APPS("System")
+enum class AppFilter {
+    ALL_APPS,
+    USER_APPS,
+    SYSTEM_APPS
 }
 
 /**

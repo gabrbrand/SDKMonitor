@@ -1,6 +1,16 @@
 <resources>
     <string name="app_name">SDK Monitor</string>
 
+    <!-- Theme Mode -->
+    <string name="theme_system">System</string>
+    <string name="theme_material_you">Dynamisch</string>
+    <string name="theme_light">Hell</string>
+    <string name="theme_dark">Dunkel</string>
+    <string name="theme_system_description">Systemeinstellungen folgen</string>
+    <string name="theme_material_you_description">Farben vom Hintergrundbild</string>
+    <string name="theme_light_description">Immer helles Design</string>
+    <string name="theme_dark_description">Immer dunkles Design</string>
+
     <string-array name="singularTime">
         <item>Minute</item>
         <item>Stunde</item>
@@ -33,7 +43,7 @@
         <item quantity="other">vor %d Tagen</item>
     </plurals>
 
-    <string name="sync_every">Alle %d %s synchronisieren</string>
+    <string name="sync_every" formatted="false">Alle %d %s synchronisieren</string>
     <string name="sync_disabled">Synchronisation deaktiviert</string>
 
     <string name="dismiss">Verwerfen</string>
@@ -127,15 +137,24 @@
     <string name="light">Hell</string>
     <string name="dark">Dunkel</string>
     <string name="system">System</string>
+    <string name="appearance">Erscheinungsbild</string>
+    <string name="background_sync">Automatische Synchronisation</string>
+    <string name="tap_to_configure_automatic_updates">Tippen um automatische Updates zu konfigurieren</string>
+    <string name="enabled_daily_updates">Aktiviert - Tägliche Updates</string>
+    <string name="enabled_weekly_updates">Aktiviert - Wöchentliche Updates</string>
+    <string name="enabled_monthly_updates">Aktiviert - Monatliche Updates</string>
+    <string name="enabled_every">Aktiviert alle %1$s %2$s</string>
+    <string name="delete_all_app_change_history_and_logs">Alle App-Änderungsverläufe und Protokolle löschen</string>
+    <string name="confirm_clear_all_logs">Dies wird alle App-Änderungsverläufe und Protokolle dauerhaft löschen. Diese Aktion kann nicht rückgängig gemacht werden.</string>
 
     <!-- About Dialog -->
     <string name="about">Über</string>
-    <string name="designed_developed_by">Entworfen &amp; entwickelt von</string>
+    <string name="designed_developed_by">Entworfen und entwickelt von</string>
     <string name="bernardo_ferrari">Bernardo Ferrari</string>
     <string name="github">GitHub</string>
     <string name="reddit">Reddit</string>
     <string name="linkedin">LinkedIn</string>
-    <string name="open_source_project">Dieses Projekt ist Open Source und unter Apache 2.0 lizenziert</string>
+    <string name="open_source_project">Dieses Projekt ist Open Source und unter Apache 2.0 lizenziert.</string>
 
     <!-- Background Sync Dialog -->
     <string name="enable_sync">Synchronisation Aktivieren</string>
@@ -145,6 +164,21 @@
     <string name="wifi_only">Nur WLAN</string>
     <string name="requires_charging">Erfordert Laden</string>
     <string name="battery_not_low">Batterie nicht schwach</string>
+    <string name="apps_will_update_automatically">Apps werden automatisch aktualisiert</string>
+    <string name="tap_to_enable_automatic_updates">Tippen um automatische Updates zu aktivieren</string>
+    <string name="sync_frequency">Synchronisationsfrequenz</string>
+    <string name="daily">Täglich</string>
+    <string name="weekly">Wöchentlich</string>
+    <string name="monthly">Monatlich</string>
+    <string name="custom">Benutzerdefiniert</string>
+    <string name="once_every_day">Einmal täglich</string>
+    <string name="once_every_week">Einmal wöchentlich</string>
+    <string name="once_every_month">Einmal monatlich</string>
+    <string name="set_your_own_interval">Eigenes Intervall festlegen</string>
+    <string name="set_custom_interval">Benutzerdefiniertes Intervall Festlegen</string>
+    <string name="every">Alle</string>
+    <string name="unit">Einheit</string>
+    <string name="required">Erforderlich</string>
 
     <!-- Common UI Elements -->
     <string name="loading">Lädt</string>
@@ -175,4 +209,9 @@
     <string name="try_different_filter">Versuche einen anderen Filter</string>
     <string name="filter_options">Filteroptionen</string>
     <string name="percentage_format">%d%%</string>
+    <string name="data_management">Datenverwaltung</string>
+    <string name="about_section">Über</string>
+    <string name="learn_more_about_app">Erfahre mehr über diese App</string>
+    <string name="app_version_format">%1$s v%2$s</string>
+    <string name="unknown_error">Unbekannter Fehler</string>
 </resources>

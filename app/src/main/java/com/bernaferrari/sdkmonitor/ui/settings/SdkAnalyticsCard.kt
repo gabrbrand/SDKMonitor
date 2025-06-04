@@ -18,8 +18,8 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.TrendingUp
 import androidx.compose.material.icons.filled.Analytics
-import androidx.compose.material.icons.filled.TrendingUp
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -39,10 +39,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.bernaferrari.sdkmonitor.R
 import com.bernaferrari.sdkmonitor.domain.model.AppFilter
 import com.bernaferrari.sdkmonitor.extensions.apiToColor
 import com.bernaferrari.sdkmonitor.extensions.apiToVersion
@@ -110,8 +112,8 @@ fun SdkAnalyticsCard(
                             contentAlignment = Alignment.Center
                         ) {
                             Icon(
-                                imageVector = Icons.Default.TrendingUp,
-                                contentDescription = "Analytics",
+                                imageVector = Icons.AutoMirrored.Filled.TrendingUp,
+                                contentDescription = stringResource(R.string.analytics),
                                 modifier = Modifier.size(24.dp),
                                 tint = MaterialTheme.colorScheme.primary
                             )
@@ -122,7 +124,7 @@ fun SdkAnalyticsCard(
                         verticalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
                         Text(
-                            text = "SDK Analytics",
+                            text = stringResource(R.string.sdk_analytics),
                             style = MaterialTheme.typography.titleLarge.copy(
                                 fontWeight = FontWeight.Bold
                             ),
@@ -152,7 +154,7 @@ fun SdkAnalyticsCard(
                                     )
                                 }
                                 Text(
-                                    text = "apps",
+                                    text = stringResource(R.string.apps_lowercase),
                                     style = MaterialTheme.typography.bodySmall.copy(
                                         fontWeight = FontWeight.Medium
                                     ),
@@ -179,7 +181,7 @@ fun SdkAnalyticsCard(
                                     )
                                 }
                                 Text(
-                                    text = "versions",
+                                    text = stringResource(R.string.versions_lowercase),
                                     style = MaterialTheme.typography.bodySmall.copy(
                                         fontWeight = FontWeight.Medium
                                     ),
@@ -234,12 +236,19 @@ fun SdkAnalyticsCard(
                             tint = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                         Text(
-                            text = "No ${currentAppFilter.displayName.lowercase()} found",
+                            text = stringResource(
+                                R.string.no_filtered_apps_found,
+                                when (currentAppFilter) {
+                                    AppFilter.ALL_APPS -> stringResource(R.string.all_apps)
+                                    AppFilter.USER_APPS -> stringResource(R.string.user_apps)
+                                    AppFilter.SYSTEM_APPS -> stringResource(R.string.system_apps)
+                                }.lowercase()
+                            ),
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                         Text(
-                            text = "Try a different filter",
+                            text = stringResource(R.string.try_changing_filter),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
                         )
@@ -398,7 +407,7 @@ private fun SdkLegendItem(
             )
 
             Text(
-                text = "$appCount apps",
+                text = stringResource(R.string.apps_count, appCount),
                 style = MaterialTheme.typography.bodySmall.copy(
                     fontWeight = FontWeight.Medium
                 ),

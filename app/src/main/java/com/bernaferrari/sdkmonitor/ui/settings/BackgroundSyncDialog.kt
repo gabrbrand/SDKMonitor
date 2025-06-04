@@ -48,34 +48,54 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringArrayResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import com.bernaferrari.sdkmonitor.R
 import com.bernaferrari.sdkmonitor.ui.theme.SDKMonitorTheme
 
 enum class SyncPreset(
-    val displayName: String,
-    val shortName: String,
-    val description: String,
+    val displayNameRes: Int,
+    val shortNameRes: Int,
     val icon: ImageVector,
     val intervalValue: String,
     val timeUnit: TimeUnit,
 ) {
-    DAILY("Daily", "Daily", "Once every day", Icons.Default.CalendarToday, "1", TimeUnit.DAYS),
-    WEEKLY("Weekly", "Weekly", "Once every week", Icons.Default.DateRange, "7", TimeUnit.DAYS),
+    DAILY(
+        R.string.daily,
+        R.string.daily,
+        Icons.Default.CalendarToday,
+        "1",
+        TimeUnit.DAYS
+    ),
+    WEEKLY(
+        R.string.weekly,
+        R.string.weekly,
+        Icons.Default.DateRange,
+        "7",
+        TimeUnit.DAYS
+    ),
     MONTHLY(
-        "Monthly",
-        "Monthly",
-        "Once every month",
+        R.string.monthly,
+        R.string.monthly,
         Icons.Default.CalendarMonth,
         "30",
         TimeUnit.DAYS
     ),
-    CUSTOM("Custom", "Custom", "Set your own interval", Icons.Default.Tune, "", TimeUnit.HOURS)
+    CUSTOM(
+        R.string.custom,
+        R.string.custom,
+        Icons.Default.Tune,
+        "",
+        TimeUnit.HOURS
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -101,6 +121,18 @@ fun BackgroundSyncDialog(
     var customInterval by remember { mutableStateOf(if (selectedPreset == SyncPreset.CUSTOM) currentInterval else "1") }
     var customUnit by remember { mutableStateOf(if (selectedPreset == SyncPreset.CUSTOM) currentUnit else TimeUnit.HOURS) }
 
+    val singularTimeArray = stringArrayResource(R.array.singularTime)
+    val pluralTimeArray = stringArrayResource(R.array.pluralTime)
+
+    // Helper function to get the correct time unit display name
+    fun getTimeUnitDisplayName(unit: TimeUnit, value: Int): String {
+        return if (value == 1) {
+            singularTimeArray[unit.code]
+        } else {
+            pluralTimeArray[unit.code]
+        }
+    }
+
     Dialog(
         onDismissRequest = onDismiss,
         properties = DialogProperties(
@@ -123,10 +155,11 @@ fun BackgroundSyncDialog(
                     .padding(20.dp),
                 verticalArrangement = Arrangement.spacedBy(20.dp)
             ) {
-            
+
 
                 // Fully Clickable Enable/Disable Card
                 Card(
+
                     onClick = { enabled = !enabled },
                     colors = CardDefaults.cardColors(
                         containerColor = if (enabled) {
@@ -141,21 +174,29 @@ fun BackgroundSyncDialog(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(20.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
-                        Column {
+                        Column(
+                            modifier = Modifier.weight(1f)
+                        ) {
                             Text(
-                                text = "Background Sync",
+                                text = stringResource(R.string.background_sync),
                                 style = MaterialTheme.typography.titleMedium.copy(
                                     fontWeight = FontWeight.SemiBold
                                 ),
-                                color = MaterialTheme.colorScheme.onSurface
+                                color = MaterialTheme.colorScheme.onSurface,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
                             )
                             Text(
-                                text = if (enabled) "Apps will update automatically" else "Tap to enable automatic updates",
+                                text = if (enabled) stringResource(R.string.apps_will_update_automatically) else stringResource(
+                                    R.string.tap_to_enable_automatic_updates
+                                ),
                                 style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
                             )
                         }
 
@@ -176,7 +217,7 @@ fun BackgroundSyncDialog(
                         verticalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
                         Text(
-                            text = "Sync Frequency",
+                            text = stringResource(R.string.sync_frequency),
                             style = MaterialTheme.typography.titleMedium.copy(
                                 fontWeight = FontWeight.SemiBold
                             ),
@@ -232,7 +273,7 @@ fun BackgroundSyncDialog(
                                             tint = MaterialTheme.colorScheme.primary
                                         )
                                         Text(
-                                            text = "Set Custom Interval",
+                                            text = stringResource(R.string.set_custom_interval),
                                             style = MaterialTheme.typography.titleMedium.copy(
                                                 fontWeight = FontWeight.SemiBold
                                             ),
@@ -253,14 +294,14 @@ fun BackgroundSyncDialog(
                                                     customInterval = value
                                                 }
                                             },
-                                            label = { Text("Every") },
+                                            label = { Text(stringResource(R.string.every)) },
                                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                                             modifier = Modifier.weight(1f),
                                             singleLine = true,
                                             supportingText = {
                                                 if (customInterval.isEmpty() || customInterval.toIntOrNull() == null) {
                                                     Text(
-                                                        "Required",
+                                                        stringResource(R.string.required),
                                                         color = MaterialTheme.colorScheme.error
                                                     )
                                                 }
@@ -276,17 +317,22 @@ fun BackgroundSyncDialog(
                                             modifier = Modifier.weight(1f)
                                         ) {
                                             OutlinedTextField(
-                                                value = customUnit.displayName,
+                                                value = getTimeUnitDisplayName(
+                                                    customUnit,
+                                                    customInterval.toIntOrNull() ?: 1
+                                                ),
                                                 onValueChange = {},
                                                 readOnly = true,
-                                                label = { Text("Unit") },
+                                                label = { Text(stringResource(R.string.unit)) },
                                                 trailingIcon = {
                                                     ExposedDropdownMenuDefaults.TrailingIcon(
                                                         expanded = expanded
                                                     )
                                                 },
                                                 modifier = Modifier.menuAnchor(
-                                                    ExposedDropdownMenuAnchorType.PrimaryNotEditable, enabled)
+                                                    ExposedDropdownMenuAnchorType.PrimaryNotEditable,
+                                                    enabled
+                                                )
                                             )
 
                                             ExposedDropdownMenu(
@@ -295,7 +341,15 @@ fun BackgroundSyncDialog(
                                             ) {
                                                 TimeUnit.entries.forEach { unit ->
                                                     DropdownMenuItem(
-                                                        text = { Text(unit.displayName) },
+                                                        text = {
+                                                            Text(
+                                                                getTimeUnitDisplayName(
+                                                                    unit,
+                                                                    customInterval.toIntOrNull()
+                                                                        ?: 1
+                                                                )
+                                                            )
+                                                        },
                                                         onClick = {
                                                             customUnit = unit
                                                             expanded = false
@@ -320,7 +374,7 @@ fun BackgroundSyncDialog(
                         onClick = onDismiss,
                         modifier = Modifier.weight(1f)
                     ) {
-                        Text("Cancel")
+                        Text(stringResource(R.string.cancel))
                     }
 
                     FilledTonalButton(
@@ -356,7 +410,7 @@ fun BackgroundSyncDialog(
                             true
                         }
                     ) {
-                        Text("Save")
+                        Text(stringResource(R.string.save))
                     }
                 }
             }
@@ -405,7 +459,7 @@ private fun ElegantSyncToggleWithDescription(
             ) {
                 Icon(
                     imageVector = preset.icon,
-                    contentDescription = preset.displayName,
+                    contentDescription = stringResource(preset.displayNameRes),
                     modifier = Modifier.size(20.dp),
                     tint = if (isSelected) {
                         MaterialTheme.colorScheme.primary
@@ -418,15 +472,17 @@ private fun ElegantSyncToggleWithDescription(
 
         // Description outside the card
         Text(
-            text = preset.shortName,
+            modifier = Modifier.fillMaxWidth(),
+            text = stringResource(preset.shortNameRes),
             style = MaterialTheme.typography.labelSmall,
             color = if (isSelected) {
                 MaterialTheme.colorScheme.onSurface
             } else {
                 MaterialTheme.colorScheme.onSurfaceVariant
             },
+            maxLines = 1,
             textAlign = TextAlign.Center,
-            maxLines = 2
+            overflow = TextOverflow.Ellipsis
         )
     }
 }

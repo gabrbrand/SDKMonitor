@@ -53,6 +53,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.bernaferrari.sdkmonitor.R
+import com.bernaferrari.sdkmonitor.domain.model.AppFilter
 import com.bernaferrari.sdkmonitor.domain.model.LogEntry
 import com.bernaferrari.sdkmonitor.extensions.convertTimestampToDate
 
@@ -479,7 +480,7 @@ private fun TimelineHeader(
                             color = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)
                         ) {
                             Text(
-                                text = viewModel.getCurrentFilterDisplayName(),
+                                text = getFilterDisplayName(viewModel.getCurrentFilter()),
                                 modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
                                 style = MaterialTheme.typography.labelSmall.copy(
                                     fontWeight = FontWeight.Medium
@@ -654,6 +655,15 @@ private fun EnhancedProgressIndicator(
             trackColor = backgroundColor,
         )
     }
+}
+
+@Composable
+private fun getFilterDisplayName(filter: AppFilter): String {
+    return when (filter) {
+        AppFilter.ALL_APPS -> stringResource(R.string.all_apps)
+        AppFilter.USER_APPS -> stringResource(R.string.user_apps)
+        AppFilter.SYSTEM_APPS -> stringResource(R.string.system_apps)
+    }.lowercase()
 }
 
 fun formatLogTime(timestamp: Long, context: Context): String {

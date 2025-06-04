@@ -101,14 +101,14 @@ class LogsViewModel @Inject constructor(
         loadLogs()
     }
 
-    fun getCurrentFilterDisplayName(): String {
+    fun getCurrentFilter(): AppFilter {
         return try {
             runBlocking {
                 val preferences = preferencesRepository.getUserPreferences().first()
-                preferences.appFilter.displayName.lowercase()
+                preferences.appFilter
             }
         } catch (e: Exception) {
-            "filtered apps"
+            AppFilter.ALL_APPS
         }
     }
 }

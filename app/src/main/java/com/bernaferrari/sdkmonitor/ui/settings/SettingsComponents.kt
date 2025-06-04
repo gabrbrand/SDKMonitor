@@ -41,10 +41,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.bernaferrari.sdkmonitor.R
 import com.bernaferrari.sdkmonitor.domain.model.AppFilter
 import com.bernaferrari.sdkmonitor.ui.theme.SDKMonitorTheme
 
@@ -405,7 +407,11 @@ fun AnalyticsSection(
                                 tint = MaterialTheme.colorScheme.onSurface
                             )
                             Text(
-                                text = currentFilter.displayName,
+                                text = when (currentFilter) {
+                                    AppFilter.ALL_APPS -> stringResource(R.string.all_apps)
+                                    AppFilter.USER_APPS -> stringResource(R.string.user_apps)
+                                    AppFilter.SYSTEM_APPS -> stringResource(R.string.system_apps)
+                                },
                                 style = MaterialTheme.typography.labelMedium.copy(
                                     fontWeight = FontWeight.SemiBold
                                 ),
@@ -427,7 +433,7 @@ fun AnalyticsSection(
                         containerColor = MaterialTheme.colorScheme.surface
                     ) {
                         Text(
-                            text = "Filter Apps",
+                            text = stringResource(R.string.filter_apps),
                             style = MaterialTheme.typography.labelLarge.copy(
                                 fontWeight = FontWeight.Bold
                             ),
@@ -460,7 +466,11 @@ fun AnalyticsSection(
                                             }
                                         )
                                         Text(
-                                            text = filter.displayName,
+                                            text = when (filter) {
+                                                AppFilter.ALL_APPS -> stringResource(R.string.all_apps)
+                                                AppFilter.USER_APPS -> stringResource(R.string.user_apps)
+                                                AppFilter.SYSTEM_APPS -> stringResource(R.string.system_apps)
+                                            },
                                             style = MaterialTheme.typography.bodyMedium.copy(
                                                 fontWeight = if (currentFilter == filter) {
                                                     FontWeight.SemiBold

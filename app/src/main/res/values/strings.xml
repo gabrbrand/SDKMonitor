@@ -1,6 +1,16 @@
 <resources>
     <string name="app_name">SDK Monitor</string>
 
+    <!-- Theme Mode -->
+    <string name="theme_system">System</string>
+    <string name="theme_material_you">Dynamic</string>
+    <string name="theme_light">Light</string>
+    <string name="theme_dark">Dark</string>
+    <string name="theme_system_description">Follow system settings</string>
+    <string name="theme_material_you_description">Colors from wallpaper</string>
+    <string name="theme_light_description">Always light theme</string>
+    <string name="theme_dark_description">Always dark theme</string>
+
     <string-array name="singularTime">
         <item>minute</item>
         <item>hour</item>
@@ -111,9 +121,8 @@
     <string name="try_again">Try Again</string>
     <string name="target_sdk">Target SDK</string>
     <string name="min_sdk">Min SDK</string>
-    <string name="app_info">App Info</string>
-    <string name="play_store">Play Store</string>
     <string name="app_information">App Information</string>
+    <string name="play_store">Play Store</string>
     <string name="package_label">Package</string>
     <string name="version_label">Version</string>
     <string name="updated_label">Updated</string>
@@ -128,6 +137,15 @@
     <string name="light">Light</string>
     <string name="dark">Dark</string>
     <string name="system">System</string>
+    <string name="appearance">Appearance</string>
+    <string name="background_sync">Background Sync</string>
+    <string name="tap_to_configure_automatic_updates">Tap to configure background updates</string>
+    <string name="enabled_daily_updates">Enabled - Daily updates</string>
+    <string name="enabled_weekly_updates">Enabled - Weekly updates</string>
+    <string name="enabled_monthly_updates">Enabled - Monthly updates</string>
+    <string name="enabled_every">Enabled every %1$s %2$s</string>
+    <string name="delete_all_app_change_history_and_logs">Delete all app change history and logs</string>
+    <string name="confirm_clear_all_logs">This will permanently delete all app change history and logs. This action cannot be undone.</string>
     
     <!-- About Dialog -->
     <string name="about">About</string>
@@ -136,9 +154,24 @@
     <string name="github">GitHub</string>
     <string name="reddit">Reddit</string>
     <string name="linkedin">LinkedIn</string>
-    <string name="open_source_project">This project is open source and licensed under Apache 2.0</string>
-    
+    <string name="open_source_project">This project is open source and licensed under Apache 2.0.</string>
+
     <!-- Background Sync Dialog -->
+    <string name="apps_will_update_automatically">Apps will update automatically</string>
+    <string name="tap_to_enable_automatic_updates">Tap to enable automatic updates</string>
+    <string name="sync_frequency">Sync Frequency</string>
+    <string name="daily">Daily</string>
+    <string name="weekly">Weekly</string>
+    <string name="monthly">Monthly</string>
+    <string name="custom">Custom</string>
+    <string name="once_every_day">Once every day</string>
+    <string name="once_every_week">Once every week</string>
+    <string name="once_every_month">Once every month</string>
+    <string name="set_your_own_interval">Set your own interval</string>
+    <string name="set_custom_interval">Set Custom Interval</string>
+    <string name="every">Every</string>
+    <string name="unit">Unit</string>
+    <string name="required">Required</string>
     <string name="enable_sync">Enable Sync</string>
     <string name="disable_sync">Disable Sync</string>
     <string name="save">Save</string>
@@ -175,4 +208,9 @@
     <string name="try_different_filter">Try a different filter</string>
     <string name="filter_options">Filter options</string>
     <string name="percentage_format">%d%%</string>
+    <string name="data_management">Data Management</string>
+    <string name="about_section">About</string>
+    <string name="learn_more_about_app">Learn more about this app</string>
+    <string name="app_version_format">%1$s v%2$s</string>
+    <string name="unknown_error">Unknown error</string>
 </resources>

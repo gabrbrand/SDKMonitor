@@ -1,5 +1,15 @@
 <resources>
-    <string name="app_name">SDK监视器</string>
+    <string name="app_name">SDK Monitor</string>
+
+    <!-- Theme Mode -->
+    <string name="theme_system">系统</string>
+    <string name="theme_material_you">动态</string>
+    <string name="theme_light">浅色</string>
+    <string name="theme_dark">深色</string>
+    <string name="theme_system_description">跟随系统设置</string>
+    <string name="theme_material_you_description">壁纸取色</string>
+    <string name="theme_light_description">始终浅色主题</string>
+    <string name="theme_dark_description">始终深色主题</string>
 
     <string-array name="singularTime">
         <item>分钟</item>
@@ -14,18 +24,22 @@
     </string-array>
 
     <plurals name="searchApps">
+        <item quantity="one">搜索 %d 个应用</item>
         <item quantity="other">搜索 %d 个应用</item>
     </plurals>
 
     <plurals name="minutes_ago">
+        <item quantity="one">%d分钟前</item>
         <item quantity="other">%d分钟前</item>
     </plurals>
 
     <plurals name="hours_ago">
+        <item quantity="one">%d小时前</item>
         <item quantity="other">%d小时前</item>
     </plurals>
 
     <plurals name="days_ago">
+        <item quantity="one">%d天前</item>
         <item quantity="other">%d天前</item>
     </plurals>
 
@@ -85,7 +99,7 @@
     <string name="no_filtered_apps_found">未找到%s</string>
     
     <!-- Logs Screen -->
-    <string name="change_logs">变更日志</string>
+    <string name="change_logs">变更记录</string>
     <string name="loading_change_history">✨ 正在加载变更历史</string>
     <string name="analyzing_app_ecosystem">正在分析您的应用生态系统…</string>
     <string name="oops_something_went_wrong">哎呀！出现了问题</string>
@@ -105,11 +119,10 @@
     <string name="loading_app_details">正在加载应用详情</string>
     <string name="app_not_found">未找到应用</string>
     <string name="try_again">重试</string>
-    <string name="target_sdk">目标SDK</string>
-    <string name="min_sdk">最小SDK</string>
-    <string name="app_info">应用信息</string>
+    <string name="target_sdk">targetSDK</string>
+    <string name="min_sdk">minSDK</string>
+    <string name="app_information">应用信息</string>
     <string name="play_store">Play商店</string>
-    <string name="app_information">应用程序信息</string>
     <string name="package_label">包名</string>
     <string name="version_label">版本</string>
     <string name="updated_label">更新时间</string>
@@ -124,6 +137,15 @@
     <string name="light">浅色</string>
     <string name="dark">深色</string>
     <string name="system">系统</string>
+    <string name="appearance">外观</string>
+    <string name="background_sync">自动同步</string>
+    <string name="tap_to_configure_automatic_updates">点击配置自动更新</string>
+    <string name="enabled_daily_updates">已启用 - 每日更新</string>
+    <string name="enabled_weekly_updates">已启用 - 每周更新</string>
+    <string name="enabled_monthly_updates">已启用 - 每月更新</string>
+    <string name="enabled_every">每%1$s%2$s启用</string>
+    <string name="delete_all_app_change_history_and_logs">删除所有应用变更历史和日志</string>
+    <string name="confirm_clear_all_logs">这将永久删除所有应用变更历史和日志。此操作无法撤销。</string>
     
     <!-- About Dialog -->
     <string name="about">关于</string>
@@ -132,9 +154,24 @@
     <string name="github">GitHub</string>
     <string name="reddit">Reddit</string>
     <string name="linkedin">LinkedIn</string>
-    <string name="open_source_project">此项目是开源项目，采用Apache 2.0许可证</string>
-    
+    <string name="open_source_project">此项目是开源项目，采用Apache 2.0许可证。</string>
+
     <!-- Background Sync Dialog -->
+    <string name="apps_will_update_automatically">应用将自动更新</string>
+    <string name="tap_to_enable_automatic_updates">点击启用自动更新</string>
+    <string name="sync_frequency">同步频率</string>
+    <string name="daily">每日</string>
+    <string name="weekly">每周</string>
+    <string name="monthly">每月</string>
+    <string name="custom">自定义</string>
+    <string name="once_every_day">每天一次</string>
+    <string name="once_every_week">每周一次</string>
+    <string name="once_every_month">每月一次</string>
+    <string name="set_your_own_interval">设置您自己的间隔</string>
+    <string name="set_custom_interval">设置自定义间隔</string>
+    <string name="every">每</string>
+    <string name="unit">单位</string>
+    <string name="required">必填</string>
     <string name="enable_sync">启用同步</string>
     <string name="disable_sync">禁用同步</string>
     <string name="save">保存</string>
@@ -171,4 +208,9 @@
     <string name="try_different_filter">尝试不同的筛选器</string>
     <string name="filter_options">筛选选项</string>
     <string name="percentage_format">%d%%</string>
+    <string name="data_management">数据管理</string>
+    <string name="about_section">关于</string>
+    <string name="learn_more_about_app">了解更多关于此应用</string>
+    <string name="app_version_format">%1$s v%2$s</string>
+    <string name="unknown_error">未知错误</string>
 </resources>

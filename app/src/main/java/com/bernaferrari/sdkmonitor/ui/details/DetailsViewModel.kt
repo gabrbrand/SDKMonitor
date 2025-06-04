@@ -3,6 +3,7 @@ package com.bernaferrari.sdkmonitor.ui.details
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.bernaferrari.sdkmonitor.R
 import com.bernaferrari.sdkmonitor.core.AppManager
 import com.bernaferrari.sdkmonitor.domain.repository.AppsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -66,12 +67,14 @@ class DetailsViewModel @Inject constructor(
                         )
                     } else {
                         // App not found anywhere
-                        _uiState.value = DetailsUiState.Error("App not found")
+                        _uiState.value =
+                            DetailsUiState.Error(context.getString(R.string.app_not_found))
                     }
                 }
             } catch (e: Exception) {
                 // Handle any errors
-                _uiState.value = DetailsUiState.Error(e.message ?: "Unknown error")
+                _uiState.value =
+                    DetailsUiState.Error(e.message ?: context.getString(R.string.unknown_error))
             }
         }
     }

@@ -10,29 +10,22 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.DeleteSweep
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Sync
 import androidx.compose.material.icons.filled.SyncDisabled
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilledTonalButton
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -44,12 +37,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringArrayResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.compose.ui.res.stringResource
+import com.bernaferrari.sdkmonitor.BuildConfig
 import com.bernaferrari.sdkmonitor.R
 import com.bernaferrari.sdkmonitor.domain.model.ThemeMode
 
@@ -64,7 +58,19 @@ fun SettingsScreen(
     var selectedSdkVersion by remember { mutableIntStateOf(0) }
     var showSdkDialog by remember { mutableStateOf(false) }
     var showAboutDialog by remember { mutableStateOf(false) }
-    var showClearLogsDialog by remember { mutableStateOf(false) }
+
+    val singularTimeArray = stringArrayResource(R.array.singularTime)
+    val pluralTimeArray = stringArrayResource(R.array.pluralTime)
+
+    // Helper function to get the correct time unit display name
+    fun getTimeUnitDisplayName(unit: TimeUnit, value: String): String {
+        val intValue = value.toIntOrNull() ?: 1
+        return if (intValue == 1) {
+            singularTimeArray[unit.code]
+        } else {
+            pluralTimeArray[unit.code]
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -76,15 +82,6 @@ fun SettingsScreen(
                         overflow = TextOverflow.Ellipsis,
                         fontWeight = FontWeight.Bold
                     )
-                },
-                actions = {
-                    IconButton(onClick = { showAboutDialog = true }) {
-                        Icon(
-                            imageVector = Icons.Default.Info,
-                            contentDescription = stringResource(R.string.about),
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.surface
@@ -139,7 +136,8 @@ fun SettingsScreen(
                                 fontWeight = FontWeight.Bold
                             )
                             Text(
-                                text = uiState.errorMessage ?: "Unknown error",
+                                text = uiState.errorMessage
+                                    ?: stringResource(R.string.unknown_error),
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.onErrorContainer
                             )
@@ -160,7 +158,7 @@ fun SettingsScreen(
                 ) {
                     val prefs = uiState.preferences
 
-                    SettingsSection(title = "Appearance") {
+                    SettingsSection(title = stringResource(R.string.appearance)) {
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -197,33 +195,53 @@ fun SettingsScreen(
                     Spacer(modifier = Modifier.height(16.dp))
 
                     // Background Sync Section - SIMPLIFIED AND ELEGANT
-                    SettingsSection(title = "Background Sync") {
+                    SettingsSection(title = stringResource(R.string.background_sync)) {
                         SettingsItem(
-                            title = "Background Sync",
+                            title = stringResource(R.string.background_sync),
                             subtitle = if (prefs.backgroundSync) {
                                 when {
-                                    prefs.syncInterval == "1" && prefs.syncTimeUnit == TimeUnit.DAYS -> "Enabled • Daily updates"
-                                    prefs.syncInterval == "7" && prefs.syncTimeUnit == TimeUnit.DAYS -> "Enabled • Weekly updates"
-                                    prefs.syncInterval == "30" && prefs.syncTimeUnit == TimeUnit.DAYS -> "Enabled • Monthly updates"
-                                    else -> "Enabled • Every ${prefs.syncInterval} ${prefs.syncTimeUnit.displayName.lowercase()}"
+                                    prefs.syncInterval == "1" && prefs.syncTimeUnit == TimeUnit.DAYS -> stringResource(
+                                        R.string.enabled_daily_updates
+                                    )
+
+                                    prefs.syncInterval == "7" && prefs.syncTimeUnit == TimeUnit.DAYS -> stringResource(
+                                        R.string.enabled_weekly_updates
+                                    )
+
+                                    prefs.syncInterval == "30" && prefs.syncTimeUnit == TimeUnit.DAYS -> stringResource(
+                                        R.string.enabled_monthly_updates
+                                    )
+
+                                    else -> stringResource(
+                                        R.string.enabled_every,
+                                        prefs.syncInterval,
+                                        getTimeUnitDisplayName(
+                                            prefs.syncTimeUnit,
+                                            prefs.syncInterval
+                                        ).lowercase()
+                                    )
                                 }
                             } else {
-                                "Tap to configure automatic updates"
+                                stringResource(R.string.tap_to_configure_automatic_updates)
                             },
                             icon = if (prefs.backgroundSync) Icons.Default.Sync else Icons.Default.SyncDisabled,
                             onClick = { showSyncDialog = true }
                         )
                     }
 
-                    Spacer(modifier = Modifier.height(32.dp))
+                    Spacer(modifier = Modifier.height(16.dp))
 
-                    // Data Management Section - NEW
-                    SettingsSection(title = "Data Management") {
+                    // About Section
+                    SettingsSection(title = stringResource(R.string.about_section)) {
                         SettingsItem(
-                            title = stringResource(R.string.clear_all),
-                            subtitle = "Delete all app change history and logs",
-                            icon = Icons.Default.DeleteSweep,
-                            onClick = { showClearLogsDialog = true }
+                            title = stringResource(
+                                R.string.app_version_format,
+                                stringResource(R.string.app_name),
+                                BuildConfig.VERSION_NAME
+                            ),
+                            subtitle = stringResource(R.string.learn_more_about_app),
+                            icon = Icons.Default.Info,
+                            onClick = { showAboutDialog = true }
                         )
                     }
 
@@ -269,55 +287,6 @@ fun SettingsScreen(
     if (showAboutDialog) {
         AboutDialog(
             onDismiss = { showAboutDialog = false }
-        )
-    }
-
-    // Clear Logs Dialog - NEW
-    if (showClearLogsDialog) {
-        AlertDialog(
-            onDismissRequest = { showClearLogsDialog = false },
-            title = {                    Text(
-                        stringResource(R.string.clear_all),
-                        style = MaterialTheme.typography.headlineSmall.copy(
-                            fontWeight = FontWeight.ExtraBold
-                        )
-                    )
-            },
-            text = {
-                Text(
-                    "Are you sure you want to clear all change logs and app data? This action cannot be undone and will permanently remove your app update history.",
-                    style = MaterialTheme.typography.bodyLarge.copy(
-                        lineHeight = 22.sp
-                    )
-                )
-            },
-            confirmButton = {
-                FilledTonalButton(
-                    onClick = {
-                        viewModel.clearAllLogs()
-                        showClearLogsDialog = false
-                    },
-                    colors = ButtonDefaults.filledTonalButtonColors(
-                        containerColor = MaterialTheme.colorScheme.errorContainer,
-                        contentColor = MaterialTheme.colorScheme.onErrorContainer
-                    )
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.DeleteSweep,
-                        contentDescription = null,
-                        modifier = Modifier.size(18.dp)
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(stringResource(R.string.clear_all), fontWeight = FontWeight.Bold)
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { showClearLogsDialog = false }) {
-                    Text(stringResource(R.string.cancel), fontWeight = FontWeight.Medium)
-                }
-            },
-            shape = RoundedCornerShape(28.dp),
-            containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
         )
     }
 }

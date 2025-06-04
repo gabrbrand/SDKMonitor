@@ -29,8 +29,8 @@ data class SettingsPreferences(
 )
 
 
-enum class TimeUnit(val displayName: String, val code: Int) {
-    MINUTES("Minutes", 0),
-    HOURS("Hours", 1),
-    DAYS("Days", 2)
+enum class TimeUnit(val code: Int) {
+    MINUTES(0),
+    HOURS(1),
+    DAYS(2)
 }

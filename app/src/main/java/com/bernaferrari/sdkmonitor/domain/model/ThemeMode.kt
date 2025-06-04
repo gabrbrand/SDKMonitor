@@ -6,35 +6,35 @@ import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material.icons.filled.PhoneAndroid
 import androidx.compose.ui.graphics.vector.ImageVector
+import com.bernaferrari.sdkmonitor.R
 
 /**
  * 🎨 Beautiful Theme Mode Options - The Perfect Visual Experience!
  * Supports Material You dynamic theming with gorgeous fallbacks
  */
 enum class ThemeMode(
-    val displayName: String,
-    val description: String,
+    val displayNameRes: Int,
+    val descriptionRes: Int,
     val icon: ImageVector,
 ) {
     SYSTEM(
-        displayName = "System",
-        description = "Match your device settings",
+        displayNameRes = R.string.theme_system,
+        descriptionRes = R.string.theme_system_description,
         icon = Icons.Default.PhoneAndroid,
     ),
     MATERIAL_YOU(
-        displayName = "For You",
-        description = "Dynamic colors from your wallpaper",
+        displayNameRes = R.string.theme_material_you,
+        descriptionRes = R.string.theme_material_you_description,
         icon = Icons.Default.Palette,
     ),
     LIGHT(
-        displayName = "Light",
-        description = "Always use light theme",
+        displayNameRes = R.string.theme_light,
+        descriptionRes = R.string.theme_light_description,
         icon = Icons.Default.LightMode,
     ),
     DARK(
-        displayName = "Dark",
-        description = "Always use dark theme",
+        displayNameRes = R.string.theme_dark,
+        descriptionRes = R.string.theme_dark_description,
         icon = Icons.Default.DarkMode,
     ),
-
 }

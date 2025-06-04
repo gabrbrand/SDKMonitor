@@ -1,5 +1,15 @@
 <resources>
-    <string name="app_name">Monitor SDK</string>
+    <string name="app_name">SDK Monitor</string>
+
+    <!-- Theme Mode -->
+    <string name="theme_system">Sistema</string>
+    <string name="theme_material_you">Dinâmico</string>
+    <string name="theme_light">Claro</string>
+    <string name="theme_dark">Escuro</string>
+    <string name="theme_system_description">Seguir configurações do sistema</string>
+    <string name="theme_material_you_description">Cores do papel de parede</string>
+    <string name="theme_light_description">Sempre tema claro</string>
+    <string name="theme_dark_description">Sempre tema escuro</string>
 
     <string-array name="singularTime">
         <item>minuto</item>
@@ -15,22 +25,22 @@
 
     <plurals name="searchApps">
         <item quantity="one">Buscar %d app</item>
-        <item quantity="many">Buscar %d apps</item>
+        <item quantity="other">Buscar %d apps</item>
     </plurals>
 
     <plurals name="minutes_ago">
         <item quantity="one">há %d minuto</item>
-        <item quantity="many">há %d minutos</item>
+        <item quantity="other">há %d minutos</item>
     </plurals>
 
     <plurals name="hours_ago">
         <item quantity="one">há %d hora</item>
-        <item quantity="many">há %d horas</item>
+        <item quantity="other">há %d horas</item>
     </plurals>
 
     <plurals name="days_ago">
         <item quantity="one">há %d dia</item>
-        <item quantity="many">há %d dias</item>
+        <item quantity="other">há %d dias</item>
     </plurals>
 
     <string name="sync_every" formatted="false">Sincronizar a cada %d %s</string>
@@ -50,11 +60,11 @@
 
     <string name="background_sync_description">Verifica periodicamente se o targetSDK mudou, já que os apps estão sempre sendo atualizados.</string>
     <string name="home">Início</string>
-    <string name="logs">Logs</string>
+    <string name="logs">Registros</string>
     <string name="settings">Configurações</string>
     <string name="loading">Carregando..</string>
 
-    <string name="target_sdk_logs">Logs do TargetSDK</string>
+    <string name="target_sdk_logs">Registros do targetSDK</string>
     <string name="no_logs_yet">Ainda Sem Logs</string>
     <string name="app_changes_will_appear">Mudanças nos apps aparecerão aqui conforme acontecem</string>
     <string name="failed_to_load_logs">Falha ao Carregar Logs</string>
@@ -63,7 +73,7 @@
 
     <!-- Navigation titles -->
     <string name="main_title">Apps</string>
-    <string name="logs_title">Logs</string>
+    <string name="logs_title">Registros</string>
     <string name="settings_title">Configurações</string>
 
     <!-- Time formatting -->
@@ -77,8 +87,8 @@
     <string name="filter_apps">Filtrar Apps</string>
     <string name="sort_by">Ordenar Por</string>
     <string name="all_apps">Todos os Apps</string>
-    <string name="user_apps">Apps do Usuário</string>
-    <string name="system_apps">Apps do Sistema</string>
+    <string name="user_apps">Apps do usuário</string>
+    <string name="system_apps">Apps do sistema</string>
     <string name="sort_by_name">Nome</string>
     <string name="sort_by_sdk">Versão do SDK</string>
     <string name="loading_apps">Carregando apps…</string>
@@ -89,14 +99,14 @@
     <string name="no_filtered_apps_found">Nenhum %s encontrado</string>
 
     <!-- Logs Screen -->
-    <string name="change_logs">Logs de Alterações</string>
+    <string name="change_logs">Histórico de alterações</string>
     <string name="loading_change_history">✨ Carregando Histórico de Alterações</string>
     <string name="analyzing_app_ecosystem">Analisando seu ecossistema de aplicativos…</string>
     <string name="oops_something_went_wrong">Ops! Algo deu errado</string>
     <string name="no_changes_yet">🌟 Ainda Sem Alterações</string>
     <string name="when_apps_update_description">Quando os apps atualizarem suas versões do SDK de destino, você verá uma linda linha do tempo das mudanças aqui</string>
     <string name="sdk_monitor_watching">✨ Monitor SDK está observando</string>
-    <string name="change_timeline">Linha do Tempo das Alterações</string>
+    <string name="change_timeline">Histórico de alterações</string>
     <string name="showing">Exibindo</string>
     <string name="activity_overview">Visão Geral da Atividade</string>
     <string name="past_week">Última Semana</string>
@@ -109,11 +119,10 @@
     <string name="loading_app_details">Carregando Detalhes do App</string>
     <string name="app_not_found">App Não Encontrado</string>
     <string name="try_again">Tentar Novamente</string>
-    <string name="target_sdk">SDK de Destino</string>
-    <string name="min_sdk">SDK Mínimo</string>
-    <string name="app_info">Info do App</string>
+    <string name="target_sdk">targetSDK</string>
+    <string name="min_sdk">minSDK</string>
+    <string name="app_information">Informações do app</string>
     <string name="play_store">Play Store</string>
-    <string name="app_information">Informações do App</string>
     <string name="package_label">Pacote</string>
     <string name="version_label">Versão</string>
     <string name="updated_label">Atualizado</string>
@@ -128,24 +137,23 @@
     <string name="light">Claro</string>
     <string name="dark">Escuro</string>
     <string name="system">Sistema</string>
+    <string name="appearance">Aparência</string>
+    <string name="tap_to_configure_automatic_updates">Toque para configurar atualizações automáticas</string>
+    <string name="enabled_daily_updates">Ativado - Atualizações diárias</string>
+    <string name="enabled_weekly_updates">Ativado - Atualizações semanais</string>
+    <string name="enabled_monthly_updates">Ativado - Atualizações mensais</string>
+    <string name="enabled_every">Ativado a cada %1$s %2$s</string>
+    <string name="delete_all_app_change_history_and_logs">Excluir todo histórico de alterações e logs dos apps</string>
+    <string name="confirm_clear_all_logs">Isso excluirá permanentemente todo o histórico de alterações e logs dos apps. Esta ação não pode ser desfeita.</string>
 
     <!-- About Dialog -->
     <string name="about">Sobre</string>
-    <string name="designed_developed_by">Projetado &amp; desenvolvido por</string>
+    <string name="designed_developed_by">Projetado e desenvolvido por</string>
     <string name="bernardo_ferrari">Bernardo Ferrari</string>
     <string name="github">GitHub</string>
     <string name="reddit">Reddit</string>
     <string name="linkedin">LinkedIn</string>
-    <string name="open_source_project">Este projeto é código aberto e licenciado sob Apache 2.0</string>
-
-    <!-- Background Sync Dialog -->
-    <string name="enable_sync">Ativar Sincronização</string>
-    <string name="disable_sync">Desativar Sincronização</string>
-    <string name="save">Salvar</string>
-    <string name="cancel">Cancelar</string>
-    <string name="wifi_only">Apenas WiFi</string>
-    <string name="requires_charging">Requer carregamento</string>
-    <string name="battery_not_low">Bateria não está baixa</string>
+    <string name="open_source_project">Este projeto é código aberto e licenciado sob Apache 2.0.</string>
 
     <!-- Common UI Elements -->
     <string name="error">Erro</string>
@@ -175,4 +183,34 @@
     <string name="try_different_filter">Tente um filtro diferente</string>
     <string name="filter_options">Opções de filtro</string>
     <string name="percentage_format">%d%%</string>
+    <string name="data_management">Gerenciamento de Dados</string>
+    <string name="about_section">Sobre</string>
+    <string name="learn_more_about_app">Saiba mais sobre este app</string>
+    <string name="app_version_format">%1$s v%2$s</string>
+    <string name="unknown_error">Erro desconhecido</string>
+
+    <!-- Background Sync Dialog -->
+    <string name="enable_sync">Ativar Sync</string>
+    <string name="disable_sync">Desativar Sync</string>
+    <string name="save">Salvar</string>
+    <string name="cancel">Cancelar</string>
+    <string name="wifi_only">Apenas WiFi</string>
+    <string name="requires_charging">Requer carregamento</string>
+    <string name="battery_not_low">Bateria não baixa</string>
+    <string name="background_sync">Sincronização Automática</string>
+    <string name="apps_will_update_automatically">Apps serão atualizados automaticamente</string>
+    <string name="tap_to_enable_automatic_updates">Toque para ativar atualizações automáticas</string>
+    <string name="sync_frequency">Frequência de Sincronização</string>
+    <string name="daily">Diariamente</string>
+    <string name="weekly">Semanalmente</string>
+    <string name="monthly">Mensalmente</string>
+    <string name="custom">Personalizado</string>
+    <string name="once_every_day">Uma vez por dia</string>
+    <string name="once_every_week">Uma vez por semana</string>
+    <string name="once_every_month">Uma vez por mês</string>
+    <string name="set_your_own_interval">Defina seu próprio intervalo</string>
+    <string name="set_custom_interval">Definir Intervalo Personalizado</string>
+    <string name="every">A cada</string>
+    <string name="unit">Unidade</string>
+    <string name="required">Obrigatório</string>
 </resources>

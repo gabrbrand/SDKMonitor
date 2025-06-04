@@ -1,81 +1,15 @@
 <resources>
-    <!-- Main Screen -->
-    <string name="app_name">Monitor SDK</string>
-    <string name="apps_count" formatted="false">%d app</string>
-    <string name="search_apps_hint">Cerca app…</string>
-    <string name="clear_search">Cancella ricerca</string>
-    <string name="filter_apps">Filtra App</string>
-    <string name="sort_by">Ordina per</string>
-    <string name="all_apps">Tutte le App</string>
-    <string name="user_apps">App Utente</string>
-    <string name="system_apps">App Sistema</string>
-    <string name="sort_by_name">Nome</string>
-    <string name="sort_by_sdk">Versione SDK</string>
-    <string name="loading_apps">Caricamento app…</string>
-    <string name="something_went_wrong">Qualcosa è andato storto</string>
-    <string name="no_apps_found">Nessuna app trovata</string>
-    <string name="try_searching_different_terms">Prova a cercare con termini diversi</string>
-    <string name="try_changing_filter">Prova a cambiare il tuo filtro</string>
-    <string name="no_filtered_apps_found">Nessuna %s trovata</string>
-    
-    <!-- Logs Screen -->
-    <string name="change_logs">Log delle Modifiche</string>
-    <string name="loading_change_history">✨ Caricamento Cronologia Modifiche</string>
-    <string name="analyzing_app_ecosystem">Analizzando il tuo ecosistema di app…</string>
-    <string name="oops_something_went_wrong">Ops! Qualcosa è andato storto</string>
-    <string name="no_changes_yet">🌟 Nessuna Modifica Ancora</string>
-    <string name="when_apps_update_description">Quando le app aggiornano le loro versioni SDK target, vedrai una bella timeline delle modifiche qui</string>
-    <string name="sdk_monitor_watching">✨ Monitor SDK sta guardando</string>
-    <string name="change_timeline">Timeline delle Modifiche</string>
-    <string name="showing">Mostrando</string>
-    <string name="activity_overview">Panoramica Attività</string>
-    <string name="past_week">Settimana Scorsa</string>
-    <string name="past_month">Mese Scorso</string>
-    <string name="past_6_months">Ultimi 6 Mesi</string>
-    
-    <!-- Details Screen -->
-    <string name="app_details">Dettagli App</string>
-    <string name="back">Indietro</string>
-    <string name="loading_app_details">Caricamento Dettagli App</string>
-    <string name="app_not_found">App Non Trovata</string>
-    <string name="try_again">Riprova</string>
-    <string name="target_sdk">SDK Target</string>
-    <string name="min_sdk">SDK Min</string>
-    <string name="app_info">Info App</string>
-    <string name="play_store">Play Store</string>
-    <string name="app_information">Informazioni App</string>
-    <string name="package_label">Package</string>
-    <string name="version_label">Versione</string>
-    <string name="updated_label">Aggiornato</string>
-    <string name="size_label">Dimensione</string>
-    <string name="version_history">Cronologia Versioni</string>
-    <string name="no_version_history">Nessuna cronologia versioni disponibile ancora. Quando l\'app si aggiorna, vedrai la sua evoluzione qui.</string>
-    <string name="latest">ULTIMO</string>
-    <string name="api_version">API %d</string>
-    
-    <!-- Settings Screen -->
-    <string name="theme_mode">Modalità Tema</string>
-    <string name="light">Chiaro</string>
-    <string name="dark">Scuro</string>
-    <string name="system">Sistema</string>
-    
-    <!-- About Dialog -->
-    <string name="about">Info</string>
-    <string name="designed_developed_by">Progettato &amp; sviluppato da</string>
-    <string name="bernardo_ferrari">Bernardo Ferrari</string>
-    <string name="github">GitHub</string>
-    <string name="reddit">Reddit</string>
-    <string name="linkedin">LinkedIn</string>
-    <string name="open_source_project">Questo progetto è open source e licenziato sotto Apache 2.0</string>
-    
-    <!-- Background Sync Dialog -->
-    <string name="enable_sync">Abilita Sync</string>
-    <string name="disable_sync">Disabilita Sync</string>
-    <string name="save">Salva</string>
-    <string name="cancel">Annulla</string>
-    <string name="wifi_only">Solo WiFi</string>
-    <string name="requires_charging">Richiede carica</string>
-    <string name="battery_not_low">Batteria non scarica</string>
+    <string name="app_name">SDK Monitor</string>
+
+    <!-- Theme Mode -->
+    <string name="theme_system">Sistema</string>
+    <string name="theme_material_you">Dinamico</string>
+    <string name="theme_light">Chiaro</string>
+    <string name="theme_dark">Scuro</string>
+    <string name="theme_system_description">Segui impostazioni sistema</string>
+    <string name="theme_material_you_description">Colori dallo sfondo</string>
+    <string name="theme_light_description">Sempre tema chiaro</string>
+    <string name="theme_dark_description">Sempre tema scuro</string>
 
     <string-array name="singularTime">
         <item>minuto</item>
@@ -92,21 +26,25 @@
     <plurals name="searchApps">
         <item quantity="one">Cerca %d app</item>
         <item quantity="many">Cerca %d app</item>
+        <item quantity="other">Cerca %d app</item>
     </plurals>
 
     <plurals name="minutes_ago">
         <item quantity="one">%d minuto fa</item>
         <item quantity="many">%d minuti fa</item>
+        <item quantity="other">%d minuti fa</item>
     </plurals>
 
     <plurals name="hours_ago">
         <item quantity="one">%d ora fa</item>
         <item quantity="many">%d ore fa</item>
+        <item quantity="other">%d ore fa</item>
     </plurals>
 
     <plurals name="days_ago">
         <item quantity="one">%d giorno fa</item>
         <item quantity="many">%d giorni fa</item>
+        <item quantity="other">%d giorni fa</item>
     </plurals>
 
     <string name="sync_every" formatted="false">Sincronizza ogni %d %s</string>
@@ -146,6 +84,106 @@
     <string name="just_now">Proprio ora</string>
     <string name="never">Mai</string>
 
+    <!-- Main Screen -->
+    <string name="apps_count" formatted="false">%d app</string>
+    <string name="search_apps_hint">Cerca app…</string>
+    <string name="clear_search">Cancella ricerca</string>
+    <string name="filter_apps">Filtra app</string>
+    <string name="sort_by">Ordina per</string>
+    <string name="all_apps">Tutte le app</string>
+    <string name="user_apps">App utente</string>
+    <string name="system_apps">App sistema</string>
+    <string name="sort_by_name">Nome</string>
+    <string name="sort_by_sdk">Versione SDK</string>
+    <string name="loading_apps">Caricamento app…</string>
+    <string name="something_went_wrong">Qualcosa è andato storto</string>
+    <string name="no_apps_found">Nessuna app trovata</string>
+    <string name="try_searching_different_terms">Prova a cercare con termini diversi</string>
+    <string name="try_changing_filter">Prova a cambiare il tuo filtro</string>
+    <string name="no_filtered_apps_found">Nessuna %s trovata</string>
+
+    <!-- Logs Screen -->
+    <string name="change_logs">Cronologia modifiche</string>
+    <string name="loading_change_history">✨ Caricamento cronologia modifiche</string>
+    <string name="analyzing_app_ecosystem">Analizzando il tuo ecosistema di app…</string>
+    <string name="oops_something_went_wrong">Ops! Qualcosa è andato storto</string>
+    <string name="no_changes_yet">🌟 Nessuna modifica ancora</string>
+    <string name="when_apps_update_description">Quando le app aggiornano le loro versioni SDK target, vedrai una bella timeline delle modifiche qui</string>
+    <string name="sdk_monitor_watching">✨ SDK Monitor sta guardando</string>
+    <string name="change_timeline">Cronologia modifiche</string>
+    <string name="showing">Mostrando</string>
+    <string name="activity_overview">Panoramica attività</string>
+    <string name="past_week">Settimana scorsa</string>
+    <string name="past_month">Mese scorso</string>
+    <string name="past_6_months">Ultimi 6 mesi</string>
+
+    <!-- Details Screen -->
+    <string name="app_details">Dettagli app</string>
+    <string name="back">Indietro</string>
+    <string name="loading_app_details">Caricamento dettagli app</string>
+    <string name="app_not_found">App non trovata</string>
+    <string name="try_again">Riprova</string>
+    <string name="target_sdk">targetSDK</string>
+    <string name="min_sdk">minSDK</string>
+    <string name="app_information">Informazioni app</string>
+    <string name="play_store">Play Store</string>
+    <string name="package_label">Package</string>
+    <string name="version_label">Versione</string>
+    <string name="updated_label">Aggiornato</string>
+    <string name="size_label">Dimensione</string>
+    <string name="version_history">Cronologia versioni</string>
+    <string name="no_version_history">Nessuna cronologia versioni disponibile ancora. Quando l\'app si aggiorna, vedrai la sua evoluzione qui.</string>
+    <string name="latest">ULTIMO</string>
+    <string name="api_version">API %d</string>
+
+    <!-- Settings Screen -->
+    <string name="theme_mode">Modalità tema</string>
+    <string name="light">Chiaro</string>
+    <string name="dark">Scuro</string>
+    <string name="system">Sistema</string>
+    <string name="appearance">Aspetto</string>
+    <string name="background_sync">Sincronizzazione automatica</string>
+    <string name="tap_to_configure_automatic_updates">Tocca per configurare aggiornamenti automatici</string>
+    <string name="enabled_daily_updates">Abilitato - Aggiornamenti giornalieri</string>
+    <string name="enabled_weekly_updates">Abilitato - Aggiornamenti settimanali</string>
+    <string name="enabled_monthly_updates">Abilitato - Aggiornamenti mensili</string>
+    <string name="enabled_every">Abilitato ogni %1$s %2$s</string>
+    <string name="delete_all_app_change_history_and_logs">Elimina tutta la cronologia dei cambiamenti delle app e i log</string>
+    <string name="confirm_clear_all_logs">Questo eliminerà permanentemente tutta la cronologia dei cambiamenti delle app e i log. Questa azione non può essere annullata.</string>
+
+    <!-- About Dialog -->
+    <string name="about">Info</string>
+    <string name="designed_developed_by">Progettato e sviluppato da</string>
+    <string name="bernardo_ferrari">Bernardo Ferrari</string>
+    <string name="github">GitHub</string>
+    <string name="reddit">Reddit</string>
+    <string name="linkedin">LinkedIn</string>
+    <string name="open_source_project">Questo progetto è open source e licenziato sotto Apache 2.0.</string>
+
+    <!-- Background Sync Dialog -->
+    <string name="enable_sync">Abilita Sync</string>
+    <string name="disable_sync">Disabilita Sync</string>
+    <string name="save">Salva</string>
+    <string name="cancel">Annulla</string>
+    <string name="wifi_only">Solo WiFi</string>
+    <string name="requires_charging">Richiede carica</string>
+    <string name="battery_not_low">Batteria non scarica</string>
+    <string name="apps_will_update_automatically">Le app si aggiorneranno automaticamente</string>
+    <string name="tap_to_enable_automatic_updates">Tocca per abilitare aggiornamenti automatici</string>
+    <string name="sync_frequency">Frequenza di Sincronizzazione</string>
+    <string name="daily">Giornaliera</string>
+    <string name="weekly">Settimanale</string>
+    <string name="monthly">Mensile</string>
+    <string name="custom">Personalizzata</string>
+    <string name="once_every_day">Una volta al giorno</string>
+    <string name="once_every_week">Una volta alla settimana</string>
+    <string name="once_every_month">Una volta al mese</string>
+    <string name="set_your_own_interval">Imposta il tuo intervallo</string>
+    <string name="set_custom_interval">Imposta Intervallo Personalizzato</string>
+    <string name="every">Ogni</string>
+    <string name="unit">Unità</string>
+    <string name="required">Obbligatorio</string>
+
     <!-- Common UI Elements -->
     <string name="error">Errore</string>
     <string name="close">Chiudi</string>
@@ -174,4 +212,9 @@
     <string name="try_different_filter">Prova un filtro diverso</string>
     <string name="filter_options">Opzioni filtro</string>
     <string name="percentage_format">%d%%</string>
+    <string name="data_management">Gestione Dati</string>
+    <string name="about_section">Info</string>
+    <string name="learn_more_about_app">Scopri di più su questa app</string>
+    <string name="app_version_format">%1$s v%2$s</string>
+    <string name="unknown_error">Errore sconosciuto</string>
 </resources>
