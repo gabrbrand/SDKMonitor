@@ -11,7 +11,7 @@ plugins {
 }
 
 android {
-    compileSdk = AndroidConfig.compileSdk
+    compileSdk = 36
 
     signingConfigs {
         register("release") {
@@ -35,8 +35,8 @@ android {
 
     defaultConfig {
         applicationId = "com.bernaferrari.sdkmonitor"
-        minSdk = AndroidConfig.minSdk
-        targetSdk = AndroidConfig.targetSdk
+        minSdk = 28
+        targetSdk = 36
         versionCode = 14
         versionName = "2.0.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -120,6 +120,7 @@ dependencies {
     // Hilt for Dependency Injection
     implementation(libs.hilt.android)
     ksp(libs.hilt.android.compiler)
+    implementation(libs.hilt.compiler)
     implementation(libs.hilt.navigation.compose)
     implementation(libs.hilt.work)
 
