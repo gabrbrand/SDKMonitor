@@ -1,0 +1,174 @@
+<resources>
+    <string name="app_name">SDKモニター</string>
+
+    <string-array name="singularTime">
+        <item>分</item>
+        <item>時間</item>
+        <item>日</item>
+    </string-array>
+
+    <string-array name="pluralTime">
+        <item>分</item>
+        <item>時間</item>
+        <item>日</item>
+    </string-array>
+
+    <plurals name="searchApps">
+        <item quantity="other">%d個のアプリを検索</item>
+    </plurals>
+
+    <plurals name="minutes_ago">
+        <item quantity="other">%d分前</item>
+    </plurals>
+
+    <plurals name="hours_ago">
+        <item quantity="other">%d時間前</item>
+    </plurals>
+
+    <plurals name="days_ago">
+        <item quantity="other">%d日前</item>
+    </plurals>
+
+    <string name="sync_every" formatted="false">%d %s毎に同期</string>
+    <string name="sync_disabled">同期が無効です</string>
+
+    <string name="dismiss">閉じる</string>
+    <string name="contact">連絡先</string>
+    <string name="about_title">SDKモニター v%1$s</string>
+    <string name="about_body"><![CDATA[
+        <b>Bernardo Ferrari</b>によってデザイン・開発されました。<br/>
+        <a href=\'https://github.com/bernaferrari\'>GitHub</a>&nbsp;&nbsp;
+        <a href=\'https://www.reddit.com/user/bernaferrari\'>Reddit</a>&nbsp;&nbsp;
+        <a href=\'https://www.linkedin.com/in/bernaferrari\'>LinkedIn</a><br/><br/>
+        このプロジェクトは<a href=\'https://github.com/bernaferrari/SDKMonitor\'>オープンソース</a>で、
+        Apache 2.0の下でライセンスされています。
+  ]]></string>
+
+    <string name="background_sync_description">アプリは常に更新されているため、targetSDKが変更されたかどうかを定期的にチェックします。</string>
+    <string name="home">ホーム</string>
+    <string name="logs">ログ</string>
+    <string name="settings">設定</string>
+    <string name="loading">読み込み中</string>
+
+    <string name="target_sdk_logs">TargetSDKログ</string>
+    <string name="no_logs_yet">まだログがありません</string>
+    <string name="app_changes_will_appear">アプリの変更がここに表示されます</string>
+    <string name="failed_to_load_logs">ログの読み込みに失敗しました</string>
+    <string name="loading_logs">ログを読み込み中…</string>
+    <string name="retry">再試行</string>
+    
+    <!-- Navigation titles -->
+    <string name="main_title">アプリ</string>
+    <string name="logs_title">ログ</string>
+    <string name="settings_title">設定</string>
+
+    <!-- Time formatting -->
+    <string name="just_now">たった今</string>
+    <string name="never">なし</string>
+
+    <!-- Main Screen -->
+    <string name="apps_count">%d個のアプリ</string>
+    <string name="search_apps_hint">アプリを検索…</string>
+    <string name="clear_search">検索をクリア</string>
+    <string name="filter_apps">アプリをフィルター</string>
+    <string name="sort_by">並び替え</string>
+    <string name="all_apps">すべてのアプリ</string>
+    <string name="user_apps">ユーザーアプリ</string>
+    <string name="system_apps">システムアプリ</string>
+    <string name="sort_by_name">名前</string>
+    <string name="sort_by_sdk">SDKバージョン</string>
+    <string name="loading_apps">アプリを読み込み中…</string>
+    <string name="something_went_wrong">問題が発生しました</string>
+    <string name="no_apps_found">アプリが見つかりません</string>
+    <string name="try_searching_different_terms">別のキーワードで検索してみてください</string>
+    <string name="try_changing_filter">フィルターを変更してみてください</string>
+    <string name="no_filtered_apps_found">%sが見つかりません</string>
+    
+    <!-- Logs Screen -->
+    <string name="change_logs">変更ログ</string>
+    <string name="loading_change_history">✨ 変更履歴を読み込み中</string>
+    <string name="analyzing_app_ecosystem">アプリエコシステムを分析中…</string>
+    <string name="oops_something_went_wrong">おっと！問題が発生しました</string>
+    <string name="no_changes_yet">🌟 まだ変更はありません</string>
+    <string name="when_apps_update_description">アプリがターゲットSDKバージョンを更新すると、ここに美しいタイムラインが表示されます</string>
+    <string name="sdk_monitor_watching">✨ SDKモニターが監視中</string>
+    <string name="change_timeline">変更タイムライン</string>
+    <string name="showing">表示中</string>
+    <string name="activity_overview">アクティビティ概要</string>
+    <string name="past_week">過去1週間</string>
+    <string name="past_month">過去1ヶ月</string>
+    <string name="past_6_months">過去6ヶ月</string>
+    
+    <!-- Details Screen -->
+    <string name="app_details">アプリ詳細</string>
+    <string name="back">戻る</string>
+    <string name="loading_app_details">アプリ詳細を読み込み中</string>
+    <string name="app_not_found">アプリが見つかりません</string>
+    <string name="try_again">再試行</string>
+    <string name="target_sdk">ターゲットSDK</string>
+    <string name="min_sdk">最小SDK</string>
+    <string name="app_info">アプリ情報</string>
+    <string name="play_store">Play Store</string>
+    <string name="app_information">アプリケーション情報</string>
+    <string name="package_label">パッケージ</string>
+    <string name="version_label">バージョン</string>
+    <string name="updated_label">更新日</string>
+    <string name="size_label">サイズ</string>
+    <string name="version_history">バージョン履歴</string>
+    <string name="no_version_history">まだバージョン履歴はありません。アプリが更新されると、その変遷をここで確認できます。</string>
+    <string name="latest">最新</string>
+    <string name="api_version">API %d</string>
+    
+    <!-- Settings Screen -->
+    <string name="theme_mode">テーマモード</string>
+    <string name="light">ライト</string>
+    <string name="dark">ダーク</string>
+    <string name="system">システム</string>
+    
+    <!-- About Dialog -->
+    <string name="about">このアプリについて</string>
+    <string name="designed_developed_by">デザイン・開発</string>
+    <string name="bernardo_ferrari">Bernardo Ferrari</string>
+    <string name="github">GitHub</string>
+    <string name="reddit">Reddit</string>
+    <string name="linkedin">LinkedIn</string>
+    <string name="open_source_project">このプロジェクトはオープンソースで、Apache 2.0の下でライセンスされています</string>
+    
+    <!-- Background Sync Dialog -->
+    <string name="enable_sync">同期を有効にする</string>
+    <string name="disable_sync">同期を無効にする</string>
+    <string name="save">保存</string>
+    <string name="cancel">キャンセル</string>
+    <string name="wifi_only">WiFiのみ</string>
+    <string name="requires_charging">充電が必要</string>
+    <string name="battery_not_low">バッテリー残量が少なくない</string>
+    
+    <!-- Common UI Elements -->
+    <string name="error">エラー</string>
+    <string name="close">閉じる</string>
+    <string name="open">開く</string>
+    <string name="analytics">分析</string>
+    <string name="timeline">タイムライン</string>
+    <string name="updated_to">更新先</string>
+    <string name="app_icon">アプリアイコン</string>
+    <string name="app_icon_for">%sのアプリアイコン</string>
+    <string name="clear_all">すべてクリア</string>
+    <string name="loading_settings">設定を読み込み中…</string>
+    <string name="error_loading_settings">設定の読み込みエラー</string>
+    <string name="settings_screen_title">設定</string>
+    <string name="privacy_first">🔒 プライバシー優先</string>
+    <string name="privacy_description">このアプリは個人データを収集、保存、送信しません。すべての情報はお使いのデバイスに完全にローカルに保存されます。</string>
+    <string name="sdk_analytics">SDK分析</string>
+    <string name="apps_lowercase">アプリ</string>
+    <string name="versions_lowercase">バージョン</string>
+    <string name="api_format">API %d</string>
+    <string name="target_sdk_format">ターゲットSDK %d</string>
+    <string name="apps_count_format" formatted="false">%d %s</string>
+    <string name="app_singular">アプリ</string>
+    <string name="apps_plural">アプリ</string>
+    <string name="no_apps_found_sdk">このSDKバージョンのアプリが見つかりません</string>
+    <string name="no_apps_found_filter">%sが見つかりません</string>
+    <string name="try_different_filter">別のフィルターを試してください</string>
+    <string name="filter_options">フィルターオプション</string>
+    <string name="percentage_format">%d%%</string>
+</resources>

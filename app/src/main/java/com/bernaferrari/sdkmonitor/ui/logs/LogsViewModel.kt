@@ -97,19 +97,6 @@ class LogsViewModel @Inject constructor(
         }
     }
 
-    fun clearAllLogs() {
-        viewModelScope.launch {
-            try {
-                appsRepository.clearAllLogs()
-                loadLogs() // Reload to show empty state
-            } catch (e: Exception) {
-                _uiState.value = LogsUiState.Error(
-                    e.message ?: "Failed to clear logs"
-                )
-            }
-        }
-    }
-
     fun refreshLogs() {
         loadLogs()
     }

@@ -4,6 +4,7 @@ import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -24,23 +25,66 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush.Companion.verticalGradient
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalInspectionMode
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
 import com.bernaferrari.sdkmonitor.domain.model.AppVersion
 import com.bernaferrari.sdkmonitor.extensions.apiToColor
 import com.bernaferrari.sdkmonitor.extensions.apiToVersion
+import com.bernaferrari.sdkmonitor.extensions.normalizeString
 import com.bernaferrari.sdkmonitor.ui.theme.SDKMonitorTheme
+
+@Composable
+fun createHighlightedText(
+    text: String,
+    searchQuery: String
+): AnnotatedString {
+    if (searchQuery.isBlank()) {
+        return AnnotatedString(text)
+    }
+    
+    val normalizedText = text.normalizeString()
+    val normalizedQuery = searchQuery.normalizeString()
+    
+    return buildAnnotatedString {
+        var lastIndex = 0
+        var startIndex = normalizedText.indexOf(normalizedQuery, lastIndex, ignoreCase = true)
+        
+        while (startIndex != -1) {
+            // Add text before the match
+            append(text.substring(lastIndex, startIndex))
+            
+            // Add highlighted match with prominent styling
+            withStyle(
+                style = SpanStyle(
+                    fontWeight = FontWeight.ExtraBold,
+                    color = MaterialTheme.colorScheme.primary,
+                    // background = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3f)
+                )
+            ) {
+                append(text.substring(startIndex, startIndex + normalizedQuery.length))
+            }
+            
+            lastIndex = startIndex + normalizedQuery.length
+            startIndex = normalizedText.indexOf(normalizedQuery, lastIndex, ignoreCase = true)
+        }
+        
+        // Add remaining text
+        append(text.substring(lastIndex))
+    }
+}
 
 @Composable
 fun MainAppCard(
@@ -48,6 +92,7 @@ fun MainAppCard(
     appVersion: AppVersion,
     appIcon: Bitmap? = null,
     showVersionPill: Boolean = true,
+    searchQuery: String = "",
     isLast: Boolean = false, // Add parameter to detect last item
     onClick: () -> Unit = {},
 ) {
@@ -115,9 +160,9 @@ fun MainAppCard(
                 modifier = Modifier.weight(1f),
                 verticalArrangement = Arrangement.spacedBy(2.dp)
             ) {
-                // App title
+                // App title with highlighting
                 Text(
-                    text = appVersion.title,
+                    text = createHighlightedText(appVersion.title, searchQuery),
                     style = MaterialTheme.typography.titleMedium.copy(
                         fontWeight = FontWeight.SemiBold
                     ),
@@ -126,7 +171,7 @@ fun MainAppCard(
                     overflow = TextOverflow.Ellipsis
                 )
 
-                // Bottom row with date and API pill
+                // Bottom row with date
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
@@ -140,55 +185,43 @@ fun MainAppCard(
                         ),
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
-
                 }
             }
 
             if (showVersionPill) {
-                // Refined compact pill with beautiful styling
+                // Modern minimalist SDK pill with better contrast
                 Column(
                     modifier = Modifier
-                        .clip(RoundedCornerShape(14.dp))
-                        .background(
-                            verticalGradient(
-                                colors = listOf(
-                                    apiColor.copy(alpha = 0.18f),
-                                    apiColor.copy(alpha = 0.08f)
-                                )
-                            )
+                        .clip(RoundedCornerShape(12.dp))
+                        .background(apiColor.copy(alpha = 0.07f))
+                        .border(
+                            width = 1.dp,
+                            color = apiColor,
+                            shape = RoundedCornerShape(12.dp)
                         )
-                        .padding(horizontal = 8.dp, vertical = 4.dp),
+                        .padding(horizontal = 10.dp, vertical = 6.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(1.dp)
+                    verticalArrangement = Arrangement.spacedBy(2.dp)
                 ) {
-                    // Compact SDK number with refined typography
+                    // Bold SDK number with high contrast
                     Text(
                         text = appVersion.sdkVersion.toString(),
-                        style = MaterialTheme.typography.headlineSmall.copy(
-                            fontWeight = FontWeight.Black,
-                            letterSpacing = (-0.8).dp.value.sp
+                        style = MaterialTheme.typography.titleLarge.copy(
+                            fontWeight = FontWeight.ExtraBold
                         ),
                         color = apiColor
                     )
 
-                    // Compact API description with subtle background
-                    Box(
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(6.dp))
-                            .padding(horizontal = 6.dp, vertical = 1.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = apiDescription,
-                            style = MaterialTheme.typography.labelSmall.copy(
-                                fontWeight = FontWeight.Bold,
-                                letterSpacing = 0.2.dp.value.sp
-                            ),
-                            color = apiColor,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
-                        )
-                    }
+                    // Clean API description without background
+                    Text(
+                        text = apiDescription,
+                        style = MaterialTheme.typography.labelSmall.copy(
+                            fontWeight = FontWeight.SemiBold
+                        ),
+                        color = apiColor,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
                 }
             }
 

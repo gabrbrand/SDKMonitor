@@ -1,0 +1,174 @@
+<resources>
+    <string name="app_name">SDK监视器</string>
+
+    <string-array name="singularTime">
+        <item>分钟</item>
+        <item>小时</item>
+        <item>天</item>
+    </string-array>
+
+    <string-array name="pluralTime">
+        <item>分钟</item>
+        <item>小时</item>
+        <item>天</item>
+    </string-array>
+
+    <plurals name="searchApps">
+        <item quantity="other">搜索 %d 个应用</item>
+    </plurals>
+
+    <plurals name="minutes_ago">
+        <item quantity="other">%d分钟前</item>
+    </plurals>
+
+    <plurals name="hours_ago">
+        <item quantity="other">%d小时前</item>
+    </plurals>
+
+    <plurals name="days_ago">
+        <item quantity="other">%d天前</item>
+    </plurals>
+
+    <string name="sync_every" formatted="false">每 %d %s 同步</string>
+    <string name="sync_disabled">同步已禁用</string>
+
+    <string name="dismiss">关闭</string>
+    <string name="contact">联系</string>
+    <string name="about_title">SDK监视器 v%1$s</string>
+    <string name="about_body"><![CDATA[
+        由 <b>Bernardo Ferrari</b> 设计与开发。<br/>
+        <a href=\'https://github.com/bernaferrari\'>GitHub</a>&nbsp;&nbsp;
+        <a href=\'https://www.reddit.com/user/bernaferrari\'>Reddit</a>&nbsp;&nbsp;
+        <a href=\'https://www.linkedin.com/in/bernaferrari\'>LinkedIn</a><br/><br/>
+        此项目是<a href=\'https://github.com/bernaferrari/SDKMonitor\'>开源项目</a>，
+        采用Apache 2.0许可证。
+  ]]></string>
+
+    <string name="background_sync_description">定期检查targetSDK是否已更改，因为应用程序总是在更新。</string>
+    <string name="home">主页</string>
+    <string name="logs">日志</string>
+    <string name="settings">设置</string>
+    <string name="loading">加载中</string>
+
+    <string name="target_sdk_logs">TargetSDK日志</string>
+    <string name="no_logs_yet">暂无日志</string>
+    <string name="app_changes_will_appear">应用变化将在此处显示</string>
+    <string name="failed_to_load_logs">加载日志失败</string>
+    <string name="loading_logs">正在加载日志…</string>
+    <string name="retry">重试</string>
+    
+    <!-- Navigation titles -->
+    <string name="main_title">应用</string>
+    <string name="logs_title">日志</string>
+    <string name="settings_title">设置</string>
+
+    <!-- Time formatting -->
+    <string name="just_now">刚刚</string>
+    <string name="never">从不</string>
+
+    <!-- Main Screen -->
+    <string name="apps_count">%d个应用</string>
+    <string name="search_apps_hint">搜索应用…</string>
+    <string name="clear_search">清除搜索</string>
+    <string name="filter_apps">筛选应用</string>
+    <string name="sort_by">排序方式</string>
+    <string name="all_apps">所有应用</string>
+    <string name="user_apps">用户应用</string>
+    <string name="system_apps">系统应用</string>
+    <string name="sort_by_name">名称</string>
+    <string name="sort_by_sdk">SDK版本</string>
+    <string name="loading_apps">正在加载应用…</string>
+    <string name="something_went_wrong">出现了问题</string>
+    <string name="no_apps_found">未找到应用</string>
+    <string name="try_searching_different_terms">尝试使用不同的搜索词</string>
+    <string name="try_changing_filter">尝试更改筛选器</string>
+    <string name="no_filtered_apps_found">未找到%s</string>
+    
+    <!-- Logs Screen -->
+    <string name="change_logs">变更日志</string>
+    <string name="loading_change_history">✨ 正在加载变更历史</string>
+    <string name="analyzing_app_ecosystem">正在分析您的应用生态系统…</string>
+    <string name="oops_something_went_wrong">哎呀！出现了问题</string>
+    <string name="no_changes_yet">🌟 暂无变化</string>
+    <string name="when_apps_update_description">当应用更新其目标SDK版本时，您将在此处看到美丽的变化时间线</string>
+    <string name="sdk_monitor_watching">✨ SDK监视器正在监控</string>
+    <string name="change_timeline">变化时间线</string>
+    <string name="showing">显示</string>
+    <string name="activity_overview">活动概览</string>
+    <string name="past_week">过去一周</string>
+    <string name="past_month">过去一月</string>
+    <string name="past_6_months">过去6个月</string>
+    
+    <!-- Details Screen -->
+    <string name="app_details">应用详情</string>
+    <string name="back">返回</string>
+    <string name="loading_app_details">正在加载应用详情</string>
+    <string name="app_not_found">未找到应用</string>
+    <string name="try_again">重试</string>
+    <string name="target_sdk">目标SDK</string>
+    <string name="min_sdk">最小SDK</string>
+    <string name="app_info">应用信息</string>
+    <string name="play_store">Play商店</string>
+    <string name="app_information">应用程序信息</string>
+    <string name="package_label">包名</string>
+    <string name="version_label">版本</string>
+    <string name="updated_label">更新时间</string>
+    <string name="size_label">大小</string>
+    <string name="version_history">版本历史</string>
+    <string name="no_version_history">暂无版本历史。当应用更新时，您将在此处看到其演变过程。</string>
+    <string name="latest">最新</string>
+    <string name="api_version">API %d</string>
+    
+    <!-- Settings Screen -->
+    <string name="theme_mode">主题模式</string>
+    <string name="light">浅色</string>
+    <string name="dark">深色</string>
+    <string name="system">系统</string>
+    
+    <!-- About Dialog -->
+    <string name="about">关于</string>
+    <string name="designed_developed_by">设计与开发</string>
+    <string name="bernardo_ferrari">Bernardo Ferrari</string>
+    <string name="github">GitHub</string>
+    <string name="reddit">Reddit</string>
+    <string name="linkedin">LinkedIn</string>
+    <string name="open_source_project">此项目是开源项目，采用Apache 2.0许可证</string>
+    
+    <!-- Background Sync Dialog -->
+    <string name="enable_sync">启用同步</string>
+    <string name="disable_sync">禁用同步</string>
+    <string name="save">保存</string>
+    <string name="cancel">取消</string>
+    <string name="wifi_only">仅WiFi</string>
+    <string name="requires_charging">需要充电</string>
+    <string name="battery_not_low">电池电量不低</string>
+    
+    <!-- Common UI Elements -->
+    <string name="error">错误</string>
+    <string name="close">关闭</string>
+    <string name="open">打开</string>
+    <string name="analytics">分析</string>
+    <string name="timeline">时间线</string>
+    <string name="updated_to">更新至</string>
+    <string name="app_icon">应用图标</string>
+    <string name="app_icon_for">%s的应用图标</string>
+    <string name="clear_all">全部清除</string>
+    <string name="loading_settings">正在加载设置…</string>
+    <string name="error_loading_settings">加载设置时出错</string>
+    <string name="settings_screen_title">设置</string>
+    <string name="privacy_first">🔒 隐私优先</string>
+    <string name="privacy_description">此应用不收集、存储或传输任何个人数据。所有信息都完全保存在您的设备本地。</string>
+    <string name="sdk_analytics">SDK分析</string>
+    <string name="apps_lowercase">应用</string>
+    <string name="versions_lowercase">版本</string>
+    <string name="api_format">API %d</string>
+    <string name="target_sdk_format">目标SDK %d</string>
+    <string name="apps_count_format" formatted="false">%d %s</string>
+    <string name="app_singular">应用</string>
+    <string name="apps_plural">应用</string>
+    <string name="no_apps_found_sdk">未找到使用此SDK版本的应用</string>
+    <string name="no_apps_found_filter">未找到%s</string>
+    <string name="try_different_filter">尝试不同的筛选器</string>
+    <string name="filter_options">筛选选项</string>
+    <string name="percentage_format">%d%%</string>
+</resources>

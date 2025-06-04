@@ -48,12 +48,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.bernaferrari.sdkmonitor.R
 import com.bernaferrari.sdkmonitor.domain.model.AppVersion
 
 /**
@@ -107,7 +109,7 @@ fun DetailsScreen(
                     AnimatedContent(
                         targetState = when (val state = uiState) {
                             is DetailsUiState.Success -> state.appDetails.title
-                            else -> "App Details"
+                            else -> stringResource(R.string.app_details)
                         },
                         transitionSpec = {
                             slideInVertically { -it } + fadeIn() togetherWith
@@ -127,7 +129,7 @@ fun DetailsScreen(
                     IconButton(onClick = onNavigateBack) {
                         Icon(
                             Icons.AutoMirrored.Default.ArrowBack,
-                            contentDescription = "Back",
+                            contentDescription = stringResource(R.string.back),
                             tint = MaterialTheme.colorScheme.primary
                         )
                     }
@@ -192,7 +194,7 @@ private fun LoadingState(
             )
             
             Text(
-                text = "Loading App Details",
+                text = stringResource(R.string.loading_app_details),
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -231,7 +233,7 @@ private fun ErrorState(
                 )
 
                 Text(
-                    text = "App Not Found",
+                    text = stringResource(R.string.app_not_found),
                     style = MaterialTheme.typography.headlineSmall.copy(
                         fontWeight = FontWeight.Bold
                     ),
@@ -256,7 +258,7 @@ private fun ErrorState(
                         modifier = Modifier.size(18.dp)
                     )
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text("Try Again")
+                    Text(stringResource(R.string.try_again))
                 }
             }
         }
@@ -320,13 +322,13 @@ private fun VersionHistoryCard(
             ) {
                 Icon(
                     imageVector = Icons.Default.History,
-                    contentDescription = "Version History",
+                    contentDescription = stringResource(R.string.version_history),
                     modifier = Modifier.size(20.dp),
                     tint = MaterialTheme.colorScheme.primary
                 )
 
                 Text(
-                    text = "Version History",
+                    text = stringResource(R.string.version_history),
                     style = MaterialTheme.typography.titleMedium.copy(
                         fontWeight = FontWeight.Bold
                     ),
@@ -359,7 +361,7 @@ private fun VersionHistoryCard(
                 )
             } else {
                 Text(
-                    text = "No version history available yet. When the app updates, you'll see its evolution here.",
+                    text = stringResource(R.string.no_version_history),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.padding(vertical = 8.dp)

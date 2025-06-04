@@ -18,53 +18,43 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Error
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Timeline
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.bernaferrari.sdkmonitor.R
 import com.bernaferrari.sdkmonitor.domain.model.LogEntry
 import com.bernaferrari.sdkmonitor.extensions.convertTimestampToDate
-import java.util.Date
-import java.util.Locale
 
 /**
  * Logs Screen - Change Log UI
@@ -76,26 +66,16 @@ fun LogsScreen(
     viewModel: LogsViewModel = hiltViewModel()
 ) {
     val uiState: LogsUiState by viewModel.uiState.collectAsStateWithLifecycle()
-    var showClearDialog by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
             TopAppBar(
                 title = {
                     Text(
-                        "Change Logs",
+                        stringResource(R.string.change_logs),
                         fontWeight = FontWeight.ExtraBold,
                         style = MaterialTheme.typography.headlineSmall
                     )
-                },
-                actions = {
-                    IconButton(onClick = { showClearDialog = true }) {
-                        Icon(
-                            Icons.Default.Delete,
-                            contentDescription = "Clear logs",
-                            tint = MaterialTheme.colorScheme.error
-                        )
-                    }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.95f)
@@ -143,16 +123,6 @@ fun LogsScreen(
             }
         }
     }
-
-    if (showClearDialog) {
-        ClearDialog(
-            onConfirm = {
-                viewModel.clearAllLogs()
-                showClearDialog = false
-            },
-            onDismiss = { showClearDialog = false }
-        )
-    }
 }
 
 @Composable
@@ -194,7 +164,7 @@ private fun LoadingState(
                 )
 
                 Text(
-                    text = "✨ Loading Change History",
+                    text = stringResource(R.string.loading_change_history),
                     style = MaterialTheme.typography.titleLarge.copy(
                         fontWeight = FontWeight.Bold
                     ),
@@ -203,7 +173,7 @@ private fun LoadingState(
                 )
 
                 Text(
-                    text = "Analyzing your app ecosystem...",
+                    text = stringResource(R.string.analyzing_app_ecosystem),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     textAlign = TextAlign.Center
@@ -266,7 +236,7 @@ private fun ErrorState(
                     }
 
                     Text(
-                        text = "Oops! Something went wrong",
+                        text = stringResource(R.string.oops_something_went_wrong),
                         style = MaterialTheme.typography.headlineSmall.copy(
                             fontWeight = FontWeight.Bold
                         ),
@@ -366,7 +336,7 @@ private fun EmptyLogsContent(
                     }
 
                     Text(
-                        text = "🌟 No Changes Yet",
+                        text = stringResource(R.string.no_changes_yet),
                         style = MaterialTheme.typography.headlineMedium.copy(
                             fontWeight = FontWeight.ExtraBold
                         ),
@@ -375,7 +345,7 @@ private fun EmptyLogsContent(
                     )
 
                     Text(
-                        text = "When apps update their target SDK versions, you'll see a beautiful timeline of changes here",
+                        text = stringResource(R.string.when_apps_update_description),
                         style = MaterialTheme.typography.bodyLarge.copy(
                             lineHeight = 24.sp
                         ),
@@ -388,7 +358,7 @@ private fun EmptyLogsContent(
                         color = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.5f)
                     ) {
                         Text(
-                            text = "✨ SDK Monitor is watching",
+                            text = stringResource(R.string.sdk_monitor_watching),
                             modifier = Modifier.padding(
                                 horizontal = 24.dp,
                                 vertical = 12.dp
@@ -443,7 +413,7 @@ private fun TimelineHeader(
     modifier: Modifier = Modifier
 ) {
     val viewModel: LogsViewModel = hiltViewModel()
-    
+
     Card(
         modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(24.dp),
@@ -486,24 +456,24 @@ private fun TimelineHeader(
                     verticalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
                     Text(
-                        text = "Change Timeline",
+                        text = stringResource(R.string.change_timeline),
                         style = MaterialTheme.typography.headlineSmall.copy(
                             fontWeight = FontWeight.Bold
                         ),
                         color = MaterialTheme.colorScheme.onSurface
                     )
-                    
+
                     // Show actual filter status
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(6.dp)
                     ) {
                         Text(
-                            text = "Showing",
+                            text = stringResource(R.string.showing),
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
-                        
+
                         Surface(
                             shape = RoundedCornerShape(8.dp),
                             color = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)
@@ -566,7 +536,7 @@ private fun ProgressSection(
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         Text(
-            text = "Activity Overview",
+            text = stringResource(R.string.activity_overview),
             style = MaterialTheme.typography.titleMedium.copy(
                 fontWeight = FontWeight.Bold
             ),
@@ -575,7 +545,7 @@ private fun ProgressSection(
 
         // Weekly Progress
         EnhancedProgressIndicator(
-            label = "Past Week",
+            label = stringResource(R.string.past_week),
             count = weeklyLogs,
             total = totalLogs,
             color = MaterialTheme.colorScheme.primary,
@@ -585,7 +555,7 @@ private fun ProgressSection(
 
         // Monthly Progress  
         EnhancedProgressIndicator(
-            label = "Past Month",
+            label = stringResource(R.string.past_month),
             count = monthlyLogs,
             total = totalLogs,
             color = MaterialTheme.colorScheme.primary,
@@ -595,7 +565,7 @@ private fun ProgressSection(
 
         // 6 Month Progress
         EnhancedProgressIndicator(
-            label = "Past 6 Months",
+            label = stringResource(R.string.past_6_months),
             count = sixMonthLogs,
             total = totalLogs,
             color = MaterialTheme.colorScheme.primary,
@@ -684,56 +654,6 @@ private fun EnhancedProgressIndicator(
             trackColor = backgroundColor,
         )
     }
-}
-
-@Composable
-private fun ClearDialog(
-    onConfirm: () -> Unit,
-    onDismiss: () -> Unit
-) {
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = {
-            Text(
-                "🗑️ Clear All Logs",
-                style = MaterialTheme.typography.headlineSmall.copy(
-                    fontWeight = FontWeight.ExtraBold
-                )
-            )
-        },
-        text = {
-            Text(
-                "Are you sure you want to clear all change logs? This action cannot be undone and will permanently remove your app update history.",
-                style = MaterialTheme.typography.bodyLarge.copy(
-                    lineHeight = 22.sp
-                )
-            )
-        },
-        confirmButton = {
-            FilledTonalButton(
-                onClick = onConfirm,
-                colors = ButtonDefaults.filledTonalButtonColors(
-                    containerColor = MaterialTheme.colorScheme.errorContainer,
-                    contentColor = MaterialTheme.colorScheme.onErrorContainer
-                )
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Delete,
-                    contentDescription = null,
-                    modifier = Modifier.size(18.dp)
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Text("Clear All", fontWeight = FontWeight.Bold)
-            }
-        },
-        dismissButton = {
-            TextButton(onClick = onDismiss) {
-                Text("Cancel", fontWeight = FontWeight.Medium)
-            }
-        },
-        shape = RoundedCornerShape(28.dp),
-        containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
-    )
 }
 
 fun formatLogTime(timestamp: Long, context: Context): String {

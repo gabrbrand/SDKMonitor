@@ -5,7 +5,6 @@ import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.bernaferrari.sdkmonitor.domain.repository.PreferencesRepository
-import com.bernaferrari.sdkmonitor.notifications.NotificationManager
 import com.orhanobut.logger.Logger
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject

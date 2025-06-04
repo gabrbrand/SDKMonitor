@@ -199,6 +199,21 @@ class SettingsViewModel @Inject constructor(
     }
 
     /**
+     * Clear all logs/data
+     */
+    fun clearAllLogs() {
+        viewModelScope.launch {
+            try {
+                appsRepository.clearAllLogs()
+            } catch (e: Exception) {
+                _uiState.value = _uiState.value.copy(
+                    errorMessage = "Failed to clear logs: ${e.message}"
+                )
+            }
+        }
+    }
+
+    /**
      * Clear error state
      */
     fun clearError() {

@@ -1,0 +1,178 @@
+<resources>
+    <string name="app_name">SDK Monitor</string>
+
+    <string-array name="singularTime">
+        <item>Minute</item>
+        <item>Stunde</item>
+        <item>Tag</item>
+    </string-array>
+
+    <string-array name="pluralTime">
+        <item>Minuten</item>
+        <item>Stunden</item>
+        <item>Tage</item>
+    </string-array>
+
+    <plurals name="searchApps">
+        <item quantity="one">%d App durchsuchen</item>
+        <item quantity="other">%d Apps durchsuchen</item>
+    </plurals>
+
+    <plurals name="minutes_ago">
+        <item quantity="one">vor %d Minute</item>
+        <item quantity="other">vor %d Minuten</item>
+    </plurals>
+
+    <plurals name="hours_ago">
+        <item quantity="one">vor %d Stunde</item>
+        <item quantity="other">vor %d Stunden</item>
+    </plurals>
+
+    <plurals name="days_ago">
+        <item quantity="one">vor %d Tag</item>
+        <item quantity="other">vor %d Tagen</item>
+    </plurals>
+
+    <string name="sync_every">Alle %d %s synchronisieren</string>
+    <string name="sync_disabled">Synchronisation deaktiviert</string>
+
+    <string name="dismiss">Verwerfen</string>
+    <string name="contact">Kontakt</string>
+    <string name="about_title">SDK Monitor v%1$s</string>
+    <string name="about_body"><![CDATA[
+        Entworfen &amp; entwickelt von <b>Bernardo Ferrari</b>.<br/>
+        <a href=\'https://github.com/bernaferrari\'>GitHub</a>&nbsp;&nbsp;
+        <a href=\'https://www.reddit.com/user/bernaferrari\'>Reddit</a>&nbsp;&nbsp;
+        <a href=\'https://www.linkedin.com/in/bernaferrari\'>LinkedIn</a><br/><br/>
+        Dieses Projekt ist <a href=\'https://github.com/bernaferrari/SDKMonitor\'>Open Source</a>, und ist
+        unter Apache 2.0 lizenziert.</a>.
+  ]]></string>
+
+    <string name="background_sync_description">Überprüft regelmäßig, ob sich das targetSDK geändert hat, da Apps immer aktualisiert werden.</string>
+    <string name="home">Startseite</string>
+    <string name="logs">Protokolle</string>
+    <string name="settings">Einstellungen</string>
+
+    <string name="target_sdk_logs">TargetSDK-Protokolle</string>
+    <string name="no_logs_yet">Noch Keine Protokolle</string>
+    <string name="app_changes_will_appear">App-Änderungen werden hier erscheinen, sobald sie auftreten</string>
+    <string name="failed_to_load_logs">Fehler beim Laden der Protokolle</string>
+    <string name="loading_logs">Lade Protokolle…</string>
+    <string name="retry">Wiederholen</string>
+
+    <!-- Navigation titles -->
+    <string name="main_title">Apps</string>
+    <string name="logs_title">Protokolle</string>
+    <string name="settings_title">Einstellungen</string>
+
+    <!-- Time formatting -->
+    <string name="just_now">Gerade jetzt</string>
+    <string name="never">Niemals</string>
+
+    <!-- Main Screen -->
+    <string name="apps_count">%d Apps</string>
+    <string name="search_apps_hint">Apps durchsuchen…</string>
+    <string name="clear_search">Suche löschen</string>
+    <string name="filter_apps">Apps Filtern</string>
+    <string name="sort_by">Sortieren Nach</string>
+    <string name="all_apps">Alle Apps</string>
+    <string name="user_apps">Benutzer-Apps</string>
+    <string name="system_apps">System-Apps</string>
+    <string name="sort_by_name">Name</string>
+    <string name="sort_by_sdk">SDK-Version</string>
+    <string name="loading_apps">Lade Apps…</string>
+    <string name="something_went_wrong">Etwas ist schief gelaufen</string>
+    <string name="no_apps_found">Keine Apps gefunden</string>
+    <string name="try_searching_different_terms">Versuche die Suche mit anderen Begriffen</string>
+    <string name="try_changing_filter">Versuche deinen Filter zu ändern</string>
+    <string name="no_filtered_apps_found">Keine %s gefunden</string>
+
+    <!-- Logs Screen -->
+    <string name="change_logs">Änderungsprotokoll</string>
+    <string name="loading_change_history">✨ Lade Änderungsverlauf</string>
+    <string name="analyzing_app_ecosystem">Analysiere dein App-Ökosystem…</string>
+    <string name="oops_something_went_wrong">Ups! Etwas ist schief gelaufen</string>
+    <string name="no_changes_yet">🌟 Noch Keine Änderungen</string>
+    <string name="when_apps_update_description">Wenn Apps ihre Ziel-SDK-Versionen aktualisieren, siehst du hier eine schöne Zeitleiste der Änderungen</string>
+    <string name="sdk_monitor_watching">✨ SDK Monitor beobachtet</string>
+    <string name="change_timeline">Änderungs-Zeitleiste</string>
+    <string name="showing">Zeige</string>
+    <string name="activity_overview">Aktivitätsübersicht</string>
+    <string name="past_week">Letzte Woche</string>
+    <string name="past_month">Letzter Monat</string>
+    <string name="past_6_months">Letzte 6 Monate</string>
+
+    <!-- Details Screen -->
+    <string name="app_details">App-Details</string>
+    <string name="back">Zurück</string>
+    <string name="loading_app_details">Lade App-Details</string>
+    <string name="app_not_found">App Nicht Gefunden</string>
+    <string name="try_again">Erneut Versuchen</string>
+    <string name="target_sdk">Ziel-SDK</string>
+    <string name="min_sdk">Min-SDK</string>
+    <string name="app_info">App-Info</string>
+    <string name="play_store">Play Store</string>
+    <string name="app_information">App-Informationen</string>
+    <string name="package_label">Paket</string>
+    <string name="version_label">Version</string>
+    <string name="updated_label">Aktualisiert</string>
+    <string name="size_label">Größe</string>
+    <string name="version_history">Versionsverlauf</string>
+    <string name="no_version_history">Noch kein Versionsverlauf verfügbar. Wenn die App aktualisiert wird, siehst du ihre Entwicklung hier.</string>
+    <string name="latest">NEUESTE</string>
+    <string name="api_version">API %d</string>
+
+    <!-- Settings Screen -->
+    <string name="theme_mode">Design-Modus</string>
+    <string name="light">Hell</string>
+    <string name="dark">Dunkel</string>
+    <string name="system">System</string>
+
+    <!-- About Dialog -->
+    <string name="about">Über</string>
+    <string name="designed_developed_by">Entworfen &amp; entwickelt von</string>
+    <string name="bernardo_ferrari">Bernardo Ferrari</string>
+    <string name="github">GitHub</string>
+    <string name="reddit">Reddit</string>
+    <string name="linkedin">LinkedIn</string>
+    <string name="open_source_project">Dieses Projekt ist Open Source und unter Apache 2.0 lizenziert</string>
+
+    <!-- Background Sync Dialog -->
+    <string name="enable_sync">Synchronisation Aktivieren</string>
+    <string name="disable_sync">Synchronisation Deaktivieren</string>
+    <string name="save">Speichern</string>
+    <string name="cancel">Abbrechen</string>
+    <string name="wifi_only">Nur WLAN</string>
+    <string name="requires_charging">Erfordert Laden</string>
+    <string name="battery_not_low">Batterie nicht schwach</string>
+
+    <!-- Common UI Elements -->
+    <string name="loading">Lädt</string>
+    <string name="error">Fehler</string>
+    <string name="close">Schließen</string>
+    <string name="open">Öffnen</string>
+    <string name="analytics">Analytics</string>
+    <string name="timeline">Zeitleiste</string>
+    <string name="updated_to">Aktualisiert auf</string>
+    <string name="app_icon">App-Icon</string>
+    <string name="app_icon_for">App-Icon für %s</string>
+    <string name="clear_all">Alle Löschen</string>
+    <string name="loading_settings">Lade Einstellungen…</string>
+    <string name="error_loading_settings">Fehler beim Laden der Einstellungen</string>
+    <string name="settings_screen_title">Einstellungen</string>
+    <string name="privacy_first">🔒 Datenschutz Zuerst</string>
+    <string name="privacy_description">Diese App sammelt, speichert oder überträgt keine persönlichen Daten. Alle Informationen bleiben vollständig lokal auf deinem Gerät.</string>
+    <string name="sdk_analytics">SDK-Analytics</string>
+    <string name="apps_lowercase">Apps</string>
+    <string name="versions_lowercase">Versionen</string>
+    <string name="api_format">API %d</string>
+    <string name="target_sdk_format">Ziel-SDK %d</string>
+    <string name="apps_count_format">%d %s</string>
+    <string name="app_singular">App</string>
+    <string name="apps_plural">Apps</string>
+    <string name="no_apps_found_sdk">Keine Apps mit dieser SDK-Version gefunden</string>
+    <string name="no_apps_found_filter">Keine %s gefunden</string>
+    <string name="try_different_filter">Versuche einen anderen Filter</string>
+    <string name="filter_options">Filteroptionen</string>
+    <string name="percentage_format">%d%%</string>
+</resources>

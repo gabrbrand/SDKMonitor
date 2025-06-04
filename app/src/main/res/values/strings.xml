@@ -1,20 +1,6 @@
 <resources>
     <string name="app_name">SDK Monitor</string>
 
-    <string name="empty_search">No results found</string>
-    <string name="empty_logs">No changes detected</string>
-    <string name="target_history">TargetSDK history</string>
-    <string name="background_sync">Background Sync</string>
-    <string name="sync_interval">Sync Interval</string>
-    <string name="constraints">Constraints</string>
-    <string name="charging">Charging</string>
-    <string name="batter_not_low">Battery not low</string>
-
-    <string name="min">min</string>
-    <string name="hour">1 hour</string>
-    <string name="hours">hours</string>
-    <string name="days">days</string>
-
     <string-array name="singularTime">
         <item>minute</item>
         <item>hour</item>
@@ -47,7 +33,7 @@
         <item quantity="other">%d days ago</item>
     </plurals>
 
-    <string name="sync_every">Sync every %d %s</string>
+    <string name="sync_every" formatted="false">Sync every %d %s</string>
     <string name="sync_disabled">Sync is disabled</string>
 
     <string name="dismiss">Dismiss</string>
@@ -66,13 +52,13 @@
     <string name="home">Home</string>
     <string name="logs">Logs</string>
     <string name="settings">Settings</string>
-    <string name="loading">Loading..</string>
+    <string name="loading">Loading</string>
 
     <string name="target_sdk_logs">TargetSDK Logs</string>
     <string name="no_logs_yet">No Logs Yet</string>
     <string name="app_changes_will_appear">App changes will appear here as they happen</string>
     <string name="failed_to_load_logs">Failed to Load Logs</string>
-    <string name="loading_logs">Loading logs...</string>
+    <string name="loading_logs">Loading logs…</string>
     <string name="retry">Retry</string>
     
     <!-- Navigation titles -->
@@ -84,4 +70,109 @@
     <string name="just_now">Just now</string>
     <string name="never">Never</string>
 
+    <!-- Main Screen -->
+    <string name="apps_count">%d apps</string>
+    <string name="search_apps_hint">Search apps…</string>
+    <string name="clear_search">Clear search</string>
+    <string name="filter_apps">Filter Apps</string>
+    <string name="sort_by">Sort By</string>
+    <string name="all_apps">All Apps</string>
+    <string name="user_apps">User Apps</string>
+    <string name="system_apps">System Apps</string>
+    <string name="sort_by_name">Name</string>
+    <string name="sort_by_sdk">SDK Version</string>
+    <string name="loading_apps">Loading apps…</string>
+    <string name="something_went_wrong">Something went wrong</string>
+    <string name="no_apps_found">No apps found</string>
+    <string name="try_searching_different_terms">Try searching with different terms</string>
+    <string name="try_changing_filter">Try changing your filter</string>
+    <string name="no_filtered_apps_found">No %s found</string>
+    
+    <!-- Logs Screen -->
+    <string name="change_logs">Change Logs</string>
+    <string name="loading_change_history">✨ Loading Change History</string>
+    <string name="analyzing_app_ecosystem">Analyzing your app ecosystem…</string>
+    <string name="oops_something_went_wrong">Oops! Something went wrong</string>
+    <string name="no_changes_yet">🌟 No Changes Yet</string>
+    <string name="when_apps_update_description">When apps update their target SDK versions, you\'ll see a beautiful timeline of changes here</string>
+    <string name="sdk_monitor_watching">✨ SDK Monitor is watching</string>
+    <string name="change_timeline">Change Timeline</string>
+    <string name="showing">Showing</string>
+    <string name="activity_overview">Activity Overview</string>
+    <string name="past_week">Past Week</string>
+    <string name="past_month">Past Month</string>
+    <string name="past_6_months">Past 6 Months</string>
+    
+    <!-- Details Screen -->
+    <string name="app_details">App Details</string>
+    <string name="back">Back</string>
+    <string name="loading_app_details">Loading App Details</string>
+    <string name="app_not_found">App Not Found</string>
+    <string name="try_again">Try Again</string>
+    <string name="target_sdk">Target SDK</string>
+    <string name="min_sdk">Min SDK</string>
+    <string name="app_info">App Info</string>
+    <string name="play_store">Play Store</string>
+    <string name="app_information">App Information</string>
+    <string name="package_label">Package</string>
+    <string name="version_label">Version</string>
+    <string name="updated_label">Updated</string>
+    <string name="size_label">Size</string>
+    <string name="version_history">Version History</string>
+    <string name="no_version_history">No version history available yet. When the app updates, you\'ll see its evolution here.</string>
+    <string name="latest">LATEST</string>
+    <string name="api_version">API %d</string>
+    
+    <!-- Settings Screen -->
+    <string name="theme_mode">Theme Mode</string>
+    <string name="light">Light</string>
+    <string name="dark">Dark</string>
+    <string name="system">System</string>
+    
+    <!-- About Dialog -->
+    <string name="about">About</string>
+    <string name="designed_developed_by">Designed &amp; developed by</string>
+    <string name="bernardo_ferrari">Bernardo Ferrari</string>
+    <string name="github">GitHub</string>
+    <string name="reddit">Reddit</string>
+    <string name="linkedin">LinkedIn</string>
+    <string name="open_source_project">This project is open source and licensed under Apache 2.0</string>
+    
+    <!-- Background Sync Dialog -->
+    <string name="enable_sync">Enable Sync</string>
+    <string name="disable_sync">Disable Sync</string>
+    <string name="save">Save</string>
+    <string name="cancel">Cancel</string>
+    <string name="wifi_only">WiFi only</string>
+    <string name="requires_charging">Requires charging</string>
+    <string name="battery_not_low">Battery not low</string>
+    
+    <!-- Common UI Elements -->
+    <string name="error">Error</string>
+    <string name="close">Close</string>
+    <string name="open">Open</string>
+    <string name="analytics">Analytics</string>
+    <string name="timeline">Timeline</string>
+    <string name="updated_to">Updated to</string>
+    <string name="app_icon">App icon</string>
+    <string name="app_icon_for">App icon for %s</string>
+    <string name="clear_all">Clear All</string>
+    <string name="loading_settings">Loading settings…</string>
+    <string name="error_loading_settings">Error loading settings</string>
+    <string name="settings_screen_title">Settings</string>
+    <string name="privacy_first">🔒 Privacy First</string>
+    <string name="privacy_description">This app doesn\'t collect, store, or transmit any personal data. All information remains completely local on your device.</string>
+    <string name="sdk_analytics">SDK Analytics</string>
+    <string name="apps_lowercase">apps</string>
+    <string name="versions_lowercase">versions</string>
+    <string name="api_format">API %d</string>
+    <string name="target_sdk_format">Target SDK %d</string>
+    <string name="apps_count_format" formatted="false">%d %s</string>
+    <string name="app_singular">app</string>
+    <string name="apps_plural">apps</string>
+    <string name="no_apps_found_sdk">No apps found with this SDK version</string>
+    <string name="no_apps_found_filter">No %s found</string>
+    <string name="try_different_filter">Try a different filter</string>
+    <string name="filter_options">Filter options</string>
+    <string name="percentage_format">%d%%</string>
 </resources>

@@ -16,7 +16,6 @@ import com.bernaferrari.sdkmonitor.domain.repository.AppsRepository
 import com.bernaferrari.sdkmonitor.domain.repository.PreferencesRepository
 import com.bernaferrari.sdkmonitor.extensions.convertTimestampToDate
 import com.bernaferrari.sdkmonitor.extensions.darken
-import com.bernaferrari.sdkmonitor.notifications.NotificationManager
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
@@ -88,7 +87,12 @@ class AppManager @Inject constructor(
         newTargetSDK: Int
     ) {
         val appName = getAppLabel(packageInfo)
-        notificationManager.showSdkChangeNotification(appName, oldTargetSDK, newTargetSDK)
+        notificationManager.showSdkChangeNotification(
+            appName = appName,
+            packageName = packageInfo.packageName,
+            oldSdk = oldTargetSDK,
+            newSdk = newTargetSDK
+        )
     }
 
     fun getAppLabel(packageInfo: PackageInfo) =

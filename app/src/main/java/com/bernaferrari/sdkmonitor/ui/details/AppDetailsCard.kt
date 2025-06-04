@@ -28,10 +28,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.bernaferrari.sdkmonitor.R
 import com.bernaferrari.sdkmonitor.domain.model.AppDetails
 import com.bernaferrari.sdkmonitor.extensions.apiToColor
 import com.bernaferrari.sdkmonitor.extensions.apiToVersion
@@ -95,7 +97,7 @@ private fun SDKInfoSection(appDetails: AppDetails) {
                     color = targetSdkColor
                 )
                 Text(
-                    text = "Target SDK",
+                    text = stringResource(R.string.target_sdk),
                     style = MaterialTheme.typography.labelMedium.copy(
                         fontWeight = FontWeight.Medium
                     ),
@@ -130,7 +132,7 @@ private fun SDKInfoSection(appDetails: AppDetails) {
                     color = MaterialTheme.colorScheme.secondary
                 )
                 Text(
-                    text = "Min SDK",
+                    text = stringResource(R.string.min_sdk),
                     style = MaterialTheme.typography.labelMedium.copy(
                         fontWeight = FontWeight.Medium
                     ),
@@ -169,7 +171,7 @@ private fun ActionButtonsSection(
             )
             Spacer(modifier = Modifier.width(8.dp))
             Text(
-                "App Info",
+                stringResource(R.string.app_info),
                 style = MaterialTheme.typography.labelLarge.copy(
                     fontWeight = FontWeight.SemiBold
                 )
@@ -188,7 +190,7 @@ private fun ActionButtonsSection(
             )
             Spacer(modifier = Modifier.width(8.dp))
             Text(
-                "Play Store",
+                stringResource(R.string.play_store),
                 style = MaterialTheme.typography.labelLarge.copy(
                     fontWeight = FontWeight.SemiBold
                 )
@@ -209,12 +211,12 @@ private fun AppInformationSection(appDetails: AppDetails) {
         ) {
             Icon(
                 imageVector = Icons.Default.Info,
-                contentDescription = "App Info",
+                contentDescription = stringResource(R.string.app_information),
                 modifier = Modifier.size(18.dp),
                 tint = MaterialTheme.colorScheme.primary
             )
             Text(
-                text = "App Information",
+                text = stringResource(R.string.app_information),
                 style = MaterialTheme.typography.titleMedium.copy(
                     fontWeight = FontWeight.Bold
                 ),
@@ -227,22 +229,22 @@ private fun AppInformationSection(appDetails: AppDetails) {
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             InfoRow(
-                label = "Package",
+                label = stringResource(R.string.package_label),
                 value = appDetails.packageName,
                 icon = Icons.Default.Code
             )
             InfoRow(
-                label = "Version",
+                label = stringResource(R.string.version_label),
                 value = "${appDetails.versionName} (${appDetails.versionCode})",
                 icon = Icons.Default.Tag
             )
             InfoRow(
-                label = "Updated",
+                label = stringResource(R.string.updated_label),
                 value = appDetails.lastUpdateTime,
                 icon = Icons.Default.Update
             )
             InfoRow(
-                label = "Size",
+                label = stringResource(R.string.size_label),
                 value = formatSize(appDetails.size),
                 icon = Icons.Default.Storage
             )

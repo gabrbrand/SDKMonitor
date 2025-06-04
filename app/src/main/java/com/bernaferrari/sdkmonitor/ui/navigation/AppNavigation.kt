@@ -16,6 +16,7 @@ import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -33,11 +34,19 @@ import com.bernaferrari.sdkmonitor.ui.settings.SettingsScreen
 
 @Composable
 fun AppNavigation(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    initialPackageName: String? = null
 ) {
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
+
+    // Handle initial navigation from notification
+    LaunchedEffect(initialPackageName) {
+        if (!initialPackageName.isNullOrEmpty()) {
+            navController.navigate(Screen.Details.createRoute(initialPackageName))
+        }
+    }
 
     val bottomNavItems = listOf(
         BottomNavItem.Main,
@@ -97,12 +106,6 @@ fun AppNavigation(
         ) {
             composable(Screen.Main.route) {
                 MainScreen(
-                    onNavigateToSettings = {
-                        navController.navigate(Screen.Settings.route)
-                    },
-                    onNavigateToLogs = {
-                        navController.navigate(Screen.Logs.route)
-                    },
                     onNavigateToAppDetails = { packageName ->
                         navController.navigate(Screen.Details.createRoute(packageName))
                     }

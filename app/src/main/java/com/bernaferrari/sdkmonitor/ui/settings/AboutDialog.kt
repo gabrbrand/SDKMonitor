@@ -21,7 +21,9 @@ import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.surfaceColorAtElevation
@@ -42,7 +44,6 @@ import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
 import com.bernaferrari.sdkmonitor.R
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun AboutDialog(
     onDismiss: () -> Unit
@@ -104,6 +105,32 @@ fun AboutDialog(
                     textAlign = TextAlign.Center,
                     style = MaterialTheme.typography.bodyLarge
                 )
+
+                Surface(
+                    shape = RoundedCornerShape(16.dp),
+                    color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3f)
+                ) {
+                    Column(
+                        modifier = Modifier.padding(16.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            text = stringResource(R.string.privacy_first),
+                            style = MaterialTheme.typography.titleMedium.copy(
+                                fontWeight = FontWeight.Bold
+                            ),
+                            color = MaterialTheme.colorScheme.primary,
+                            textAlign = TextAlign.Center
+                        )
+                        Text(
+                            text = stringResource(R.string.privacy_description),
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurface,
+                            textAlign = TextAlign.Center
+                        )
+                    }
+                }
 
                 FlowRow(
                     horizontalArrangement = Arrangement.spacedBy(
@@ -219,10 +246,14 @@ private fun SocialLink(
     @DrawableRes iconRes: Int,
     onClick: () -> Unit
 ) {
-    FilledIconButton (
+    FilledIconButton(
         onClick = onClick,
         modifier = Modifier.animateContentSize(),
-        ) {
+        colors = IconButtonDefaults.filledIconButtonColors(
+            containerColor = MaterialTheme.colorScheme.background,
+            contentColor = MaterialTheme.colorScheme.primary
+        ),
+    ) {
         Row(
             horizontalArrangement = Arrangement.spacedBy(4.dp),
             verticalAlignment = Alignment.CenterVertically

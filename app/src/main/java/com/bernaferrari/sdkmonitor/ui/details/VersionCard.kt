@@ -18,17 +18,16 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.bernaferrari.sdkmonitor.R
 import com.bernaferrari.sdkmonitor.domain.model.AppVersion
 import com.bernaferrari.sdkmonitor.extensions.apiToColor
-import com.bernaferrari.sdkmonitor.extensions.apiToVersion
 import com.bernaferrari.sdkmonitor.ui.theme.SDKMonitorTheme
 
 @Composable
@@ -95,22 +94,7 @@ fun VersionTimelineEntry(
                         overflow = TextOverflow.Ellipsis
                     )
 
-                    if (isLatest) {
-                        Surface(
-                            shape = RoundedCornerShape(4.dp),
-                            color = apiColor.copy(alpha = 0.2f)
-                        ) {
-                            Text(
-                                text = "LATEST",
-                                modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
-                                style = MaterialTheme.typography.labelSmall.copy(
-                                    fontWeight = FontWeight.Bold,
-                                    fontSize = 10.sp
-                                ),
-                                color = apiColor
-                            )
-                        }
-                    }
+
                 }
 
                 // Right side: API badge - always visible, consistent position
@@ -129,11 +113,32 @@ fun VersionTimelineEntry(
                 }
             }
 
-            Text(
-                text = versionInfo.lastUpdateTime,
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Text(
+                    text = versionInfo.lastUpdateTime,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+
+                if (isLatest) {
+                    Surface(
+                        shape = RoundedCornerShape(4.dp),
+                        color = apiColor.copy(alpha = 0.2f)
+                    ) {
+                        Text(
+                            text = stringResource(R.string.latest),
+                            modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
+                            style = MaterialTheme.typography.labelSmall.copy(
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 10.sp
+                            ),
+                            color = apiColor
+                        )
+                    }
+                }
+            }
         }
     }
 }
@@ -202,7 +207,7 @@ private fun VersionTimelinePreview() {
                 AppVersion(
                     packageName = "com.whatsapp",
                     title = "WhatsApp",
-                    sdkVersion = 34,
+                    sdkVersion = 33,
                     versionName = "2.24.1.74",
                     versionCode = 242174,
                     lastUpdateTime = "1 week ago"
@@ -210,7 +215,7 @@ private fun VersionTimelinePreview() {
                 AppVersion(
                     packageName = "com.whatsapp",
                     title = "WhatsApp",
-                    sdkVersion = 33,
+                    sdkVersion = 32,
                     versionName = "2.24.1.70",
                     versionCode = 242170,
                     lastUpdateTime = "3 weeks ago"
@@ -218,7 +223,7 @@ private fun VersionTimelinePreview() {
                 AppVersion(
                     packageName = "com.whatsapp",
                     title = "WhatsApp",
-                    sdkVersion = 33,
+                    sdkVersion = 31,
                     versionName = "2.24.1.65",
                     versionCode = 242165,
                     lastUpdateTime = "2 months ago"

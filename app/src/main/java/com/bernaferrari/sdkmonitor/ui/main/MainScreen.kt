@@ -56,19 +56,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.bernaferrari.sdkmonitor.R
 import com.bernaferrari.sdkmonitor.domain.model.AppFilter
 import com.bernaferrari.sdkmonitor.domain.model.SortOption
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(
-    onNavigateToSettings: () -> Unit,
-    onNavigateToLogs: () -> Unit,
     onNavigateToAppDetails: (String) -> Unit,
     viewModel: MainViewModel = hiltViewModel()
 ) {
@@ -142,7 +142,7 @@ fun MainScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "SDK Monitor",
+                        text = stringResource(R.string.app_name),
                         style = MaterialTheme.typography.titleLarge.copy(
                             fontWeight = FontWeight.Bold
                         ),
@@ -154,15 +154,18 @@ fun MainScreen(
                         is MainUiState.Success -> {
                             Surface(
                                 shape = RoundedCornerShape(12.dp),
-                                color = MaterialTheme.colorScheme.primaryContainer,
+                                color = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
                                 modifier = Modifier.padding(0.dp)
                             ) {
                                 Text(
-                                    text = "${state.filteredApps.size} apps",
+                                    text = stringResource(
+                                        R.string.apps_count,
+                                        state.filteredApps.size
+                                    ),
                                     style = MaterialTheme.typography.labelMedium.copy(
                                         fontWeight = FontWeight.SemiBold
                                     ),
-                                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                                    color = MaterialTheme.colorScheme.primary,
                                     modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
                                 )
                             }
@@ -188,7 +191,7 @@ fun MainScreen(
 
                         placeholder = {
                             Text(
-                                "Search apps...",
+                                stringResource(R.string.search_apps_hint),
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
                             )
@@ -196,7 +199,7 @@ fun MainScreen(
                         leadingIcon = {
                             Icon(
                                 imageVector = Icons.Default.Search,
-                                contentDescription = "Search",
+                                contentDescription = stringResource(R.string.search_apps_hint),
                                 tint = MaterialTheme.colorScheme.primary,
                                 modifier = Modifier.size(20.dp)
                             )
@@ -209,7 +212,7 @@ fun MainScreen(
                                 ) {
                                     Icon(
                                         imageVector = Icons.Default.Clear,
-                                        contentDescription = "Clear search",
+                                        contentDescription = stringResource(R.string.clear_search),
                                         tint = MaterialTheme.colorScheme.onSurfaceVariant,
                                         modifier = Modifier.size(16.dp)
                                     )
@@ -255,7 +258,7 @@ fun MainScreen(
                                     AppFilter.USER_APPS -> Icons.Default.Person
                                     AppFilter.SYSTEM_APPS -> Icons.Default.Android
                                 },
-                                contentDescription = "Filter: ${appFilter.displayName}",
+                                contentDescription = stringResource(R.string.filter_apps),
                                 modifier = Modifier.size(18.dp),
                                 tint = MaterialTheme.colorScheme.onSurface
                             )
@@ -269,7 +272,7 @@ fun MainScreen(
                         ) {
                             // Filter menu title
                             Text(
-                                text = "Filter Apps",
+                                text = stringResource(R.string.filter_apps),
                                 style = MaterialTheme.typography.labelLarge.copy(
                                     fontWeight = FontWeight.Bold
                                 ),
@@ -299,13 +302,13 @@ fun MainScreen(
                                                 }
                                             )
                                             Text(
-                                                text = filter.displayName,
+                                                text = when (filter) {
+                                                    AppFilter.ALL_APPS -> stringResource(R.string.all_apps)
+                                                    AppFilter.USER_APPS -> stringResource(R.string.user_apps)
+                                                    AppFilter.SYSTEM_APPS -> stringResource(R.string.system_apps)
+                                                },
                                                 style = MaterialTheme.typography.bodyMedium.copy(
-                                                    fontWeight = if (appFilter == filter) {
-                                                        FontWeight.SemiBold
-                                                    } else {
-                                                        FontWeight.Normal
-                                                    }
+                                                    fontWeight = if (appFilter == filter) FontWeight.Bold else FontWeight.Normal
                                                 ),
                                                 color = if (appFilter == filter) {
                                                     MaterialTheme.colorScheme.primary
@@ -343,7 +346,7 @@ fun MainScreen(
                         ) {
                             Icon(
                                 imageVector = sortOption.icon,
-                                contentDescription = "Sort: ${sortOption.displayName}",
+                                contentDescription = stringResource(R.string.sort_by),
                                 modifier = Modifier.size(18.dp),
                                 tint = MaterialTheme.colorScheme.onSurface
                             )
@@ -357,7 +360,7 @@ fun MainScreen(
                         ) {
                             // Sort menu title
                             Text(
-                                text = "Sort By",
+                                text = stringResource(R.string.sort_by),
                                 style = MaterialTheme.typography.labelLarge.copy(
                                     fontWeight = FontWeight.Bold
                                 ),
@@ -383,13 +386,12 @@ fun MainScreen(
                                                 }
                                             )
                                             Text(
-                                                text = option.displayName,
+                                                text = when (option) {
+                                                    SortOption.NAME -> stringResource(R.string.sort_by_name)
+                                                    SortOption.SDK -> stringResource(R.string.sort_by_sdk)
+                                                },
                                                 style = MaterialTheme.typography.bodyMedium.copy(
-                                                    fontWeight = if (sortOption == option) {
-                                                        FontWeight.SemiBold
-                                                    } else {
-                                                        FontWeight.Normal
-                                                    }
+                                                    fontWeight = if (sortOption == option) FontWeight.Bold else FontWeight.Normal
                                                 ),
                                                 color = if (sortOption == option) {
                                                     MaterialTheme.colorScheme.primary
@@ -427,7 +429,7 @@ fun MainScreen(
                             color = MaterialTheme.colorScheme.primary
                         )
                         Text(
-                            text = "Loading apps...",
+                            text = stringResource(R.string.loading_apps),
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -459,7 +461,7 @@ fun MainScreen(
                                 tint = MaterialTheme.colorScheme.onErrorContainer
                             )
                             Text(
-                                text = "Something went wrong",
+                                text = stringResource(R.string.something_went_wrong),
                                 style = MaterialTheme.typography.titleMedium.copy(
                                     fontWeight = FontWeight.Bold
                                 ),
@@ -476,11 +478,11 @@ fun MainScreen(
                             ) {
                                 Icon(
                                     imageVector = Icons.Default.Refresh,
-                                    contentDescription = "Retry",
+                                    contentDescription = stringResource(R.string.retry),
                                     modifier = Modifier.size(16.dp)
                                 )
                                 Spacer(modifier = Modifier.width(8.dp))
-                                Text("Retry")
+                                Text(stringResource(R.string.retry))
                             }
                         }
                     }
@@ -500,19 +502,19 @@ fun MainScreen(
                             ) {
                                 Icon(
                                     imageVector = Icons.Default.SearchOff,
-                                    contentDescription = "No results",
+                                    contentDescription = stringResource(R.string.no_apps_found),
                                     modifier = Modifier.size(48.dp),
                                     tint = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
                                 Text(
-                                    text = "No apps found",
+                                    text = stringResource(R.string.no_apps_found),
                                     style = MaterialTheme.typography.titleMedium.copy(
                                         fontWeight = FontWeight.Bold
                                     ),
                                     color = MaterialTheme.colorScheme.onSurface
                                 )
                                 Text(
-                                    text = "Try searching with different terms",
+                                    text = stringResource(R.string.try_searching_different_terms),
                                     style = MaterialTheme.typography.bodyMedium,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                                     textAlign = TextAlign.Center
@@ -532,19 +534,26 @@ fun MainScreen(
                             ) {
                                 Icon(
                                     imageVector = Icons.Default.Apps,
-                                    contentDescription = "No apps",
+                                    contentDescription = stringResource(R.string.no_apps_found),
                                     modifier = Modifier.size(48.dp),
                                     tint = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
                                 Text(
-                                    text = "No ${appFilter.displayName.lowercase()} found",
+                                    text = stringResource(
+                                        R.string.no_filtered_apps_found,
+                                        when (appFilter) {
+                                            AppFilter.ALL_APPS -> stringResource(R.string.all_apps)
+                                            AppFilter.USER_APPS -> stringResource(R.string.user_apps)
+                                            AppFilter.SYSTEM_APPS -> stringResource(R.string.system_apps)
+                                        }.lowercase()
+                                    ),
                                     style = MaterialTheme.typography.titleMedium.copy(
                                         fontWeight = FontWeight.Bold
                                     ),
                                     color = MaterialTheme.colorScheme.onSurface
                                 )
                                 Text(
-                                    text = "Try changing your filter",
+                                    text = stringResource(R.string.try_changing_filter),
                                     style = MaterialTheme.typography.bodyMedium,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
@@ -616,9 +625,14 @@ fun MainScreen(
                                                 Surface(
                                                     modifier = Modifier
                                                         .fillMaxWidth()
-                                                        .padding(horizontal = 16.dp, vertical = 8.dp),
+                                                        .padding(
+                                                            horizontal = 16.dp,
+                                                            vertical = 8.dp
+                                                        ),
                                                     shape = RoundedCornerShape(12.dp),
-                                                    color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3f)
+                                                    color = MaterialTheme.colorScheme.primaryContainer.copy(
+                                                        alpha = 0.3f
+                                                    )
                                                 ) {
                                                     Text(
                                                         text = letter,
@@ -626,7 +640,10 @@ fun MainScreen(
                                                             fontWeight = FontWeight.Bold
                                                         ),
                                                         color = MaterialTheme.colorScheme.primary,
-                                                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                                                        modifier = Modifier.padding(
+                                                            horizontal = 16.dp,
+                                                            vertical = 8.dp
+                                                        )
                                                     )
                                                 }
                                             }
@@ -638,12 +655,14 @@ fun MainScreen(
                                             ) { index, appVersion ->
                                                 MainAppCard(
                                                     appVersion = appVersion,
+                                                    searchQuery = searchQuery,
                                                     isLast = index == appsInSection.lastIndex,
                                                     onClick = { onNavigateToAppDetails(appVersion.packageName) }
                                                 )
                                             }
                                         }
                                     }
+
                                     groupedAppsBySdk.isNotEmpty() -> {
                                         // Show apps with SDK version section headers
                                         groupedAppsBySdk.forEach { (sdkHeader, appsInSection) ->
@@ -652,9 +671,14 @@ fun MainScreen(
                                                 Surface(
                                                     modifier = Modifier
                                                         .fillMaxWidth()
-                                                        .padding(horizontal = 16.dp, vertical = 8.dp),
+                                                        .padding(
+                                                            horizontal = 16.dp,
+                                                            vertical = 8.dp
+                                                        ),
                                                     shape = RoundedCornerShape(12.dp),
-                                                    color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3f)
+                                                    color = MaterialTheme.colorScheme.primaryContainer.copy(
+                                                        alpha = 0.3f
+                                                    )
                                                 ) {
                                                     Text(
                                                         text = sdkHeader,
@@ -662,7 +686,10 @@ fun MainScreen(
                                                             fontWeight = FontWeight.Bold
                                                         ),
                                                         color = MaterialTheme.colorScheme.primary,
-                                                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                                                        modifier = Modifier.padding(
+                                                            horizontal = 16.dp,
+                                                            vertical = 8.dp
+                                                        )
                                                     )
                                                 }
                                             }
@@ -674,12 +701,14 @@ fun MainScreen(
                                             ) { index, appVersion ->
                                                 MainAppCard(
                                                     appVersion = appVersion,
+                                                    searchQuery = searchQuery,
                                                     isLast = index == appsInSection.lastIndex,
                                                     onClick = { onNavigateToAppDetails(appVersion.packageName) }
                                                 )
                                             }
                                         }
                                     }
+
                                     else -> {
                                         // Show apps without headers (when searching)
                                         itemsIndexed(
@@ -688,6 +717,7 @@ fun MainScreen(
                                         ) { index, appVersion ->
                                             MainAppCard(
                                                 appVersion = appVersion,
+                                                searchQuery = searchQuery,
                                                 isLast = index == state.filteredApps.lastIndex,
                                                 onClick = { onNavigateToAppDetails(appVersion.packageName) }
                                             )
@@ -725,6 +755,5 @@ fun MainScreen(
                 }
             }
         }
-
     }
 }

@@ -5,6 +5,11 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.core.view.WindowCompat
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -23,11 +28,24 @@ class MainActivity : ComponentActivity() {
         setContent {
             val themeViewModel: ThemeViewModel = hiltViewModel()
             
+            // Handle notification navigation
+            var initialPackageName by remember { mutableStateOf<String?>(null) }
+            
+            LaunchedEffect(intent) {
+                if (intent?.getBooleanExtra("navigate_to_details", false) == true) {
+                    val packageName = intent.getStringExtra("package_name")
+                    if (!packageName.isNullOrEmpty()) {
+                        initialPackageName = packageName
+                    }
+                }
+            }
+            
             SDKMonitorTheme(
                 themeViewModel = themeViewModel
             ) {
                 AppNavigation(
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier.fillMaxSize(),
+                    initialPackageName = initialPackageName
                 )
             }
         }

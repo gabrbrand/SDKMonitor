@@ -26,9 +26,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntSize
@@ -63,6 +65,7 @@ fun <T> GenericFastScroller(
 ) {
     val coroutineScope = rememberCoroutineScope()
     val density = LocalDensity.current
+    val hapticFeedback = LocalHapticFeedback.current
 
     // Get unique letters from items
     val letters = remember(items.hashCode()) {
@@ -90,6 +93,7 @@ fun <T> GenericFastScroller(
     var currentDragPosition by remember { mutableFloatStateOf(0f) }
     var scrollerSize by remember { mutableStateOf(IntSize.Zero) }
     var currentSelectedLetter by remember { mutableStateOf("") }
+    var previousSelectedLetter by remember { mutableStateOf("") }
 
     // Auto-reset when items change
     LaunchedEffect(items.hashCode()) {
@@ -119,6 +123,13 @@ fun <T> GenericFastScroller(
             .coerceIn(0, letters.size - 1)
 
         val selectedLetter = letters[letterIndex]
+        
+        // Trigger haptic feedback only when letter changes
+        if (selectedLetter != previousSelectedLetter) {
+            hapticFeedback.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+            previousSelectedLetter = selectedLetter
+        }
+        
         currentSelectedLetter = selectedLetter
 
         onLetterSelected(selectedLetter)
@@ -144,6 +155,10 @@ fun <T> GenericFastScroller(
                             val down = awaitFirstDown()
                             onInteractionStart()
                             isInteracting = true
+                            
+                            // Haptic feedback on initial touch
+                            hapticFeedback.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                            
                             currentDragPosition = down.position.y
                             handlePositionAndSelectLetter(down.position.y)
 
@@ -159,6 +174,7 @@ fun <T> GenericFastScroller(
                                 }
                             }
                             isInteracting = false
+                            previousSelectedLetter = "" // Reset for next interaction
                             onScrollFinished()
                         }
                     }

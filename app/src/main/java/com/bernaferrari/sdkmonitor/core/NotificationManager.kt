@@ -1,4 +1,4 @@
-package com.bernaferrari.sdkmonitor.notifications
+package com.bernaferrari.sdkmonitor.core
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -62,15 +62,21 @@ class NotificationManager @Inject constructor(
      */
     fun showSdkChangeNotification(
         appName: String,
+        packageName: String,
         oldSdk: Int,
         newSdk: Int
     ) {
         if (!notificationManager.areNotificationsEnabled()) return
 
-        val intent = Intent(context, MainActivity::class.java)
+        val intent = Intent(context, MainActivity::class.java).apply {
+            putExtra("package_name", packageName)
+            putExtra("navigate_to_details", true)
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+        }
+
         val pendingIntent = PendingIntent.getActivity(
             context,
-            0,
+            packageName.hashCode(), // Use package name hash as unique request code
             intent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
@@ -84,7 +90,7 @@ class NotificationManager @Inject constructor(
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .build()
 
-        notificationManager.notify(NOTIFICATION_ID_SDK_CHANGE, notification)
+        notificationManager.notify(NOTIFICATION_ID_SDK_CHANGE + packageName.hashCode(), notification)
     }
 
     /**
