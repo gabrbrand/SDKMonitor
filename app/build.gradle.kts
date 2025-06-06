@@ -110,9 +110,6 @@ dependencies {
     implementation(libs.androidx.lifecycle.runtime.compose)
     implementation(libs.androidx.navigation.compose)
 
-    // Fragment support for viewModels()
-    implementation(libs.androidx.fragment.ktx)
-
     // Coil for image loading
     implementation(libs.coil.compose)
     implementation(libs.coil.core)

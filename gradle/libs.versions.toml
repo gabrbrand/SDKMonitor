@@ -1,9 +1,9 @@
 [versions]
 activityCompose = "1.10.1"
 androidGradlePlugin = "8.10.1"
-appcompat = "1.7.0"
+appcompat = "1.7.1"
 compose = "1.8.2"
-composeBom = "2025.05.01"
+composeBom = "2025.06.00"
 coroutines = "1.10.2"
 datastore = "1.1.7"
 hilt = "2.56.2"
@@ -12,7 +12,7 @@ junit = "4.13.2"
 kotlin = "2.1.21"
 ktx = "1.16.0"
 leakcanary = "2.14"
-lifecycle = "2.9.0"
+lifecycle = "2.9.1"
 material3 = "1.4.0-alpha15"
 navigation = "2.9.0"
 paging = "3.3.6"
@@ -21,7 +21,6 @@ room = "2.7.1"
 work = "2.10.1"
 logger = "2.2.0"
 coil = "3.2.0"
-fragment = "1.8.7"
 ksp = "2.1.21-2.0.1"
 gradle-versions = "0.52.0"
 spotless = "7.0.3"
@@ -31,7 +30,6 @@ startup = "1.2.0"
 [libraries]
 androidx-startup = { module = "androidx.startup:startup-runtime", version.ref = "startup" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activityCompose" }
-androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
 androidx-compose-bom = { module = "androidx.compose:compose-bom", version.ref = "composeBom" }
 androidx-compose-foundation = { module = "androidx.compose.foundation:foundation" }
 androidx-compose-foundation-layout = { module = "androidx.compose.foundation:foundation-layout" }
@@ -72,9 +70,6 @@ logger = { module = "com.orhanobut:logger", version.ref = "logger" }
 coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil" }
 coil-core = { module = "io.coil-kt.coil3:coil", version.ref = "coil" }
 
-# Fragment support
-androidx-fragment-ktx = { module = "androidx.fragment:fragment-ktx", version.ref = "fragment" }
-
 # Material Icons Extended
 androidx-compose-material-icons-extended = { module = "androidx.compose.material:material-icons-extended" }
 
@@ -85,7 +80,6 @@ android-test = { id = "com.android.test", version.ref = "androidGradlePlugin" }
 compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 gradle-versions = { id = "com.github.ben-manes.versions", version.ref = "gradle-versions" }
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
-kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kotlin" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
