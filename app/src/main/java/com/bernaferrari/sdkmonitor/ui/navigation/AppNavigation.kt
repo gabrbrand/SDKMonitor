@@ -1,5 +1,11 @@
 package com.bernaferrari.sdkmonitor.ui.navigation
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -58,8 +64,17 @@ fun AppNavigation(
         modifier = modifier,
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
         bottomBar = {
-            // Only show bottom nav for main screens, not for details
-            if (currentDestination?.route != Screen.Details.route) {
+
+
+            AnimatedVisibility(
+                visible = currentDestination?.route != Screen.Details.route,
+                enter = slideInVertically(
+                    initialOffsetY = { fullHeight -> fullHeight }
+                ),
+                exit = slideOutVertically(
+                    targetOffsetY = { fullHeight -> fullHeight }
+                )
+            ) {
                 NavigationBar(
                     containerColor = MaterialTheme.colorScheme.surfaceContainer,
                     contentColor = MaterialTheme.colorScheme.onSurface
@@ -102,7 +117,9 @@ fun AppNavigation(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
-                .consumeWindowInsets(innerPadding)
+                .consumeWindowInsets(innerPadding),
+            enterTransition = { fadeIn(animationSpec = tween(300)) },
+            exitTransition = { fadeOut(animationSpec = tween(300)) }
         ) {
             composable(Screen.Main.route) {
                 MainScreen(
@@ -150,7 +167,9 @@ private sealed class BottomNavItem(
     val label: Int
 ) {
     data object Main : BottomNavItem(Screen.Main.route, Icons.Default.Apps, R.string.main_title)
-    data object Logs : BottomNavItem(Screen.Logs.route, Icons.Default.History, R.string.logs_title)
+    data object Logs :
+        BottomNavItem(Screen.Logs.route, Icons.Default.History, R.string.logs_title)
+
     data object Settings :
         BottomNavItem(Screen.Settings.route, Icons.Default.Settings, R.string.settings_title)
 }

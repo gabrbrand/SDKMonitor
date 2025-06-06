@@ -3,12 +3,6 @@ package com.bernaferrari.sdkmonitor.ui.details
 import android.content.Intent
 import android.net.Uri
 import android.provider.Settings
-import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
-import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -44,7 +38,9 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -57,6 +53,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.bernaferrari.sdkmonitor.R
 import com.bernaferrari.sdkmonitor.domain.model.AppVersion
+import kotlinx.coroutines.delay
 
 /**
  * App Details Screen with Material Design 3 and animations
@@ -70,6 +67,7 @@ fun DetailsScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
+    var showLoading by remember { mutableStateOf(false) }
 
     // Action handlers
     val handleAppInfoClick = remember {
@@ -102,28 +100,28 @@ fun DetailsScreen(
         viewModel.loadAppDetails(packageName)
     }
 
+    LaunchedEffect(uiState) {
+        if (uiState is DetailsUiState.Loading) {
+            delay(300)
+            showLoading = true
+        } else {
+            showLoading = false
+        }
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
                 title = {
-                    AnimatedContent(
-                        targetState = when (val state = uiState) {
+                    Text(
+                        text = when (val state = uiState) {
                             is DetailsUiState.Success -> state.appDetails.title
                             else -> stringResource(R.string.app_details)
                         },
-                        transitionSpec = {
-                            slideInVertically { -it } + fadeIn() togetherWith
-                                    slideOutVertically { it } + fadeOut()
-                        },
-                        label = "title_animation"
-                    ) { title ->
-                        Text(
-                            text = title,
-                            fontWeight = FontWeight.ExtraBold,
-                            style = MaterialTheme.typography.headlineSmall,
-                            maxLines = 1
-                        )
-                    }
+                        fontWeight = FontWeight.ExtraBold,
+                        style = MaterialTheme.typography.headlineSmall,
+                        maxLines = 1
+                    )
                 },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
@@ -146,11 +144,13 @@ fun DetailsScreen(
         ) {
             when (val state = uiState) {
                 is DetailsUiState.Loading -> {
-                    LoadingState(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(paddingValues)
-                    )
+                    if (showLoading) {
+                        LoadingState(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(paddingValues)
+                        )
+                    }
                 }
 
                 is DetailsUiState.Error -> {
@@ -192,7 +192,7 @@ private fun LoadingState(
                 modifier = Modifier.size(48.dp),
                 color = MaterialTheme.colorScheme.primary
             )
-            
+
             Text(
                 text = stringResource(R.string.loading_app_details),
                 style = MaterialTheme.typography.titleMedium,
@@ -353,7 +353,7 @@ private fun VersionHistoryCard(
                     }
                 }
             }
-            
+
             if (versions.isNotEmpty()) {
                 VersionTimeline(
                     versions = versions,
