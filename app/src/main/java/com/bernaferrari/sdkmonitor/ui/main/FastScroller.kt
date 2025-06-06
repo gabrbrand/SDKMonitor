@@ -4,9 +4,12 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.dp
 import com.bernaferrari.sdkmonitor.domain.model.AppFilter
 import com.bernaferrari.sdkmonitor.domain.model.AppVersion
 import com.bernaferrari.sdkmonitor.ui.components.GenericFastScroller
+
 
 @Composable
 fun FastScroller(
@@ -14,10 +17,16 @@ fun FastScroller(
     apps: List<AppVersion>,
     listState: LazyListState,
     appFilter: AppFilter,
+    scrollOffsetDp: Int = 60, // Default 60dp offset as requested
     onLetterSelected: (String) -> Unit,
     onScrollFinished: () -> Unit,
     onInteractionStart: () -> Unit = {}
 ) {
+    val density = LocalDensity.current
+    val scrollOffsetPx = remember(scrollOffsetDp) {
+        with(density) { scrollOffsetDp.dp.toPx().toInt() }
+    }
+
     // Create letter to index mapping for the apps
     val letterToIndexMap = remember(apps, appFilter, apps.hashCode()) {
         val mapping = mutableMapOf<String, Int>()
@@ -46,6 +55,7 @@ fun FastScroller(
         listState = listState,
         getIndexKey = { it.title },
         letterToIndexMap = letterToIndexMap,
+        scrollOffsetPx = scrollOffsetPx,
         modifier = modifier,
         onLetterSelected = onLetterSelected,
         onScrollFinished = onScrollFinished,

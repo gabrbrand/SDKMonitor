@@ -42,11 +42,12 @@ import kotlin.math.abs
 
 /**
  * A generic fast scroller that can work with any data type.
- * 
+ *
  * @param items The list of items to create letters from
  * @param listState The LazyListState to control scrolling
  * @param getIndexKey Function that extracts the index key (e.g., first letter) from an item
  * @param letterToIndexMap Map of letters to their corresponding indices in the LazyColumn
+ * @param scrollOffsetPx Additional offset in pixels to apply when scrolling (useful to show context above target)
  * @param modifier Modifier for the component
  * @param onLetterSelected Callback when a letter is selected
  * @param onScrollFinished Callback when scrolling interaction finishes
@@ -54,11 +55,12 @@ import kotlin.math.abs
  */
 @Composable
 fun <T> GenericFastScroller(
+    modifier: Modifier = Modifier,
     items: List<T>,
     listState: LazyListState,
     getIndexKey: (T) -> String,
     letterToIndexMap: Map<String, Int>,
-    modifier: Modifier = Modifier,
+    scrollOffsetPx: Int = 0,
     onLetterSelected: (String) -> Unit = {},
     onScrollFinished: () -> Unit = {},
     onInteractionStart: () -> Unit = {}
@@ -101,11 +103,19 @@ fun <T> GenericFastScroller(
         currentDragPosition = 0f
     }
 
-    // Function to scroll to letter
+    // Function to scroll to letter with offset
     fun scrollToLetter(letter: String) {
         letterToIndexMap[letter]?.let { index ->
             coroutineScope.launch {
-                listState.scrollToItem(index)
+                // Use immediate scroll instead of animate for faster response
+                if (scrollOffsetPx > 0) {
+                    listState.scrollToItem(
+                        index = index,
+                        scrollOffset = -scrollOffsetPx
+                    )
+                } else {
+                    listState.scrollToItem(index)
+                }
             }
         }
     }
@@ -123,13 +133,13 @@ fun <T> GenericFastScroller(
             .coerceIn(0, letters.size - 1)
 
         val selectedLetter = letters[letterIndex]
-        
+
         // Trigger haptic feedback only when letter changes
         if (selectedLetter != previousSelectedLetter) {
             hapticFeedback.performHapticFeedback(HapticFeedbackType.TextHandleMove)
             previousSelectedLetter = selectedLetter
         }
-        
+
         currentSelectedLetter = selectedLetter
 
         onLetterSelected(selectedLetter)
@@ -155,10 +165,10 @@ fun <T> GenericFastScroller(
                             val down = awaitFirstDown()
                             onInteractionStart()
                             isInteracting = true
-                            
+
                             // Haptic feedback on initial touch
                             hapticFeedback.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-                            
+
                             currentDragPosition = down.position.y
                             handlePositionAndSelectLetter(down.position.y)
 
@@ -300,7 +310,7 @@ fun GenericFastScrollerPreview() {
 
         val letterToIndexMap = remember(mockItems) {
             val mapping = mutableMapOf<String, Int>()
-            val groupedItems = mockItems.groupBy { 
+            val groupedItems = mockItems.groupBy {
                 val firstChar = it.name.firstOrNull()?.uppercaseChar()
                 if (firstChar?.isLetter() == true) {
                     firstChar.toString()
@@ -349,7 +359,7 @@ fun SimpleGenericFastScrollerPreview() {
 
         val letterToIndexMap = remember(simpleItems) {
             val mapping = mutableMapOf<String, Int>()
-            val groupedItems = simpleItems.groupBy { 
+            val groupedItems = simpleItems.groupBy {
                 it.firstOrNull()?.uppercaseChar()?.toString() ?: "#"
             }.toSortedMap()
 

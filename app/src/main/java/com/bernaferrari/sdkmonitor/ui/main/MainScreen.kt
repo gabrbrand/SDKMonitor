@@ -18,7 +18,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Android
@@ -69,8 +68,7 @@ import com.bernaferrari.sdkmonitor.domain.model.SortOption
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(
-    onNavigateToAppDetails: (String) -> Unit,
-    viewModel: MainViewModel = hiltViewModel()
+    onNavigateToAppDetails: (String) -> Unit, viewModel: MainViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val searchQuery by viewModel.searchQuery.collectAsStateWithLifecycle()
@@ -93,8 +91,28 @@ fun MainScreen(
     // Add state for filter menu
     var showFilterMenu by remember { mutableStateOf(false) }
 
-    // State for LazyColumn
-    val listState = rememberLazyListState()
+    // Create stable keys for scroll state that only change when we want to reset
+    val scrollStateKey = remember(appFilter, sortOption) {
+        "MainScreen_${appFilter.name}_${sortOption.name}"
+    }
+
+    // Remember previous filter/sort to detect changes
+    var previousFilter by remember { mutableStateOf(appFilter) }
+    var previousSort by remember { mutableStateOf(sortOption) }
+
+    // Detect if filter or sort changed (should reset scroll)
+    val shouldResetScroll = remember(appFilter, sortOption) {
+        val changed = previousFilter != appFilter || previousSort != sortOption
+        previousFilter = appFilter
+        previousSort = sortOption
+        changed
+    }
+
+    // State for LazyColumn with persistent scroll state
+    val listState = rememberPersistentLazyListState(
+        key = scrollStateKey,
+        shouldReset = shouldResetScroll
+    )
 
     // Track if list is being scrolled
     val isScrolling by remember {
@@ -110,13 +128,6 @@ fun MainScreen(
         }
     }
 
-    // Reset list state when filter changes
-    LaunchedEffect(appFilter) {
-        listState.scrollToItem(0)
-    }
-
-    // Clean, minimal design with proper status bar handling
-
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -124,8 +135,7 @@ fun MainScreen(
     ) {
         // Compact header card with title, search, and dropdowns
         Card(
-            modifier = Modifier
-                .fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(20.dp),
             colors = CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.surfaceContainer
@@ -159,8 +169,7 @@ fun MainScreen(
                             ) {
                                 Text(
                                     text = stringResource(
-                                        R.string.apps_count,
-                                        state.filteredApps.size
+                                        R.string.apps_count, state.filteredApps.size
                                     ),
                                     style = MaterialTheme.typography.labelMedium.copy(
                                         fontWeight = FontWeight.SemiBold
@@ -221,10 +230,7 @@ fun MainScreen(
                         } else null,
                         singleLine = true,
                         shape = RoundedCornerShape(
-                            topStart = 20.dp,
-                            bottomStart = 20.dp,
-                            topEnd = 10.dp,
-                            bottomEnd = 10.dp
+                            topStart = 20.dp, bottomStart = 20.dp, topEnd = 10.dp, bottomEnd = 10.dp
                         ),
                         colors = TextFieldDefaults.colors(
                             focusedIndicatorColor = Color.Transparent,
@@ -237,8 +243,7 @@ fun MainScreen(
                         ),
                         textStyle = MaterialTheme.typography.bodyMedium.copy(
                             fontWeight = FontWeight.Medium
-                        )
-                    )
+                        ))
 
                     // Filter dropdown button
                     Box {
@@ -281,48 +286,43 @@ fun MainScreen(
                             )
 
                             AppFilter.entries.forEach { filter ->
-                                DropdownMenuItem(
-                                    text = {
-                                        Row(
-                                            verticalAlignment = Alignment.CenterVertically,
-                                            horizontalArrangement = Arrangement.spacedBy(12.dp)
-                                        ) {
-                                            Icon(
-                                                imageVector = when (filter) {
-                                                    AppFilter.ALL_APPS -> Icons.Default.Apps
-                                                    AppFilter.USER_APPS -> Icons.Default.Person
-                                                    AppFilter.SYSTEM_APPS -> Icons.Default.Android
-                                                },
-                                                contentDescription = null,
-                                                modifier = Modifier.size(18.dp),
-                                                tint = if (appFilter == filter) {
-                                                    MaterialTheme.colorScheme.primary
-                                                } else {
-                                                    MaterialTheme.colorScheme.onSurfaceVariant
-                                                }
-                                            )
-                                            Text(
-                                                text = when (filter) {
-                                                    AppFilter.ALL_APPS -> stringResource(R.string.all_apps)
-                                                    AppFilter.USER_APPS -> stringResource(R.string.user_apps)
-                                                    AppFilter.SYSTEM_APPS -> stringResource(R.string.system_apps)
-                                                },
-                                                style = MaterialTheme.typography.bodyMedium.copy(
-                                                    fontWeight = if (appFilter == filter) FontWeight.Bold else FontWeight.Normal
-                                                ),
-                                                color = if (appFilter == filter) {
-                                                    MaterialTheme.colorScheme.primary
-                                                } else {
-                                                    MaterialTheme.colorScheme.onSurface
-                                                }
-                                            )
-                                        }
-                                    },
-                                    onClick = {
-                                        viewModel.updateAppFilter(filter)
-                                        showFilterMenu = false
+                                DropdownMenuItem(text = {
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                                    ) {
+                                        Icon(
+                                            imageVector = when (filter) {
+                                                AppFilter.ALL_APPS -> Icons.Default.Apps
+                                                AppFilter.USER_APPS -> Icons.Default.Person
+                                                AppFilter.SYSTEM_APPS -> Icons.Default.Android
+                                            },
+                                            contentDescription = null,
+                                            modifier = Modifier.size(18.dp),
+                                            tint = if (appFilter == filter) {
+                                                MaterialTheme.colorScheme.primary
+                                            } else {
+                                                MaterialTheme.colorScheme.onSurfaceVariant
+                                            }
+                                        )
+                                        Text(
+                                            text = when (filter) {
+                                                AppFilter.ALL_APPS -> stringResource(R.string.all_apps)
+                                                AppFilter.USER_APPS -> stringResource(R.string.user_apps)
+                                                AppFilter.SYSTEM_APPS -> stringResource(R.string.system_apps)
+                                            }, style = MaterialTheme.typography.bodyMedium.copy(
+                                                fontWeight = if (appFilter == filter) FontWeight.Bold else FontWeight.Normal
+                                            ), color = if (appFilter == filter) {
+                                                MaterialTheme.colorScheme.primary
+                                            } else {
+                                                MaterialTheme.colorScheme.onSurface
+                                            }
+                                        )
                                     }
-                                )
+                                }, onClick = {
+                                    viewModel.updateAppFilter(filter)
+                                    showFilterMenu = false
+                                })
                             }
                         }
                     }
@@ -330,17 +330,14 @@ fun MainScreen(
                     // Sort dropdown button
                     Box {
                         IconButton(
-                            onClick = { showSortMenu = true },
-                            shape = RoundedCornerShape(
+                            onClick = { showSortMenu = true }, shape = RoundedCornerShape(
                                 topStart = 10.dp,
                                 bottomStart = 10.dp,
                                 topEnd = 20.dp,
                                 bottomEnd = 20.dp
-                            ),
-                            colors = IconButtonDefaults.filledIconButtonColors(
+                            ), colors = IconButtonDefaults.filledIconButtonColors(
                                 containerColor = MaterialTheme.colorScheme.surface,
-                            ),
-                            modifier = Modifier
+                            ), modifier = Modifier
                                 .width(48.dp)
                                 .height(56.dp)
                         ) {
@@ -369,43 +366,38 @@ fun MainScreen(
                             )
 
                             SortOption.entries.forEach { option ->
-                                DropdownMenuItem(
-                                    text = {
-                                        Row(
-                                            verticalAlignment = Alignment.CenterVertically,
-                                            horizontalArrangement = Arrangement.spacedBy(12.dp)
-                                        ) {
-                                            Icon(
-                                                imageVector = option.icon,
-                                                contentDescription = null,
-                                                modifier = Modifier.size(18.dp),
-                                                tint = if (sortOption == option) {
-                                                    MaterialTheme.colorScheme.primary
-                                                } else {
-                                                    MaterialTheme.colorScheme.onSurfaceVariant
-                                                }
-                                            )
-                                            Text(
-                                                text = when (option) {
-                                                    SortOption.NAME -> stringResource(R.string.sort_by_name)
-                                                    SortOption.SDK -> stringResource(R.string.sort_by_sdk)
-                                                },
-                                                style = MaterialTheme.typography.bodyMedium.copy(
-                                                    fontWeight = if (sortOption == option) FontWeight.Bold else FontWeight.Normal
-                                                ),
-                                                color = if (sortOption == option) {
-                                                    MaterialTheme.colorScheme.primary
-                                                } else {
-                                                    MaterialTheme.colorScheme.onSurface
-                                                }
-                                            )
-                                        }
-                                    },
-                                    onClick = {
-                                        viewModel.updateSortOption(option)
-                                        showSortMenu = false
+                                DropdownMenuItem(text = {
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                                    ) {
+                                        Icon(
+                                            imageVector = option.icon,
+                                            contentDescription = null,
+                                            modifier = Modifier.size(18.dp),
+                                            tint = if (sortOption == option) {
+                                                MaterialTheme.colorScheme.primary
+                                            } else {
+                                                MaterialTheme.colorScheme.onSurfaceVariant
+                                            }
+                                        )
+                                        Text(
+                                            text = when (option) {
+                                                SortOption.NAME -> stringResource(R.string.sort_by_name)
+                                                SortOption.SDK -> stringResource(R.string.sort_by_sdk)
+                                            }, style = MaterialTheme.typography.bodyMedium.copy(
+                                                fontWeight = if (sortOption == option) FontWeight.Bold else FontWeight.Normal
+                                            ), color = if (sortOption == option) {
+                                                MaterialTheme.colorScheme.primary
+                                            } else {
+                                                MaterialTheme.colorScheme.onSurface
+                                            }
+                                        )
                                     }
-                                )
+                                }, onClick = {
+                                    viewModel.updateSortOption(option)
+                                    showSortMenu = false
+                                })
                             }
                         }
                     }
@@ -417,8 +409,7 @@ fun MainScreen(
         when (val state = uiState) {
             is MainUiState.Loading -> {
                 Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
+                    modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center
                 ) {
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
@@ -439,15 +430,12 @@ fun MainScreen(
 
             is MainUiState.Error -> {
                 Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
+                    modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center
                 ) {
                     Card(
-                        modifier = Modifier.padding(24.dp),
-                        colors = CardDefaults.cardColors(
+                        modifier = Modifier.padding(24.dp), colors = CardDefaults.cardColors(
                             containerColor = MaterialTheme.colorScheme.errorContainer
-                        ),
-                        shape = RoundedCornerShape(16.dp)
+                        ), shape = RoundedCornerShape(16.dp)
                     ) {
                         Column(
                             modifier = Modifier.padding(24.dp),
@@ -474,8 +462,7 @@ fun MainScreen(
                                 textAlign = TextAlign.Center
                             )
                             FilledTonalButton(
-                                onClick = { viewModel.retryLoadApps() }
-                            ) {
+                                onClick = { viewModel.retryLoadApps() }) {
                                 Icon(
                                     imageVector = Icons.Default.Refresh,
                                     contentDescription = stringResource(R.string.retry),
@@ -493,8 +480,7 @@ fun MainScreen(
                 when {
                     state.filteredApps.isEmpty() && searchQuery.isNotBlank() -> {
                         Box(
-                            modifier = Modifier.fillMaxSize(),
-                            contentAlignment = Alignment.Center
+                            modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center
                         ) {
                             Column(
                                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -525,8 +511,7 @@ fun MainScreen(
 
                     state.filteredApps.isEmpty() -> {
                         Box(
-                            modifier = Modifier.fillMaxSize(),
-                            contentAlignment = Alignment.Center
+                            modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center
                         ) {
                             Column(
                                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -540,17 +525,14 @@ fun MainScreen(
                                 )
                                 Text(
                                     text = stringResource(
-                                        R.string.no_filtered_apps_found,
-                                        when (appFilter) {
+                                        R.string.no_filtered_apps_found, when (appFilter) {
                                             AppFilter.ALL_APPS -> stringResource(R.string.all_apps)
                                             AppFilter.USER_APPS -> stringResource(R.string.user_apps)
                                             AppFilter.SYSTEM_APPS -> stringResource(R.string.system_apps)
                                         }.lowercase()
-                                    ),
-                                    style = MaterialTheme.typography.titleMedium.copy(
+                                    ), style = MaterialTheme.typography.titleMedium.copy(
                                         fontWeight = FontWeight.Bold
-                                    ),
-                                    color = MaterialTheme.colorScheme.onSurface
+                                    ), color = MaterialTheme.colorScheme.onSurface
                                 )
                                 Text(
                                     text = stringResource(R.string.try_changing_filter),
@@ -563,9 +545,8 @@ fun MainScreen(
 
                     else -> {
                         // Only show fast scroller when sorting by name and has apps
-                        val showFastScroller = sortOption == SortOption.NAME &&
-                                state.filteredApps.size > 15 &&
-                                searchQuery.isBlank()
+                        val showFastScroller =
+                            sortOption == SortOption.NAME && state.filteredApps.size > 15 && searchQuery.isBlank()
 
                         // Group apps by first letter when sorting alphabetically
                         val groupedApps = remember(state.filteredApps, sortOption) {
@@ -606,8 +587,7 @@ fun MainScreen(
                                         detectDragGestures(
                                             onDragStart = {
                                                 focusManager.clearFocus()
-                                            }
-                                        ) { _, _ -> }
+                                            }) { _, _ -> }
                                     },
                                 contentPadding = PaddingValues(
                                     start = 0.dp,
@@ -626,8 +606,7 @@ fun MainScreen(
                                                     modifier = Modifier
                                                         .fillMaxWidth()
                                                         .padding(
-                                                            horizontal = 16.dp,
-                                                            vertical = 8.dp
+                                                            horizontal = 16.dp, vertical = 8.dp
                                                         ),
                                                     shape = RoundedCornerShape(12.dp),
                                                     color = MaterialTheme.colorScheme.primaryContainer.copy(
@@ -641,8 +620,7 @@ fun MainScreen(
                                                         ),
                                                         color = MaterialTheme.colorScheme.primary,
                                                         modifier = Modifier.padding(
-                                                            horizontal = 16.dp,
-                                                            vertical = 8.dp
+                                                            horizontal = 16.dp, vertical = 8.dp
                                                         )
                                                     )
                                                 }
@@ -651,14 +629,12 @@ fun MainScreen(
                                             // Apps in this section
                                             itemsIndexed(
                                                 items = appsInSection,
-                                                key = { _, app -> "${letter}_${app.packageName}" }
-                                            ) { index, appVersion ->
+                                                key = { _, app -> "${letter}_${app.packageName}" }) { index, appVersion ->
                                                 MainAppCard(
                                                     appVersion = appVersion,
                                                     searchQuery = searchQuery,
                                                     isLast = index == appsInSection.lastIndex,
-                                                    onClick = { onNavigateToAppDetails(appVersion.packageName) }
-                                                )
+                                                    onClick = { onNavigateToAppDetails(appVersion.packageName) })
                                             }
                                         }
                                     }
@@ -672,8 +648,7 @@ fun MainScreen(
                                                     modifier = Modifier
                                                         .fillMaxWidth()
                                                         .padding(
-                                                            horizontal = 16.dp,
-                                                            vertical = 8.dp
+                                                            horizontal = 16.dp, vertical = 8.dp
                                                         ),
                                                     shape = RoundedCornerShape(12.dp),
                                                     color = MaterialTheme.colorScheme.primaryContainer.copy(
@@ -687,8 +662,7 @@ fun MainScreen(
                                                         ),
                                                         color = MaterialTheme.colorScheme.primary,
                                                         modifier = Modifier.padding(
-                                                            horizontal = 16.dp,
-                                                            vertical = 8.dp
+                                                            horizontal = 16.dp, vertical = 8.dp
                                                         )
                                                     )
                                                 }
@@ -697,14 +671,12 @@ fun MainScreen(
                                             // Apps in this SDK section
                                             itemsIndexed(
                                                 items = appsInSection,
-                                                key = { _, app -> "${sdkHeader}_${app.packageName}" }
-                                            ) { index, appVersion ->
+                                                key = { _, app -> "${sdkHeader}_${app.packageName}" }) { index, appVersion ->
                                                 MainAppCard(
                                                     appVersion = appVersion,
                                                     searchQuery = searchQuery,
                                                     isLast = index == appsInSection.lastIndex,
-                                                    onClick = { onNavigateToAppDetails(appVersion.packageName) }
-                                                )
+                                                    onClick = { onNavigateToAppDetails(appVersion.packageName) })
                                             }
                                         }
                                     }
@@ -713,14 +685,12 @@ fun MainScreen(
                                         // Show apps without headers (when searching)
                                         itemsIndexed(
                                             items = state.filteredApps,
-                                            key = { _, app -> app.packageName }
-                                        ) { index, appVersion ->
+                                            key = { _, app -> app.packageName }) { index, appVersion ->
                                             MainAppCard(
                                                 appVersion = appVersion,
                                                 searchQuery = searchQuery,
                                                 isLast = index == state.filteredApps.lastIndex,
-                                                onClick = { onNavigateToAppDetails(appVersion.packageName) }
-                                            )
+                                                onClick = { onNavigateToAppDetails(appVersion.packageName) })
                                         }
                                     }
                                 }
@@ -730,12 +700,14 @@ fun MainScreen(
                                 }
                             }
 
+
                             // Functional Fast Scroller - now self-healing!
                             if (showFastScroller) {
                                 FastScroller(
                                     apps = state.filteredApps,
                                     listState = listState,
                                     appFilter = appFilter,
+                                    scrollOffsetDp = 80, // Customize offset here (default is 60dp)
                                     onLetterSelected = { letter ->
                                         currentScrollLetter = letter
                                         isScrollerActive = true

@@ -49,6 +49,12 @@ class MainViewModel @Inject constructor(
 
     private val _hasLoaded = MutableStateFlow(false)
 
+    var firstVisibleItemIdx: Int = 0
+    var firstVisibleItemOffset: Int = 0
+
+    // Add scroll position state management
+    private val _scrollPositions = mutableMapOf<String, Pair<Int, Int>>()
+
     val uiState: StateFlow<MainUiState> = combine(
         appsRepository.getAppsWithVersions(),
         preferencesRepository.getUserPreferences(),
@@ -119,15 +125,33 @@ class MainViewModel @Inject constructor(
         refreshAppsIfNeeded()
     }
 
+    // Save scroll position for a given key
+    fun saveScrollPosition(key: String, index: Int, offset: Int) {
+        _scrollPositions[key] = index to offset
+    }
+
+    // Retrieve scroll position for a given key
+    fun getScrollPosition(key: String): Pair<Int, Int>? {
+        return _scrollPositions[key]
+    }
+
     fun updateAppFilter(filter: AppFilter) {
         viewModelScope.launch {
             preferencesRepository.updateAppFilter(filter)
+            // Clear scroll positions when filter changes significantly
+            if (_appFilter.value != filter) {
+                _scrollPositions.clear()
+            }
         }
     }
 
     fun updateSortOption(option: SortOption) {
         viewModelScope.launch {
             preferencesRepository.updateOrderBySdk(option == SortOption.SDK)
+            // Clear scroll positions when sort changes significantly
+            if (_sortOption.value != option) {
+                _scrollPositions.clear()
+            }
         }
     }
 
