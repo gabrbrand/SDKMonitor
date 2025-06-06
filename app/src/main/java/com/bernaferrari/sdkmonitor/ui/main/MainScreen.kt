@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Android
@@ -91,28 +92,8 @@ fun MainScreen(
     // Add state for filter menu
     var showFilterMenu by remember { mutableStateOf(false) }
 
-    // Create stable keys for scroll state that only change when we want to reset
-    val scrollStateKey = remember(appFilter, sortOption) {
-        "MainScreen_${appFilter.name}_${sortOption.name}"
-    }
-
-    // Remember previous filter/sort to detect changes
-    var previousFilter by remember { mutableStateOf(appFilter) }
-    var previousSort by remember { mutableStateOf(sortOption) }
-
-    // Detect if filter or sort changed (should reset scroll)
-    val shouldResetScroll = remember(appFilter, sortOption) {
-        val changed = previousFilter != appFilter || previousSort != sortOption
-        previousFilter = appFilter
-        previousSort = sortOption
-        changed
-    }
-
     // State for LazyColumn with persistent scroll state
-    val listState = rememberPersistentLazyListState(
-        key = scrollStateKey,
-        shouldReset = shouldResetScroll
-    )
+    val listState = rememberLazyListState()
 
     // Track if list is being scrolled
     val isScrolling by remember {
