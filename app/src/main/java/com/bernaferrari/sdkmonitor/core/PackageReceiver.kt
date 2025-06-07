@@ -20,17 +20,17 @@ class PackageReceiver : BroadcastReceiver() {
             when (intent.action) {
                 Intent.ACTION_PACKAGE_ADDED -> {
                     Logger.d("➕ Package installed: $packageName")
-                    PackageService.startActionAddPackage(context,packageName)
+                    PackageWorker.startActionAddPackage(context,packageName)
                 }
 
                 Intent.ACTION_PACKAGE_REPLACED -> {
                     Logger.d("🔄 Package updated: $packageName")
-                    PackageService.startActionFetchUpdate(context, packageName)
+                    PackageWorker.startActionFetchUpdate(context, packageName)
                 }
 
                 Intent.ACTION_PACKAGE_FULLY_REMOVED -> {
                     Logger.d("🗑️ Package uninstalled: $packageName")
-                    PackageService.startActionRemovePackage(context, packageName)
+                    PackageWorker.startActionRemovePackage(context, packageName)
                 }
 
                 else -> {

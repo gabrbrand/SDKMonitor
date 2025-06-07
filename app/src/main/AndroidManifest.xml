@@ -41,6 +41,11 @@
             </intent-filter>
         </receiver>
 
+        <!-- Add PackageService for handling package operations -->
+        <service
+            android:name=".core.PackageService"
+            android:exported="false" />
+
         <!-- Remove default WorkManager initializer -->
         <provider
             android:name="androidx.startup.InitializationProvider"

@@ -16,6 +16,7 @@ import com.bernaferrari.sdkmonitor.domain.repository.AppsRepository
 import com.bernaferrari.sdkmonitor.domain.repository.PreferencesRepository
 import com.bernaferrari.sdkmonitor.extensions.convertTimestampToDate
 import com.bernaferrari.sdkmonitor.extensions.darken
+import com.orhanobut.logger.Logger
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
@@ -45,15 +46,23 @@ class AppManager @Inject constructor(
         return ai.flags and mask == 0
     }
 
-    fun doesAppHasOrigin(packageName: String): Boolean {
-        return isUserApp(getApplicationInfo(packageName))
-    }
 
     fun getPackages(): List<PackageInfo> =
         packageManager.getInstalledPackages(PackageManager.GET_META_DATA)
 
     suspend fun removePackageName(packageName: String) = withContext(Dispatchers.IO) {
-        appsRepository.deleteApp(packageName)
+        try {
+            Logger.d("🗑️ Removing all data for package: $packageName")
+
+            // Remove app and all its versions/logs
+            appsRepository.deleteApp(packageName)
+            appsRepository.deleteAllVersionsForApp(packageName)
+
+            Logger.d("✅ Successfully removed all data for: $packageName")
+        } catch (e: Exception) {
+            Logger.e(e, "❌ Failed to remove package data: $packageName")
+            throw e
+        }
     }
 
     suspend fun insertNewVersion(packageInfo: PackageInfo) {
@@ -230,7 +239,8 @@ class AppManager @Inject constructor(
             } catch (e: Exception) {
                 0
             },
-            lastUpdateTime = packageInfo?.lastUpdateTime?.convertTimestampToDate(context) ?: "Unknown",
+            lastUpdateTime = packageInfo?.lastUpdateTime?.convertTimestampToDate(context)
+                ?: "Unknown",
             isSystemApp = !isUserApp(appInfo)
         )
     }
@@ -244,6 +254,47 @@ class AppManager @Inject constructor(
             drawable.toBitmap()
         } catch (e: Exception) {
             null
+        }
+    }
+
+    suspend fun syncAllApps() {
+        try {
+            Logger.d("🔄 Starting app sync with cleanup")
+            
+            // Get all installed packages
+            val installedPackages = packageManager.getInstalledPackages(PackageManager.GET_META_DATA)
+            val installedPackageNames = installedPackages.map { it.packageName }.toSet()
+            
+            // Get all apps from database
+            val dbApps = appsRepository.getAllApps()
+            val dbPackageNames = dbApps.map { it.packageName }.toSet()
+            
+            // Find apps in DB but not installed anymore
+            val uninstalledPackages = dbPackageNames - installedPackageNames
+            
+            // Clean up uninstalled apps
+            if (uninstalledPackages.isNotEmpty()) {
+                Logger.d("🧹 Cleaning up ${uninstalledPackages.size} uninstalled apps")
+                uninstalledPackages.forEach { packageName ->
+                    removePackageName(packageName)
+                    Logger.d("🗑️ Removed uninstalled app: $packageName")
+                }
+            }
+            
+            // Sync all currently installed apps
+            installedPackages.forEach { packageInfo ->
+                try {
+                    insertNewApp(packageInfo)
+                    insertNewVersion(packageInfo)
+                } catch (e: Exception) {
+                    Logger.e(e, "❌ Failed to sync package: ${packageInfo.packageName}")
+                }
+            }
+            
+            Logger.d("✅ App sync completed with cleanup")
+        } catch (e: Exception) {
+            Logger.e(e, "❌ Failed to sync apps")
+            throw e
         }
     }
 }

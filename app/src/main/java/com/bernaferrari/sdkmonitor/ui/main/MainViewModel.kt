@@ -9,6 +9,7 @@ import com.bernaferrari.sdkmonitor.domain.model.SortOption
 import com.bernaferrari.sdkmonitor.domain.repository.AppsRepository
 import com.bernaferrari.sdkmonitor.domain.repository.PreferencesRepository
 import com.bernaferrari.sdkmonitor.extensions.normalizeString
+import com.orhanobut.logger.Logger
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -122,7 +123,15 @@ class MainViewModel @Inject constructor(
     }
 
     fun loadApps() {
-        refreshAppsIfNeeded()
+        viewModelScope.launch {
+            try {
+                // Sync all apps (now includes cleanup automatically)
+                appManager.syncAllApps()
+            } catch (e: Exception) {
+                // Handle error appropriately based on your UI state management
+                Logger.e(e, "❌ Failed to load apps")
+            }
+        }
     }
 
     // Save scroll position for a given key
@@ -182,11 +191,8 @@ class MainViewModel @Inject constructor(
                 preferencesRepository.updateAppFilter(AppFilter.ALL_APPS)
             }
 
-            // Insert apps into database
-            installedApps.forEach { packageInfo ->
-                appManager.insertNewApp(packageInfo)
-                appManager.insertNewVersion(packageInfo)
-            }
+            // Use the new integrated sync method instead of manual insertion
+            appManager.syncAllApps()
         } catch (e: Exception) {
             // Handle error - could emit error state
             e.printStackTrace()

@@ -113,7 +113,7 @@ fun MainAppCard(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            // App Icon - clean and modern
+            // App Icon - clean and modern with better error handling
             Box(
                 modifier = Modifier
                     .size(56.dp)
@@ -132,26 +132,51 @@ fun MainAppCard(
                     Icon(
                         imageVector = Icons.Outlined.Apps,
                         contentDescription = "App icon for ${appVersion.title}",
-                        modifier = Modifier.size(32.dp),
+                        modifier = Modifier
+                            .size(32.dp)
+                            .background(
+                                MaterialTheme.colorScheme.surfaceContainer,
+                                RoundedCornerShape(16.dp)
+                            )
+                            .padding(12.dp),
                         tint = MaterialTheme.colorScheme.primary
                     )
                 } else {
-                    AsyncImage(
-                        model = ImageRequest.Builder(context)
-                            .data(remember(appVersion.packageName) {
-                                try {
-                                    context.packageManager.getApplicationIcon(appVersion.packageName)
-                                } catch (e: PackageManager.NameNotFoundException) {
-                                    Icons.Outlined.Apps
-                                }
-                            })
-                            .crossfade(true)
-                            .build(),
-                        contentDescription = "App icon for ${appVersion.title}",
-                        modifier = Modifier
-                            .size(56.dp)
-                            .clip(RoundedCornerShape(16.dp)),
-                    )
+                    // Try to get app icon, fall back to placeholder if app is uninstalled
+                    val iconData = remember(appVersion.packageName) {
+                        try {
+                            context.packageManager.getApplicationIcon(appVersion.packageName)
+                        } catch (e: PackageManager.NameNotFoundException) {
+                            null // App is uninstalled, use null instead of ImageVector
+                        }
+                    }
+                    
+                    if (iconData != null) {
+                        AsyncImage(
+                            model = ImageRequest.Builder(context)
+                                .data(iconData)
+                                .crossfade(true)
+                                .build(),
+                            contentDescription = "App icon for ${appVersion.title}",
+                            modifier = Modifier
+                                .size(56.dp)
+                                .clip(RoundedCornerShape(16.dp)),
+                        )
+                    } else {
+                        // App is uninstalled - show placeholder with background
+                        Icon(
+                            imageVector = Icons.Outlined.Apps,
+                            contentDescription = "App icon for ${appVersion.title}",
+                            modifier = Modifier
+                                .size(56.dp)
+                                .background(
+                                    MaterialTheme.colorScheme.surfaceContainer,
+                                    RoundedCornerShape(16.dp)
+                                )
+                                .padding(12.dp),
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
+                        )
+                    }
                 }
             }
 

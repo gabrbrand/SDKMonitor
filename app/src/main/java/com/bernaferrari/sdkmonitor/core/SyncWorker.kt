@@ -42,26 +42,24 @@ class SyncWorker @AssistedInject constructor(
         debugLog.appendLine("🔄 Starting app synchronization...")
 
         val preferences = preferencesRepository.getUserPreferences().first()
-        val isDebugEnabled = preferences.backgroundSync // Use background sync preference for debug logging
+        val isDebugEnabled = preferences.backgroundSync
         
-        val packages = appManager.getPackagesWithUserPrefs()
-        debugLog.appendLine("📱 Found ${packages.size} apps to process")
-
-        packages.forEach { packageInfo ->
-            try {
-                appManager.insertNewApp(packageInfo)
-                appManager.insertNewVersion(packageInfo)
-                debugLog.appendLine("✅ Processed: ${packageInfo.packageName}")
-            } catch (e: Exception) {
-                debugLog.appendLine("❌ Failed to process: ${packageInfo.packageName} - ${e.message}")
-                Logger.e(e, "Failed to process package: ${packageInfo.packageName}")
-            }
+        try {
+            // Use the new integrated sync method (includes cleanup)
+            appManager.syncAllApps()
+            
+            val packages = appManager.getPackagesWithUserPrefs()
+            debugLog.appendLine("📱 Synced ${packages.size} apps with cleanup")
+            
+        } catch (e: Exception) {
+            debugLog.appendLine("❌ Sync failed: ${e.message}")
+            throw e
         }
 
         if (isDebugEnabled) {
             notificationManager.showDebugSyncNotification(
                 title = "🔄 Sync Complete",
-                text = "Processed ${packages.size} apps with",
+                text = "Apps synced with cleanup",
                 bigText = debugLog.toString()
             )
         }

@@ -138,16 +138,20 @@ class AppsRepositoryImpl @Inject constructor(
     override suspend fun getAllVersions(): List<Version> =
         versionsDao.getAllVersionsSync()
 
+    override suspend fun deleteAllVersionsForApp(packageName: String): Unit {
+        return versionsDao.deleteAllVersionsForApp(packageName)
+    }
+
     override suspend fun getAllApps(): List<App> =
         appsDao.getAppsList()
-        
+
     override suspend fun getAllAppsAsAppVersions(): List<AppVersion> = withContext(Dispatchers.IO) {
         val apps = appsDao.getAppsList()
         apps.map { app ->
             val version = versionsDao.getLastValue(app.packageName)
             val sdkVersion = version?.targetSdk ?: 0
             val lastUpdate = version?.lastUpdateTime ?: 0
-                
+
             AppVersion(
                 packageName = app.packageName,
                 title = app.title,
@@ -160,11 +164,11 @@ class AppsRepositoryImpl @Inject constructor(
             )
         }
     }
-    
+
     override suspend fun getApp(packageName: String): App? {
         return appsDao.getApp(packageName)
     }
-    
+
     override suspend fun getAppVersions(packageName: String): List<Version> {
         return versionsDao.getAllValues(packageName)
     }

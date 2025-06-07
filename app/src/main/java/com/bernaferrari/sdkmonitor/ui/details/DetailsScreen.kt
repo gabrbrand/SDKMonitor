@@ -116,7 +116,7 @@ fun DetailsScreen(
                     Text(
                         text = when (val state = uiState) {
                             is DetailsUiState.Success -> state.appDetails.title
-                            else -> stringResource(R.string.app_details)
+                            else -> ""
                         },
                         fontWeight = FontWeight.ExtraBold,
                         style = MaterialTheme.typography.headlineSmall,
