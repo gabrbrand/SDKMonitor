@@ -1,12 +1,7 @@
-@file:OptIn(ExperimentalSharedTransitionApi::class)
-
 package com.bernaferrari.sdkmonitor.ui.main
 
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
-import androidx.compose.animation.AnimatedVisibilityScope
-import androidx.compose.animation.ExperimentalSharedTransitionApi
-import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -91,7 +86,6 @@ fun createHighlightedText(
     }
 }
 
-@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun MainAppCard(
     modifier: Modifier = Modifier,
@@ -99,9 +93,7 @@ fun MainAppCard(
     appIcon: Bitmap? = null,
     showVersionPill: Boolean = true,
     searchQuery: String = "",
-    isLast: Boolean = false,
-    sharedTransitionScope: SharedTransitionScope? = null,
-    animatedVisibilityScope: AnimatedVisibilityScope? = null,
+    isLast: Boolean = false, // Add parameter to detect last item
     onClick: () -> Unit = {},
 ) {
     val context = LocalContext.current
@@ -113,25 +105,15 @@ fun MainAppCard(
         Row(
             modifier = modifier
                 .fillMaxWidth()
-                .then(
-                    if (sharedTransitionScope != null && animatedVisibilityScope != null) {
-                        with(sharedTransitionScope) {
-                            Modifier.sharedBounds(
-                                rememberSharedContentState(key = "app_card_${appVersion.packageName}"),
-                                animatedVisibilityScope = animatedVisibilityScope
-                            )
-                        }
-                    } else Modifier
-                )
-                .clickable { onClick() }
+                .clickable { onClick() } // Move clickable to outer area for larger tap target
                 .padding(
                     horizontal = 16.dp,
                     vertical = 16.dp
-                ),
+                ), // Increased vertical padding for larger tap area
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            // App Icon - no shared transition needed
+            // App Icon - clean and modern
             Box(
                 modifier = Modifier
                     .size(56.dp)
@@ -173,7 +155,7 @@ fun MainAppCard(
                 }
             }
 
-            // Content section
+            // Content section - takes up remaining space
             Column(
                 modifier = Modifier.weight(1f),
                 verticalArrangement = Arrangement.spacedBy(2.dp)

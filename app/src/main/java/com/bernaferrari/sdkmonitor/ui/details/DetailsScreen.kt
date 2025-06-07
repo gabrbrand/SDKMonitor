@@ -3,9 +3,6 @@ package com.bernaferrari.sdkmonitor.ui.details
 import android.content.Intent
 import android.net.Uri
 import android.provider.Settings
-import androidx.compose.animation.AnimatedVisibilityScope
-import androidx.compose.animation.ExperimentalSharedTransitionApi
-import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -61,15 +58,12 @@ import kotlinx.coroutines.delay
 /**
  * App Details Screen with Material Design 3 and animations
  */
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DetailsScreen(
-    modifier: Modifier,
     packageName: String,
     onNavigateBack: () -> Unit,
-    viewModel: DetailsViewModel = hiltViewModel(),
-    sharedTransitionScope: SharedTransitionScope? = null,
-    animatedVisibilityScope: AnimatedVisibilityScope? = null
+    viewModel: DetailsViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
@@ -116,32 +110,17 @@ fun DetailsScreen(
     }
 
     Scaffold(
-        modifier,
         topBar = {
             TopAppBar(
                 title = {
                     Text(
                         text = when (val state = uiState) {
                             is DetailsUiState.Success -> state.appDetails.title
-                            else -> ""
+                            else -> stringResource(R.string.app_details)
                         },
                         fontWeight = FontWeight.ExtraBold,
                         style = MaterialTheme.typography.headlineSmall,
-                        maxLines = 1,
-                        modifier = if (sharedTransitionScope != null && animatedVisibilityScope != null) {
-                            when (val state = uiState) {
-                                is DetailsUiState.Success -> {
-                                    with(sharedTransitionScope) {
-                                        Modifier.sharedBounds(
-                                            rememberSharedContentState(key = "app_title_${state.appDetails.packageName}"),
-                                            animatedVisibilityScope = animatedVisibilityScope
-                                        )
-                                    }
-                                }
-
-                                else -> Modifier
-                            }
-                        } else Modifier
+                        maxLines = 1
                     )
                 },
                 navigationIcon = {
@@ -189,8 +168,6 @@ fun DetailsScreen(
                         state = state,
                         onAppInfoClick = handleAppInfoClick,
                         onPlayStoreClick = handlePlayStoreClick,
-                        sharedTransitionScope = sharedTransitionScope,
-                        animatedVisibilityScope = animatedVisibilityScope,
                         modifier = Modifier.padding(paddingValues)
                     )
                 }
@@ -288,29 +265,15 @@ private fun ErrorState(
     }
 }
 
-@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 private fun DetailsContent(
     state: DetailsUiState.Success,
     onAppInfoClick: () -> Unit,
     onPlayStoreClick: () -> Unit,
-    modifier: Modifier = Modifier,
-    sharedTransitionScope: SharedTransitionScope? = null,
-    animatedVisibilityScope: AnimatedVisibilityScope? = null
+    modifier: Modifier = Modifier
 ) {
     LazyColumn(
-        modifier = modifier
-            .fillMaxSize()
-            .then(
-                if (sharedTransitionScope != null && animatedVisibilityScope != null) {
-                    with(sharedTransitionScope) {
-                        Modifier.sharedBounds(
-                            rememberSharedContentState(key = "app_card_${state.appDetails.packageName}"),
-                            animatedVisibilityScope = animatedVisibilityScope
-                        )
-                    }
-                } else Modifier
-            ),
+        modifier = modifier.fillMaxSize(),
         contentPadding = PaddingValues(20.dp),
         verticalArrangement = Arrangement.spacedBy(20.dp)
     ) {

@@ -151,6 +151,8 @@ fun VersionTimeline(
     versions: List<AppVersion>,
     modifier: Modifier = Modifier
 ) {
+
+
     Column(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(0.dp)
