@@ -1,11 +1,8 @@
 package com.bernaferrari.sdkmonitor.ui.navigation
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionLayout
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -38,6 +35,7 @@ import com.bernaferrari.sdkmonitor.ui.logs.LogsScreen
 import com.bernaferrari.sdkmonitor.ui.main.MainScreen
 import com.bernaferrari.sdkmonitor.ui.settings.SettingsScreen
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun AppNavigation(
     modifier: Modifier = Modifier,
@@ -60,102 +58,99 @@ fun AppNavigation(
         BottomNavItem.Settings
     )
 
-    Scaffold(
-        modifier = modifier,
-        contentWindowInsets = WindowInsets(0, 0, 0, 0),
-        bottomBar = {
+    val isDetailsScreen = currentDestination?.route == Screen.Details.route
 
-
-            AnimatedVisibility(
-                visible = currentDestination?.route != Screen.Details.route,
-                enter = slideInVertically(
-                    initialOffsetY = { fullHeight -> fullHeight }
-                ),
-                exit = slideOutVertically(
-                    targetOffsetY = { fullHeight -> fullHeight }
-                )
-            ) {
-                NavigationBar(
-                    containerColor = MaterialTheme.colorScheme.surfaceContainer,
-                    contentColor = MaterialTheme.colorScheme.onSurface
-                ) {
-                    bottomNavItems.forEach { item ->
-                        NavigationBarItem(
-                            icon = {
-                                Icon(
-                                    imageVector = item.icon,
-                                    contentDescription = null
-                                )
-                            },
-                            label = { Text(stringResource(item.label)) },
-                            selected = currentDestination?.hierarchy?.any { it.route == item.route } == true,
-                            onClick = {
-                                navController.navigate(item.route) {
-                                    popUpTo(navController.graph.findStartDestination().id) {
-                                        saveState = true
+    SharedTransitionLayout {
+        Box(modifier = modifier) {
+            // Main navigation with bottom bar (always present)
+            Scaffold(
+                contentWindowInsets = WindowInsets(0, 0, 0, 0),
+                bottomBar = {
+                    NavigationBar(
+                        containerColor = MaterialTheme.colorScheme.surfaceContainer,
+                        contentColor = MaterialTheme.colorScheme.onSurface
+                    ) {
+                        bottomNavItems.forEach { item ->
+                            NavigationBarItem(
+                                icon = {
+                                    Icon(
+                                        imageVector = item.icon,
+                                        contentDescription = null
+                                    )
+                                },
+                                label = { Text(stringResource(item.label)) },
+                                selected = currentDestination?.hierarchy?.any { it.route == item.route } == true,
+                                onClick = {
+                                    navController.navigate(item.route) {
+                                        popUpTo(navController.graph.findStartDestination().id) {
+                                            saveState = true
+                                        }
+                                        launchSingleTop = true
+                                        restoreState = true
                                     }
-                                    launchSingleTop = true
-                                    restoreState = true
-                                }
-                            },
-                            colors = NavigationBarItemDefaults.colors(
-                                selectedIconColor = MaterialTheme.colorScheme.primary,
-                                selectedTextColor = MaterialTheme.colorScheme.primary,
-                                unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                                unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                                indicatorColor = MaterialTheme.colorScheme.primaryContainer
+                                },
+                                colors = NavigationBarItemDefaults.colors(
+                                    selectedIconColor = MaterialTheme.colorScheme.primary,
+                                    selectedTextColor = MaterialTheme.colorScheme.primary,
+                                    unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    indicatorColor = MaterialTheme.colorScheme.primaryContainer
+                                )
                             )
+                        }
+                    }
+                }
+            ) { innerPadding ->
+                NavHost(
+                    navController = navController,
+                    startDestination = Screen.Main.route,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(innerPadding)
+                        .consumeWindowInsets(innerPadding),
+                ) {
+                    composable(Screen.Main.route) {
+                        MainScreen(
+                            onNavigateToAppDetails = { packageName ->
+                                navController.navigate(Screen.Details.createRoute(packageName))
+                            },
+                            sharedTransitionScope = this@SharedTransitionLayout,
+                            animatedVisibilityScope = this
+                        )
+                    }
+
+                    composable(Screen.Settings.route) {
+                        SettingsScreen(
+                            onNavigateToAppDetails = { packageName ->
+                                navController.navigate(Screen.Details.createRoute(packageName))
+                            }
+                        )
+                    }
+
+                    composable(Screen.Logs.route) {
+                        LogsScreen(
+                            onNavigateToAppDetails = { packageName ->
+                                navController.navigate(Screen.Details.createRoute(packageName))
+                            }
+                        )
+                    }
+
+                    composable(
+                        route = Screen.Details.route,
+                        arguments = Screen.Details.arguments
+                    ) { backStackEntry ->
+                        val packageName = backStackEntry.arguments?.getString("packageName") ?: ""
+                        DetailsScreen(
+                            packageName = packageName,
+                            onNavigateBack = {
+                                navController.popBackStack()
+                            },
+                            sharedTransitionScope = this@SharedTransitionLayout,
+                            animatedVisibilityScope = this,
+                            modifier = Modifier.fillMaxSize()
                         )
                     }
                 }
-            }
-        }
-    ) { innerPadding ->
-        NavHost(
-            navController = navController,
-            startDestination = Screen.Main.route,
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-                .consumeWindowInsets(innerPadding),
-            enterTransition = { fadeIn(animationSpec = tween(300)) },
-            exitTransition = { fadeOut(animationSpec = tween(300)) }
-        ) {
-            composable(Screen.Main.route) {
-                MainScreen(
-                    onNavigateToAppDetails = { packageName ->
-                        navController.navigate(Screen.Details.createRoute(packageName))
-                    }
-                )
-            }
-
-            composable(Screen.Settings.route) {
-                SettingsScreen(
-                    onNavigateToAppDetails = { packageName ->
-                        navController.navigate(Screen.Details.createRoute(packageName))
-                    }
-                )
-            }
-
-            composable(Screen.Logs.route) {
-                LogsScreen(
-                    onNavigateToAppDetails = { packageName ->
-                        navController.navigate(Screen.Details.createRoute(packageName))
-                    }
-                )
-            }
-
-            composable(
-                route = Screen.Details.route,
-                arguments = Screen.Details.arguments
-            ) { backStackEntry ->
-                val packageName = backStackEntry.arguments?.getString("packageName") ?: ""
-                DetailsScreen(
-                    packageName = packageName,
-                    onNavigateBack = {
-                        navController.popBackStack()
-                    }
-                )
             }
         }
     }

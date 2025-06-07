@@ -1,5 +1,8 @@
 package com.bernaferrari.sdkmonitor.ui.main
 
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -66,10 +69,13 @@ import com.bernaferrari.sdkmonitor.R
 import com.bernaferrari.sdkmonitor.domain.model.AppFilter
 import com.bernaferrari.sdkmonitor.domain.model.SortOption
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
 fun MainScreen(
-    onNavigateToAppDetails: (String) -> Unit, viewModel: MainViewModel = hiltViewModel()
+    onNavigateToAppDetails: (String) -> Unit,
+    viewModel: MainViewModel = hiltViewModel(),
+    sharedTransitionScope: SharedTransitionScope? = null,
+    animatedVisibilityScope: AnimatedVisibilityScope? = null
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val searchQuery by viewModel.searchQuery.collectAsStateWithLifecycle()
@@ -615,6 +621,8 @@ fun MainScreen(
                                                     appVersion = appVersion,
                                                     searchQuery = searchQuery,
                                                     isLast = index == appsInSection.lastIndex,
+                                                    sharedTransitionScope = sharedTransitionScope,
+                                                    animatedVisibilityScope = animatedVisibilityScope,
                                                     onClick = { onNavigateToAppDetails(appVersion.packageName) })
                                             }
                                         }
@@ -657,6 +665,8 @@ fun MainScreen(
                                                     appVersion = appVersion,
                                                     searchQuery = searchQuery,
                                                     isLast = index == appsInSection.lastIndex,
+                                                    sharedTransitionScope = sharedTransitionScope,
+                                                    animatedVisibilityScope = animatedVisibilityScope,
                                                     onClick = { onNavigateToAppDetails(appVersion.packageName) })
                                             }
                                         }
@@ -671,6 +681,8 @@ fun MainScreen(
                                                 appVersion = appVersion,
                                                 searchQuery = searchQuery,
                                                 isLast = index == state.filteredApps.lastIndex,
+                                                sharedTransitionScope = sharedTransitionScope,
+                                                animatedVisibilityScope = animatedVisibilityScope,
                                                 onClick = { onNavigateToAppDetails(appVersion.packageName) })
                                         }
                                     }
