@@ -47,6 +47,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -63,6 +64,7 @@ import kotlinx.coroutines.delay
 fun DetailsScreen(
     packageName: String,
     onNavigateBack: () -> Unit,
+    isTabletSize: Boolean = false,
     viewModel: DetailsViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -96,8 +98,11 @@ fun DetailsScreen(
         }
     }
 
+    // Only load app details if we have a valid package name (and not in tablet mode with empty selection)
     LaunchedEffect(packageName) {
-        viewModel.loadAppDetails(packageName)
+        if (packageName.isNotBlank()) {
+            viewModel.loadAppDetails(packageName)
+        }
     }
 
     LaunchedEffect(uiState) {
@@ -110,6 +115,7 @@ fun DetailsScreen(
     }
 
     Scaffold(
+        containerColor = MaterialTheme.colorScheme.surface,
         topBar = {
             TopAppBar(
                 title = {
@@ -120,16 +126,19 @@ fun DetailsScreen(
                         },
                         fontWeight = FontWeight.ExtraBold,
                         style = MaterialTheme.typography.headlineSmall,
-                        maxLines = 1
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
                     )
                 },
                 navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
-                        Icon(
-                            Icons.AutoMirrored.Default.ArrowBack,
-                            contentDescription = stringResource(R.string.back),
-                            tint = MaterialTheme.colorScheme.primary
-                        )
+                    if (!isTabletSize) {
+                        IconButton(onClick = onNavigateBack) {
+                            Icon(
+                                Icons.AutoMirrored.Default.ArrowBack,
+                                contentDescription = stringResource(R.string.back),
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+                        }
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -141,34 +150,41 @@ fun DetailsScreen(
         Box(
             modifier = Modifier
                 .fillMaxSize()
+                .padding(paddingValues)
         ) {
+            // Handle empty package name case (for tablet mode) - don't try to load anything
+            if (packageName.isBlank()) {
+                // Return early - this should be handled by EmptyDetailState in navigation
+                return@Box
+            }
+
             when (val state = uiState) {
                 is DetailsUiState.Loading -> {
                     if (showLoading) {
                         LoadingState(
                             modifier = Modifier
                                 .fillMaxSize()
-                                .padding(paddingValues)
                         )
                     }
                 }
 
                 is DetailsUiState.Error -> {
-                    ErrorState(
-                        message = state.message,
-                        onRetry = { viewModel.loadAppDetails(packageName) },
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(paddingValues)
-                    )
+                    // Only show error state if we're not in tablet mode or if we have a valid package name
+                    if (packageName.isNotBlank()) {
+                        ErrorState(
+                            message = state.message,
+                            onRetry = { viewModel.loadAppDetails(packageName) },
+                            modifier = Modifier
+                                .fillMaxSize()
+                        )
+                    }
                 }
 
                 is DetailsUiState.Success -> {
                     DetailsContent(
                         state = state,
                         onAppInfoClick = handleAppInfoClick,
-                        onPlayStoreClick = handlePlayStoreClick,
-                        modifier = Modifier.padding(paddingValues)
+                        onPlayStoreClick = handlePlayStoreClick
                     )
                 }
             }
@@ -218,7 +234,7 @@ private fun ErrorState(
             colors = CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.surfaceContainer
             ),
-            elevation = CardDefaults.cardElevation(4.dp)
+            elevation = CardDefaults.cardElevation(0.dp)
         ) {
             Column(
                 modifier = Modifier.padding(32.dp),
@@ -310,7 +326,7 @@ private fun VersionHistoryCard(
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceContainer
         ),
-        elevation = CardDefaults.cardElevation(4.dp)
+        elevation = CardDefaults.cardElevation(0.dp)
     ) {
         Column(
             modifier = Modifier.padding(20.dp),

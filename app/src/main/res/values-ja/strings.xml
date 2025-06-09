@@ -211,4 +211,6 @@
     <string name="every">毎</string>
     <string name="unit">単位</string>
     <string name="required">必須</string>
+    <string name="select_app_to_get_started">開始するアプリを選択</string>
+    <string name="choose_app_from_list_description">リストからアプリを選択して、詳細情報とバージョン履歴を表示します</string>
 </resources>

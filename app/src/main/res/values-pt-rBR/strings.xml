@@ -213,4 +213,6 @@
     <string name="every">A cada</string>
     <string name="unit">Unidade</string>
     <string name="required">Obrigatório</string>
+    <string name="select_app_to_get_started">Selecione um app para começar</string>
+    <string name="choose_app_from_list_description">Escolha um app da lista para ver informações detalhadas e histórico de versões</string>
 </resources>

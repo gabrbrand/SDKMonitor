@@ -1,7 +1,6 @@
 package com.bernaferrari.sdkmonitor.ui.logs
 
 import android.content.pm.PackageManager
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -43,6 +42,7 @@ import com.bernaferrari.sdkmonitor.ui.theme.SDKMonitorTheme
 fun LogCard(
     modifier: Modifier = Modifier,
     log: LogEntry,
+    isSelected: Boolean = false,
     onClick: () -> Unit = {},
 ) {
     val context = LocalContext.current
@@ -56,19 +56,21 @@ fun LogCard(
         modifier = modifier.padding(horizontal = 16.dp),
         shape = RoundedCornerShape(20.dp),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceContainer
+            containerColor = if (isSelected) {
+                MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3f)
+            } else {
+                MaterialTheme.colorScheme.surfaceContainer
+            }
         ),
         elevation = CardDefaults.cardElevation(
-            defaultElevation = 2.dp,
+            defaultElevation = if (isSelected) 6.dp else 2.dp,
             pressedElevation = 8.dp
         )
     ) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(
-                    MaterialTheme.colorScheme.surfaceContainer,
-                )
+
         ) {
             Row(
                 modifier = Modifier
@@ -278,8 +280,8 @@ private fun LogCardLongVersionPreview() {
         LogCard(
             log = LogEntry(
                 id = 3,
-                packageName = "com.supercell.clashofclans",
-                appName = "Clash of Clans - Epic Strategy Game",
+                packageName = "com.google.gmail",
+                appName = "Gmail",
                 oldSdk = null,
                 newSdk = 34,
                 oldVersion = "15.0.3.build.4.release.candidate.final",

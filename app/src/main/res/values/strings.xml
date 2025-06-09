@@ -131,6 +131,8 @@
     <string name="no_version_history">No version history available yet. When the app updates, you\'ll see its evolution here.</string>
     <string name="latest">LATEST</string>
     <string name="api_version">API %d</string>
+    <string name="select_app_to_get_started">Select an app to get started</string>
+    <string name="choose_app_from_list_description">Choose an app from the list to view detailed information and version history</string>
     
     <!-- Settings Screen -->
     <string name="theme_mode">Theme Mode</string>

@@ -214,4 +214,6 @@
     <string name="learn_more_about_app">Erfahre mehr über diese App</string>
     <string name="app_version_format">%1$s v%2$s</string>
     <string name="unknown_error">Unbekannter Fehler</string>
+    <string name="select_app_to_get_started">Wähle eine App zum Beginnen</string>
+    <string name="choose_app_from_list_description">Wähle eine App aus der Liste, um detaillierte Informationen und Versionsverlauf anzuzeigen</string>
 </resources>

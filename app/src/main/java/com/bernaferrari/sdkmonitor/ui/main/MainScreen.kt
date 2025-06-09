@@ -34,7 +34,6 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -66,10 +65,11 @@ import com.bernaferrari.sdkmonitor.R
 import com.bernaferrari.sdkmonitor.domain.model.AppFilter
 import com.bernaferrari.sdkmonitor.domain.model.SortOption
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(
-    onNavigateToAppDetails: (String) -> Unit, viewModel: MainViewModel = hiltViewModel()
+    onNavigateToAppDetails: (String) -> Unit,
+    selectedPackageName: String? = null,
+    viewModel: MainViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val searchQuery by viewModel.searchQuery.collectAsStateWithLifecycle()
@@ -572,7 +572,7 @@ fun MainScreen(
                                     },
                                 contentPadding = PaddingValues(
                                     start = 0.dp,
-                                    end = if (showFastScroller) 22.dp else 0.dp,
+                                    end = if (showFastScroller) 32.dp else 0.dp,
                                     top = 8.dp,
                                     bottom = 8.dp
                                 ),
@@ -615,7 +615,11 @@ fun MainScreen(
                                                     appVersion = appVersion,
                                                     searchQuery = searchQuery,
                                                     isLast = index == appsInSection.lastIndex,
-                                                    onClick = { onNavigateToAppDetails(appVersion.packageName) })
+                                                    isSelected = selectedPackageName == appVersion.packageName,
+                                                    onClick = {
+                                                        onNavigateToAppDetails(appVersion.packageName)
+                                                    }
+                                                )
                                             }
                                         }
                                     }
@@ -657,7 +661,9 @@ fun MainScreen(
                                                     appVersion = appVersion,
                                                     searchQuery = searchQuery,
                                                     isLast = index == appsInSection.lastIndex,
-                                                    onClick = { onNavigateToAppDetails(appVersion.packageName) })
+                                                    isSelected = selectedPackageName == appVersion.packageName,
+                                                    onClick = { onNavigateToAppDetails(appVersion.packageName) }
+                                                )
                                             }
                                         }
                                     }
@@ -671,7 +677,9 @@ fun MainScreen(
                                                 appVersion = appVersion,
                                                 searchQuery = searchQuery,
                                                 isLast = index == state.filteredApps.lastIndex,
-                                                onClick = { onNavigateToAppDetails(appVersion.packageName) })
+                                                isSelected = selectedPackageName == appVersion.packageName,
+                                                onClick = { onNavigateToAppDetails(appVersion.packageName) }
+                                            )
                                         }
                                     }
                                 }

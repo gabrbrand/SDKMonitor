@@ -54,18 +54,18 @@ fun createHighlightedText(
     if (searchQuery.isBlank()) {
         return AnnotatedString(text)
     }
-    
+
     val normalizedText = text.normalizeString()
     val normalizedQuery = searchQuery.normalizeString()
-    
+
     return buildAnnotatedString {
         var lastIndex = 0
         var startIndex = normalizedText.indexOf(normalizedQuery, lastIndex, ignoreCase = true)
-        
+
         while (startIndex != -1) {
             // Add text before the match
             append(text.substring(lastIndex, startIndex))
-            
+
             // Add highlighted match with prominent styling
             withStyle(
                 style = SpanStyle(
@@ -76,11 +76,11 @@ fun createHighlightedText(
             ) {
                 append(text.substring(startIndex, startIndex + normalizedQuery.length))
             }
-            
+
             lastIndex = startIndex + normalizedQuery.length
             startIndex = normalizedText.indexOf(normalizedQuery, lastIndex, ignoreCase = true)
         }
-        
+
         // Add remaining text
         append(text.substring(lastIndex))
     }
@@ -93,7 +93,8 @@ fun MainAppCard(
     appIcon: Bitmap? = null,
     showVersionPill: Boolean = true,
     searchQuery: String = "",
-    isLast: Boolean = false, // Add parameter to detect last item
+    isLast: Boolean = false,
+    isSelected: Boolean = false,
     onClick: () -> Unit = {},
 ) {
     val context = LocalContext.current
@@ -105,11 +106,25 @@ fun MainAppCard(
         Row(
             modifier = modifier
                 .fillMaxWidth()
-                .clickable { onClick() } // Move clickable to outer area for larger tap target
+                .clip(RoundedCornerShape(16.dp))
+                .then(
+                    if (isSelected) {
+                        Modifier
+                            .background(
+                                MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3f)
+                            )
+                            .border(
+                                width = 2.dp,
+                                color = MaterialTheme.colorScheme.primary.copy(alpha = 0.4f),
+                                shape = RoundedCornerShape(16.dp)
+                            )
+                    } else Modifier
+                )
+                .clickable { onClick() }
                 .padding(
                     horizontal = 16.dp,
                     vertical = 16.dp
-                ), // Increased vertical padding for larger tap area
+                ),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
@@ -150,7 +165,7 @@ fun MainAppCard(
                             null // App is uninstalled, use null instead of ImageVector
                         }
                     }
-                    
+
                     if (iconData != null) {
                         AsyncImage(
                             model = ImageRequest.Builder(context)

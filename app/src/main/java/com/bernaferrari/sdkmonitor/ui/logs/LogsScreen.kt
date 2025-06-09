@@ -64,6 +64,7 @@ import com.bernaferrari.sdkmonitor.extensions.convertTimestampToDate
 @Composable
 fun LogsScreen(
     onNavigateToAppDetails: (String) -> Unit = {},
+    selectedPackageName: String? = null, // Add selected package parameter
     viewModel: LogsViewModel = hiltViewModel()
 ) {
     val uiState: LogsUiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -85,8 +86,7 @@ fun LogsScreen(
         }
     ) { paddingValues ->
         Box(
-            modifier = Modifier
-                .fillMaxSize()
+            modifier = Modifier.fillMaxSize()
         ) {
             when (val state = uiState) {
                 is LogsUiState.Loading -> {
@@ -117,6 +117,7 @@ fun LogsScreen(
                         LogsContent(
                             logs = state.logs,
                             onNavigateToAppDetails = onNavigateToAppDetails,
+                            selectedPackageName = selectedPackageName, // Pass selection state
                             modifier = Modifier.padding(paddingValues)
                         )
                     }
@@ -378,9 +379,10 @@ private fun EmptyLogsContent(
 
 @Composable
 private fun LogsContent(
+    modifier: Modifier = Modifier,
     logs: List<LogEntry>,
     onNavigateToAppDetails: (String) -> Unit,
-    modifier: Modifier = Modifier
+    selectedPackageName: String? = null, // Add selected package parameter
 ) {
     LazyColumn(
         modifier = modifier.fillMaxSize(),
@@ -398,6 +400,7 @@ private fun LogsContent(
             LogCard(
                 log = log,
                 onClick = { onNavigateToAppDetails(log.packageName) },
+                isSelected = selectedPackageName == log.packageName,
                 modifier = Modifier.fillMaxWidth()
             )
         }

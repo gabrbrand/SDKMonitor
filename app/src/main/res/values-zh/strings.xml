@@ -213,4 +213,6 @@
     <string name="learn_more_about_app">了解更多关于此应用</string>
     <string name="app_version_format">%1$s v%2$s</string>
     <string name="unknown_error">未知错误</string>
+    <string name="select_app_to_get_started">选择应用开始使用</string>
+    <string name="choose_app_from_list_description">从列表中选择一个应用以查看详细信息和版本历史</string>
 </resources>
