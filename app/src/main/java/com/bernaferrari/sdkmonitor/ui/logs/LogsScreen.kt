@@ -187,8 +187,8 @@ private fun LoadingState(
 
 @Composable
 private fun ErrorState(
+    modifier: Modifier = Modifier,
     message: String,
-    modifier: Modifier = Modifier
 ) {
     Box(
         modifier = modifier,
@@ -382,7 +382,7 @@ private fun LogsContent(
     modifier: Modifier = Modifier,
     logs: List<LogEntry>,
     onNavigateToAppDetails: (String) -> Unit,
-    selectedPackageName: String? = null, // Add selected package parameter
+    selectedPackageName: String? = null,
 ) {
     LazyColumn(
         modifier = modifier.fillMaxSize(),

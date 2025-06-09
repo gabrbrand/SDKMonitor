@@ -32,8 +32,8 @@ import com.bernaferrari.sdkmonitor.ui.theme.SDKMonitorTheme
 
 @Composable
 fun VersionTimelineEntry(
-    versionInfo: AppVersion,
     modifier: Modifier = Modifier,
+    versionInfo: AppVersion,
     isLatest: Boolean = false,
     isLast: Boolean = false
 ) {
@@ -148,8 +148,8 @@ fun VersionTimelineEntry(
  */
 @Composable
 fun VersionTimeline(
+    modifier: Modifier = Modifier,
     versions: List<AppVersion>,
-    modifier: Modifier = Modifier
 ) {
 
 
@@ -164,29 +164,6 @@ fun VersionTimeline(
                 isLast = index == versions.lastIndex
             )
         }
-    }
-}
-
-// Legacy VersionCard for compatibility (delegates to new design)
-@Composable
-fun VersionCard(
-    versionInfo: AppVersion,
-    modifier: Modifier = Modifier,
-    isLatest: Boolean = false
-) {
-    // For single version display, wrap in a simple container
-    Surface(
-        modifier = modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(16.dp),
-        color = MaterialTheme.colorScheme.surfaceContainer,
-        shadowElevation = 2.dp
-    ) {
-        VersionTimelineEntry(
-            versionInfo = versionInfo,
-            modifier = Modifier.padding(16.dp),
-            isLatest = isLatest,
-            isLast = true
-        )
     }
 }
 
