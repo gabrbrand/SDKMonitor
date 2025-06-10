@@ -83,14 +83,17 @@ class NotificationManager @Inject constructor(
 
         val notification = NotificationCompat.Builder(context, CHANNEL_ID_SDK_CHANGES)
             .setSmallIcon(R.drawable.ic_target)
-            .setContentTitle("TargetSDK changed for $appName!")
-            .setContentText("Went from $oldSdk to $newSdk")
+            .setContentTitle(appName)
+            .setContentText("TargetSDK $oldSdk -> $newSdk")
             .setContentIntent(pendingIntent)
             .setAutoCancel(true)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .build()
 
-        notificationManager.notify(NOTIFICATION_ID_SDK_CHANGE + packageName.hashCode(), notification)
+        notificationManager.notify(
+            NOTIFICATION_ID_SDK_CHANGE + packageName.hashCode(),
+            notification
+        )
     }
 
     /**
