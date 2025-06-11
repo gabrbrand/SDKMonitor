@@ -101,20 +101,22 @@ class LogsViewModel @Inject constructor(
                     versions.forEachIndexed { index, currentVersion ->
                         val previousVersion = if (index > 0) versions[index - 1] else null
 
-                        // Only create log entry if there's actually a change
-                        val hasVersionChange =
-                            previousVersion?.versionName != currentVersion.versionName
-                        val hasSdkChange = previousVersion?.targetSdk != currentVersion.targetSdk
+                        // Only create log entry if there's actually a meaningful change
+                        val hasVersionChange = previousVersion != null &&
+                                previousVersion.versionName != currentVersion.versionName
+                        val hasSdkChange = previousVersion != null &&
+                                previousVersion.targetSdk != currentVersion.targetSdk
 
-                        if (hasVersionChange || hasSdkChange) {
+                        // Only add to logs if there's an actual difference AND we have a previous version to compare
+                        if (previousVersion != null && (hasVersionChange || hasSdkChange)) {
                             logEntries.add(
                                 LogEntry(
                                     id = currentVersion.versionId.toLong(),
                                     packageName = currentVersion.packageName,
                                     appName = app.title,
-                                    oldSdk = previousVersion?.targetSdk,
+                                    oldSdk = previousVersion.targetSdk,
                                     newSdk = currentVersion.targetSdk,
-                                    oldVersion = previousVersion?.versionName,
+                                    oldVersion = previousVersion.versionName,
                                     newVersion = currentVersion.versionName,
                                     timestamp = currentVersion.lastUpdateTime
                                 )

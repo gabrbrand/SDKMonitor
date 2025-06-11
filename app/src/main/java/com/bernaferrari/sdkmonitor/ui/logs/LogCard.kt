@@ -57,8 +57,7 @@ fun LogCard(
         Surface(
             modifier = Modifier
                 .clip(RoundedCornerShape(20.dp))
-                .clickable { onClick() }
-                .height(100.dp),
+                .clickable { onClick() },
             shape = RoundedCornerShape(20.dp),
             color = if (isSelected) {
                 MaterialTheme.colorScheme.surfaceContainerHighest
@@ -69,7 +68,7 @@ fun LogCard(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
+                    .padding(horizontal = 16.dp, vertical = 16.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
@@ -120,7 +119,7 @@ fun LogCard(
                             style = MaterialTheme.typography.labelMedium.copy(
                                 fontWeight = FontWeight.Medium
                             ),
-                            color = MaterialTheme.colorScheme.tertiary
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
 
 //                    if (hasVersionChange) {
