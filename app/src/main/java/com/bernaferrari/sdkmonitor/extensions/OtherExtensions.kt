@@ -68,10 +68,10 @@ inline val @receiver:ColorInt Int.lighten
 
 // colors inspired from https://www.vanschneider.com/colors
 fun Int.apiToColor(): Int = when (this) {
-    in 0..31 -> 0xFFD31B33.toInt() // red
-    32 -> 0xFFE54B4B.toInt() // red-orange
-    33 -> 0xFFE37A46.toInt() // orange
-    34 -> 0XFF178E96.toInt() // blue-green
+    in 0..32 -> 0xFFD31B33.toInt() // red
+    33 -> 0xFFE54B4B.toInt() // red-orange
+    34 -> 0xFFE37A46.toInt() // orange
+    35 -> 0XFF178E96.toInt() // blue-green
     else -> 0xFF14B572.toInt() // green
 }
 

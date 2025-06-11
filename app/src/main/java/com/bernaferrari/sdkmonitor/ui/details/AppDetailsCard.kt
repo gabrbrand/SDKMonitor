@@ -118,7 +118,7 @@ private fun SDKInfoSection(appDetails: AppDetails) {
         Surface(
             modifier = Modifier.weight(1f),
             shape = RoundedCornerShape(16.dp),
-            color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.1f)
+            color = MaterialTheme.colorScheme.secondaryContainer
         ) {
             Column(
                 modifier = Modifier.padding(16.dp),
@@ -142,7 +142,7 @@ private fun SDKInfoSection(appDetails: AppDetails) {
                 Text(
                     text = appDetails.minSdk.apiToVersion(),
                     style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    color = MaterialTheme.colorScheme.secondary,
                     textAlign = TextAlign.Center,
                     maxLines = 1
                 )

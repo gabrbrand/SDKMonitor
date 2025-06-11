@@ -51,13 +51,13 @@ import com.bernaferrari.sdkmonitor.domain.model.ThemeMode
 @Composable
 fun SettingsScreen(
     onNavigateToAppDetails: (String) -> Unit,
+    onNavigateToAbout: (() -> Unit)? = null, // New parameter for about navigation
     viewModel: SettingsViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
     var showSyncDialog by remember { mutableStateOf(false) }
     var selectedSdkVersion by remember { mutableIntStateOf(0) }
     var showSdkDialog by remember { mutableStateOf(false) }
-    var showAboutDialog by remember { mutableStateOf(false) }
 
     val singularTimeArray = stringArrayResource(R.array.singularTime)
     val pluralTimeArray = stringArrayResource(R.array.pluralTime)
@@ -72,6 +72,8 @@ fun SettingsScreen(
         }
     }
 
+    val surface = MaterialTheme.colorScheme.surface
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -84,7 +86,8 @@ fun SettingsScreen(
                     )
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.surface
+                    containerColor = surface,
+                    titleContentColor = MaterialTheme.colorScheme.onSurface
                 )
             )
         }
@@ -92,7 +95,9 @@ fun SettingsScreen(
         when {
             uiState.isLoading -> {
                 Box(
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(paddingValues),
                     contentAlignment = Alignment.Center
                 ) {
                     Column(
@@ -114,7 +119,9 @@ fun SettingsScreen(
 
             uiState.hasError -> {
                 Box(
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(paddingValues),
                     contentAlignment = Alignment.Center
                 ) {
                     Card(
@@ -153,7 +160,7 @@ fun SettingsScreen(
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(paddingValues)
+                        .padding(paddingValues) // Apply padding from this Scaffold
                         .verticalScroll(rememberScrollState())
                 ) {
                     val prefs = uiState.preferences
@@ -241,7 +248,9 @@ fun SettingsScreen(
                             ),
                             subtitle = stringResource(R.string.learn_more_about_app),
                             icon = Icons.Default.Info,
-                            onClick = { showAboutDialog = true }
+                            onClick = {
+                                onNavigateToAbout?.invoke()
+                            }
                         )
                     }
 
@@ -249,44 +258,37 @@ fun SettingsScreen(
                 }
             }
         }
-    }
 
-    // Background Sync Dialog - NOW HANDLES EVERYTHING
-    if (showSyncDialog) {
-        BackgroundSyncDialog(
-            isEnabled = uiState.preferences.backgroundSync,
-            currentInterval = uiState.preferences.syncInterval,
-            currentUnit = uiState.preferences.syncTimeUnit,
-            onDismiss = { showSyncDialog = false },
-            onSave = { enabled, interval, unit ->
-                if (enabled != uiState.preferences.backgroundSync) {
-                    viewModel.toggleBackgroundSync()
+        // Background Sync Dialog - NOW HANDLES EVERYTHING
+        if (showSyncDialog) {
+            BackgroundSyncDialog(
+                isEnabled = uiState.preferences.backgroundSync,
+                currentInterval = uiState.preferences.syncInterval,
+                currentUnit = uiState.preferences.syncTimeUnit,
+                onDismiss = { showSyncDialog = false },
+                onSave = { enabled, interval, unit ->
+                    if (enabled != uiState.preferences.backgroundSync) {
+                        viewModel.toggleBackgroundSync()
+                    }
+                    if (enabled) {
+                        viewModel.setSyncInterval(interval, unit)
+                    }
                 }
-                if (enabled) {
-                    viewModel.setSyncInterval(interval, unit)
+            )
+        }
+
+        // SDK Detail Dialog - Enhanced for better navigation
+        if (showSdkDialog) {
+            val appsWithSdk = uiState.allAppsForSdk.filter { it.sdkVersion == selectedSdkVersion }
+            SdkDetailDialog(
+                sdkVersion = selectedSdkVersion,
+                apps = appsWithSdk,
+                onDismiss = { showSdkDialog = false },
+                onAppClick = { packageName ->
+                    showSdkDialog = false
+                    onNavigateToAppDetails(packageName)
                 }
-            }
-        )
-    }
-
-    // SDK Detail Dialog
-    if (showSdkDialog) {
-        val appsWithSdk = uiState.allAppsForSdk.filter { it.sdkVersion == selectedSdkVersion }
-        SdkDetailDialog(
-            sdkVersion = selectedSdkVersion,
-            apps = appsWithSdk,
-            onDismiss = { showSdkDialog = false },
-            onAppClick = { packageName ->
-                showSdkDialog = false
-                onNavigateToAppDetails(packageName)
-            }
-        )
-    }
-
-    // About Dialog
-    if (showAboutDialog) {
-        AboutDialog(
-            onDismiss = { showAboutDialog = false }
-        )
+            )
+        }
     }
 }

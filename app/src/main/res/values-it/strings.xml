@@ -59,7 +59,7 @@
         <a href=\'https://www.reddit.com/user/bernaferrari\'>Reddit</a>&nbsp;&nbsp;
         <a href=\'https://www.linkedin.com/in/bernaferrari\'>LinkedIn</a><br/><br/>
         Questo progetto è <a href=\'https://github.com/bernaferrari/SDKMonitor\'>open source</a>, ed è
-        licenziato sotto Apache 2.0.</a>.
+        licenziato sotto Apache 2.0.
   ]]></string>
 
     <string name="background_sync_description">Controlla periodicamente se il targetSDK è cambiato, dato che le app vengono sempre aggiornate.</string>
@@ -83,6 +83,10 @@
     <!-- Time formatting -->
     <string name="just_now">Proprio ora</string>
     <string name="never">Mai</string>
+    <string name="today">Oggi</string>
+    <string name="this_week">Questa settimana</string>
+    <string name="this_month">Questo mese</string>
+    <string name="this_year">Quest\'anno</string>
 
     <!-- Main Screen -->
     <string name="apps_count" formatted="false">%d app</string>
@@ -161,13 +165,6 @@
     <string name="open_source_project">Questo progetto è open source e licenziato sotto Apache 2.0.</string>
 
     <!-- Background Sync Dialog -->
-    <string name="enable_sync">Abilita Sync</string>
-    <string name="disable_sync">Disabilita Sync</string>
-    <string name="save">Salva</string>
-    <string name="cancel">Annulla</string>
-    <string name="wifi_only">Solo WiFi</string>
-    <string name="requires_charging">Richiede carica</string>
-    <string name="battery_not_low">Batteria non scarica</string>
     <string name="apps_will_update_automatically">Le app si aggiorneranno automaticamente</string>
     <string name="tap_to_enable_automatic_updates">Tocca per abilitare aggiornamenti automatici</string>
     <string name="sync_frequency">Frequenza di Sincronizzazione</string>
@@ -183,6 +180,13 @@
     <string name="every">Ogni</string>
     <string name="unit">Unità</string>
     <string name="required">Obbligatorio</string>
+    <string name="enable_sync">Abilita Sync</string>
+    <string name="disable_sync">Disabilita Sync</string>
+    <string name="save">Salva</string>
+    <string name="cancel">Annulla</string>
+    <string name="wifi_only">Solo WiFi</string>
+    <string name="requires_charging">Richiede carica</string>
+    <string name="battery_not_low">Batteria non scarica</string>
 
     <!-- Common UI Elements -->
     <string name="error">Errore</string>
@@ -218,5 +222,20 @@
     <string name="app_version_format">%1$s v%2$s</string>
     <string name="unknown_error">Errore sconosciuto</string>
     <string name="select_app_to_get_started">Seleziona un\'app per iniziare</string>
-    <string name="choose_app_from_list_description">Scegli un\'app dall\'elenco per vedere informazioni dettagliate e cronologia delle versioni</string>
+
+    <!-- About Screen -->
+    <string name="made_with_care_by">Realizzato con cura da</string>
+    <string name="privacy_first_title">Privacy Prima di Tutto</string>
+    <string name="zero_tracking">Zero tracciamento</string>
+    <string name="open_source">Open Source</string>
+    <string name="view_on_github">Visualizza su GitHub</string>
+    <string name="get_in_touch">Mettiti in Contatto</string>
+    <string name="send_feedback_or_ask_questions">Invia feedback o fai domande</string>
+    <string name="version_format">Versione %s</string>
+    <string name="no_data_collection">Nessuna raccolta dati</string>
+    <string name="everything_stays_local">Tutto rimane locale</string>
+    <string name="no_internet_permissions_needed">Nessun permesso internet necessario</string>
+    <string name="open_source_transparent">Open source e trasparente</string>
+    <string name="sdk_monitor_feedback">Feedback SDK Monitor</string>
+    <string name="send_feedback">Invia Feedback</string>
 </resources>

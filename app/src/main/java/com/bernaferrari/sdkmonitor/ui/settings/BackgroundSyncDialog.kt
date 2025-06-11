@@ -24,6 +24,10 @@ import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Tune
+import androidx.compose.material.icons.outlined.CalendarMonth
+import androidx.compose.material.icons.outlined.CalendarToday
+import androidx.compose.material.icons.outlined.DateRange
+import androidx.compose.material.icons.outlined.Tune
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenuItem
@@ -65,34 +69,39 @@ enum class SyncPreset(
     val displayNameRes: Int,
     val shortNameRes: Int,
     val icon: ImageVector,
+    val iconSelected: ImageVector,
     val intervalValue: String,
     val timeUnit: TimeUnit,
 ) {
     DAILY(
         R.string.daily,
         R.string.daily,
-        Icons.Default.CalendarToday,
+        Icons.Outlined.CalendarToday,
+        Icons.Filled.CalendarToday,
         "1",
         TimeUnit.DAYS
     ),
     WEEKLY(
         R.string.weekly,
         R.string.weekly,
-        Icons.Default.DateRange,
+        Icons.Outlined.DateRange,
+        Icons.Filled.DateRange,
         "7",
         TimeUnit.DAYS
     ),
     MONTHLY(
         R.string.monthly,
         R.string.monthly,
-        Icons.Default.CalendarMonth,
+        Icons.Outlined.CalendarMonth,
+        Icons.Filled.CalendarMonth,
         "30",
         TimeUnit.DAYS
     ),
     CUSTOM(
         R.string.custom,
         R.string.custom,
-        Icons.Default.Tune,
+        Icons.Outlined.Tune,
+        Icons.Filled.Tune,
         "",
         TimeUnit.HOURS
     )
@@ -159,7 +168,6 @@ fun BackgroundSyncDialog(
 
                 // Fully Clickable Enable/Disable Card
                 Card(
-
                     onClick = { enabled = !enabled },
                     colors = CardDefaults.cardColors(
                         containerColor = if (enabled) {
@@ -458,11 +466,11 @@ private fun ElegantSyncToggleWithDescription(
                 verticalArrangement = Arrangement.Center
             ) {
                 Icon(
-                    imageVector = preset.icon,
+                    imageVector = if (isSelected) preset.iconSelected else preset.icon,
                     contentDescription = stringResource(preset.displayNameRes),
                     modifier = Modifier.size(20.dp),
                     tint = if (isSelected) {
-                        MaterialTheme.colorScheme.primary
+                        MaterialTheme.colorScheme.onPrimaryContainer
                     } else {
                         MaterialTheme.colorScheme.onSurfaceVariant
                     }

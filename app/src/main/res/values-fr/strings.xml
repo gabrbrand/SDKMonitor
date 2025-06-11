@@ -25,48 +25,49 @@
 
     <plurals name="searchApps">
         <item quantity="one">Rechercher %d app</item>
-        <item quantity="other">Rechercher %d apps</item>
+        <item quantity="many">Rechercher %d apps</item>
     </plurals>
 
     <plurals name="minutes_ago">
         <item quantity="one">il y a %d minute</item>
-        <item quantity="other">il y a %d minutes</item>
+        <item quantity="many">il y a %d minutes</item>
     </plurals>
 
     <plurals name="hours_ago">
         <item quantity="one">il y a %d heure</item>
-        <item quantity="other">il y a %d heures</item>
+        <item quantity="many">il y a %d heures</item>
     </plurals>
 
     <plurals name="days_ago">
         <item quantity="one">il y a %d jour</item>
-        <item quantity="other">il y a %d jours</item>
+        <item quantity="many">il y a %d jours</item>
     </plurals>
 
     <string name="sync_every" formatted="false">Synchroniser toutes les %d %s</string>
     <string name="sync_disabled">Synchronisation désactivée</string>
 
-    <string name="dismiss">Ignorer</string>
+    <string name="dismiss">Fermer</string>
     <string name="contact">Contact</string>
-    <string name="about_title">Moniteur SDK v%1$s</string>
+    <string name="about_title">SDK Monitor v%1$s</string>
     <string name="about_body"><![CDATA[
         Conçu &amp; développé par <b>Bernardo Ferrari</b>.<br/>
         <a href=\'https://github.com/bernaferrari\'>GitHub</a>&nbsp;&nbsp;
         <a href=\'https://www.reddit.com/user/bernaferrari\'>Reddit</a>&nbsp;&nbsp;
         <a href=\'https://www.linkedin.com/in/bernaferrari\'>LinkedIn</a><br/><br/>
         Ce projet est <a href=\'https://github.com/bernaferrari/SDKMonitor\'>open source</a>, et est
-        licencié sous Apache 2.0.</a>.
+        sous licence Apache 2.0.
   ]]></string>
 
-    <string name="background_sync_description">Vérifie périodiquement si le targetSDK a changé, car les apps sont toujours en cours de mise à jour.</string>
+    <string name="background_sync_description">Vérifier périodiquement si le targetSDK a changé, car les apps sont toujours mises à jour.</string>
     <string name="home">Accueil</string>
     <string name="logs">Journaux</string>
     <string name="settings">Paramètres</string>
+    <string name="loading">Chargement</string>
 
     <string name="target_sdk_logs">Journaux TargetSDK</string>
-    <string name="no_logs_yet">Pas Encore de Journaux</string>
-    <string name="app_changes_will_appear">Les changements d\'apps apparaîtront ici au fur et à mesure</string>
-    <string name="failed_to_load_logs">Échec du Chargement des Journaux</string>
+    <string name="no_logs_yet">Pas encore de journaux</string>
+    <string name="app_changes_will_appear">Les modifications d\'apps apparaîtront ici au fur et à mesure</string>
+    <string name="failed_to_load_logs">Échec du chargement des journaux</string>
     <string name="loading_logs">Chargement des journaux…</string>
     <string name="retry">Réessayer</string>
     
@@ -78,16 +79,20 @@
     <!-- Time formatting -->
     <string name="just_now">À l\'instant</string>
     <string name="never">Jamais</string>
+    <string name="today">Aujourd\'hui</string>
+    <string name="this_week">Cette semaine</string>
+    <string name="this_month">Ce mois</string>
+    <string name="this_year">Cette année</string>
 
     <!-- Main Screen -->
     <string name="apps_count">%d apps</string>
     <string name="search_apps_hint">Rechercher des apps…</string>
     <string name="clear_search">Effacer la recherche</string>
     <string name="filter_apps">Filtrer les Apps</string>
-    <string name="sort_by">Trier Par</string>
+    <string name="sort_by">Trier par</string>
     <string name="all_apps">Toutes les Apps</string>
-    <string name="user_apps">Apps Utilisateur</string>
-    <string name="system_apps">Apps Système</string>
+    <string name="user_apps">Apps utilisateur</string>
+    <string name="system_apps">Apps système</string>
     <string name="sort_by_name">Nom</string>
     <string name="sort_by_sdk">Version SDK</string>
     <string name="loading_apps">Chargement des apps…</string>
@@ -98,25 +103,25 @@
     <string name="no_filtered_apps_found">Aucun %s trouvé</string>
     
     <!-- Logs Screen -->
-    <string name="change_logs">Historique des modifications</string>
-    <string name="loading_change_history">✨ Chargement de l\'Historique des Changements</string>
+    <string name="change_logs">Journaux de modifications</string>
+    <string name="loading_change_history">✨ Chargement de l\'historique des modifications</string>
     <string name="analyzing_app_ecosystem">Analyse de votre écosystème d\'applications…</string>
     <string name="oops_something_went_wrong">Oups ! Quelque chose s\'est mal passé</string>
-    <string name="no_changes_yet">🌟 Aucun Changement Encore</string>
-    <string name="when_apps_update_description">Quand les apps mettent à jour leurs versions SDK cibles, vous verrez une belle chronologie des changements ici</string>
-    <string name="sdk_monitor_watching">✨ Moniteur SDK observe</string>
-    <string name="change_timeline">Historique des modifications</string>
+    <string name="no_changes_yet">🌟 Aucune modification pour l\'instant</string>
+    <string name="when_apps_update_description">Quand les apps mettent à jour leurs versions SDK cible, vous verrez une belle chronologie des changements ici</string>
+    <string name="sdk_monitor_watching">✨ SDK Monitor surveille</string>
+    <string name="change_timeline">Chronologie des modifications</string>
     <string name="showing">Affichage</string>
-    <string name="activity_overview">Aperçu de l\'Activité</string>
-    <string name="past_week">Semaine Passée</string>
-    <string name="past_month">Mois Passé</string>
-    <string name="past_6_months">6 Derniers Mois</string>
+    <string name="activity_overview">Aperçu de l\'activité</string>
+    <string name="past_week">Semaine passée</string>
+    <string name="past_month">Mois passé</string>
+    <string name="past_6_months">6 derniers mois</string>
     
     <!-- Details Screen -->
-    <string name="app_details">Détails de l\'App</string>
+    <string name="app_details">Détails de l\'app</string>
     <string name="back">Retour</string>
-    <string name="loading_app_details">Chargement des Détails de l\'App</string>
-    <string name="app_not_found">App Non Trouvée</string>
+    <string name="loading_app_details">Chargement des détails de l\'app</string>
+    <string name="app_not_found">App non trouvée</string>
     <string name="try_again">Réessayer</string>
     <string name="target_sdk">targetSDK</string>
     <string name="min_sdk">minSDK</string>
@@ -124,27 +129,28 @@
     <string name="play_store">Play Store</string>
     <string name="package_label">Package</string>
     <string name="version_label">Version</string>
-    <string name="updated_label">Mise à jour</string>
+    <string name="updated_label">Mis à jour</string>
     <string name="size_label">Taille</string>
-    <string name="version_history">Historique des Versions</string>
-    <string name="no_version_history">Aucun historique de version disponible encore. Quand l\'app se mettra à jour, vous verrez son évolution ici.</string>
+    <string name="version_history">Historique des versions</string>
+    <string name="no_version_history">Aucun historique de version disponible pour l\'instant. Quand l\'app se mettra à jour, vous verrez son évolution ici.</string>
     <string name="latest">DERNIÈRE</string>
     <string name="api_version">API %d</string>
-    
+    <string name="select_app_to_get_started">Sélectionnez une app pour commencer</string>
+
     <!-- Settings Screen -->
-    <string name="theme_mode">Mode du Thème</string>
+    <string name="theme_mode">Mode du thème</string>
     <string name="light">Clair</string>
     <string name="dark">Sombre</string>
     <string name="system">Système</string>
     <string name="appearance">Apparence</string>
     <string name="background_sync">Synchronisation automatique</string>
-    <string name="tap_to_configure_automatic_updates">Toucher pour configurer les mises à jour automatiques</string>
+    <string name="tap_to_configure_automatic_updates">Appuyez pour configurer les mises à jour automatiques</string>
     <string name="enabled_daily_updates">Activé - Mises à jour quotidiennes</string>
     <string name="enabled_weekly_updates">Activé - Mises à jour hebdomadaires</string>
     <string name="enabled_monthly_updates">Activé - Mises à jour mensuelles</string>
     <string name="enabled_every">Activé toutes les %1$s %2$s</string>
-    <string name="delete_all_app_change_history_and_logs">Supprimer tout l\'historique des changements d\'apps et les journaux</string>
-    <string name="confirm_clear_all_logs">Ceci supprimera définitivement tout l\'historique des changements d\'apps et les journaux. Cette action ne peut pas être annulée.</string>
+    <string name="delete_all_app_change_history_and_logs">Supprimer tout l\'historique des modifications d\'apps et les journaux</string>
+    <string name="confirm_clear_all_logs">Cela supprimera définitivement tout l\'historique des modifications d\'apps et les journaux. Cette action ne peut pas être annulée.</string>
     
     <!-- About Dialog -->
     <string name="about">À propos</string>
@@ -153,19 +159,12 @@
     <string name="github">GitHub</string>
     <string name="reddit">Reddit</string>
     <string name="linkedin">LinkedIn</string>
-    <string name="open_source_project">Ce projet est open source et licencié sous Apache 2.0.</string>
+    <string name="open_source_project">Ce projet est open source et sous licence Apache 2.0.</string>
 
     <!-- Background Sync Dialog -->
-    <string name="enable_sync">Activer Sync</string>
-    <string name="disable_sync">Désactiver Sync</string>
-    <string name="save">Sauvegarder</string>
-    <string name="cancel">Annuler</string>
-    <string name="wifi_only">WiFi seulement</string>
-    <string name="requires_charging">Nécessite la charge</string>
-    <string name="battery_not_low">Batterie pas faible</string>
     <string name="apps_will_update_automatically">Les apps se mettront à jour automatiquement</string>
-    <string name="tap_to_enable_automatic_updates">Toucher pour activer les mises à jour automatiques</string>
-    <string name="sync_frequency">Fréquence de Synchronisation</string>
+    <string name="tap_to_enable_automatic_updates">Appuyez pour activer les mises à jour automatiques</string>
+    <string name="sync_frequency">Fréquence de synchronisation</string>
     <string name="daily">Quotidienne</string>
     <string name="weekly">Hebdomadaire</string>
     <string name="monthly">Mensuelle</string>
@@ -174,28 +173,34 @@
     <string name="once_every_week">Une fois par semaine</string>
     <string name="once_every_month">Une fois par mois</string>
     <string name="set_your_own_interval">Définir votre propre intervalle</string>
-    <string name="set_custom_interval">Définir un Intervalle Personnalisé</string>
+    <string name="set_custom_interval">Définir un intervalle personnalisé</string>
     <string name="every">Toutes les</string>
     <string name="unit">Unité</string>
     <string name="required">Requis</string>
+    <string name="enable_sync">Activer la sync</string>
+    <string name="disable_sync">Désactiver la sync</string>
+    <string name="save">Enregistrer</string>
+    <string name="cancel">Annuler</string>
+    <string name="wifi_only">WiFi uniquement</string>
+    <string name="requires_charging">Nécessite la charge</string>
+    <string name="battery_not_low">Batterie pas faible</string>
 
     <!-- Common UI Elements -->
-    <string name="loading">Chargement</string>
     <string name="error">Erreur</string>
     <string name="close">Fermer</string>
     <string name="open">Ouvrir</string>
-    <string name="analytics">Analytics</string>
+    <string name="analytics">Analyses</string>
     <string name="timeline">Chronologie</string>
     <string name="updated_to">Mis à jour vers</string>
-    <string name="app_icon">Icône de l\'app</string>
-    <string name="app_icon_for">Icône de l\'app pour %s</string>
-    <string name="clear_all">Tout Effacer</string>
-    <string name="loading_settings">Chargement des paramètres...</string>
+    <string name="app_icon">Icône d\'app</string>
+    <string name="app_icon_for">Icône d\'app pour %s</string>
+    <string name="clear_all">Tout effacer</string>
+    <string name="loading_settings">Chargement des paramètres…</string>
     <string name="error_loading_settings">Erreur lors du chargement des paramètres</string>
     <string name="settings_screen_title">Paramètres</string>
-    <string name="privacy_first">🔒 Confidentialité d\'Abord</string>
+    <string name="privacy_first">🔒 Confidentialité d\'abord</string>
     <string name="privacy_description">Cette app ne collecte, ne stocke ou ne transmet aucune donnée personnelle. Toutes les informations restent complètement locales sur votre appareil.</string>
-    <string name="sdk_analytics">Analytics du SDK</string>
+    <string name="sdk_analytics">Analyses SDK</string>
     <string name="apps_lowercase">apps</string>
     <string name="versions_lowercase">versions</string>
     <string name="api_format">API %d</string>
@@ -203,16 +208,30 @@
     <string name="apps_count_format" formatted="false">%d %s</string>
     <string name="app_singular">app</string>
     <string name="apps_plural">apps</string>
-    <string name="no_apps_found_sdk">Aucune app trouvée avec cette version du SDK</string>
+    <string name="no_apps_found_sdk">Aucune app trouvée avec cette version SDK</string>
     <string name="no_apps_found_filter">Aucun %s trouvé</string>
     <string name="try_different_filter">Essayez un filtre différent</string>
-    <string name="filter_options">Options de filtrage</string>
+    <string name="filter_options">Options de filtre</string>
     <string name="percentage_format">%d%%</string>
-    <string name="data_management">Gestion des Données</string>
+    <string name="data_management">Gestion des données</string>
     <string name="about_section">À propos</string>
     <string name="learn_more_about_app">En savoir plus sur cette app</string>
     <string name="app_version_format">%1$s v%2$s</string>
     <string name="unknown_error">Erreur inconnue</string>
-    <string name="select_app_to_get_started">Sélectionnez une app pour commencer</string>
-    <string name="choose_app_from_list_description">Choisissez une app dans la liste pour voir les informations détaillées et l\'historique des versions</string>
+
+    <!-- About Screen -->
+    <string name="made_with_care_by">Fait avec soin par</string>
+    <string name="privacy_first_title">Confidentialité d\'abord</string>
+    <string name="zero_tracking">Zéro suivi</string>
+    <string name="open_source">Open Source</string>
+    <string name="view_on_github">Voir sur GitHub</string>
+    <string name="get_in_touch">Prendre Contact</string>
+    <string name="send_feedback_or_ask_questions">Envoyez des commentaires ou posez des questions</string>
+    <string name="version_format">Version %s</string>
+    <string name="no_data_collection">Aucune collecte de données</string>
+    <string name="everything_stays_local">Tout reste local</string>
+    <string name="no_internet_permissions_needed">Aucune permission internet nécessaire</string>
+    <string name="open_source_transparent">Open source et transparent</string>
+    <string name="sdk_monitor_feedback">Commentaires SDK Monitor</string>
+    <string name="send_feedback">Envoyer Commentaires</string>
 </resources>

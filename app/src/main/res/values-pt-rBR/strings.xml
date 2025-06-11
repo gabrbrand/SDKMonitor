@@ -79,6 +79,10 @@
     <!-- Time formatting -->
     <string name="just_now">Agora mesmo</string>
     <string name="never">Nunca</string>
+    <string name="today">Hoje</string>
+    <string name="this_week">Esta semana</string>
+    <string name="this_month">Este mês</string>
+    <string name="this_year">Este ano</string>
 
     <!-- Main Screen -->
     <string name="apps_count" formatted="false">%d apps</string>
@@ -138,6 +142,7 @@
     <string name="dark">Escuro</string>
     <string name="system">Sistema</string>
     <string name="appearance">Aparência</string>
+    <string name="background_sync">Sincronização Automática</string>
     <string name="tap_to_configure_automatic_updates">Toque para configurar atualizações automáticas</string>
     <string name="enabled_daily_updates">Ativado - Atualizações diárias</string>
     <string name="enabled_weekly_updates">Ativado - Atualizações semanais</string>
@@ -190,14 +195,6 @@
     <string name="unknown_error">Erro desconhecido</string>
 
     <!-- Background Sync Dialog -->
-    <string name="enable_sync">Ativar Sync</string>
-    <string name="disable_sync">Desativar Sync</string>
-    <string name="save">Salvar</string>
-    <string name="cancel">Cancelar</string>
-    <string name="wifi_only">Apenas WiFi</string>
-    <string name="requires_charging">Requer carregamento</string>
-    <string name="battery_not_low">Bateria não baixa</string>
-    <string name="background_sync">Sincronização Automática</string>
     <string name="apps_will_update_automatically">Apps serão atualizados automaticamente</string>
     <string name="tap_to_enable_automatic_updates">Toque para ativar atualizações automáticas</string>
     <string name="sync_frequency">Frequência de Sincronização</string>
@@ -213,6 +210,28 @@
     <string name="every">A cada</string>
     <string name="unit">Unidade</string>
     <string name="required">Obrigatório</string>
+    <string name="enable_sync">Ativar Sync</string>
+    <string name="disable_sync">Desativar Sync</string>
+    <string name="save">Salvar</string>
+    <string name="cancel">Cancelar</string>
+    <string name="wifi_only">Apenas WiFi</string>
+    <string name="requires_charging">Requer carregamento</string>
+    <string name="battery_not_low">Bateria não baixa</string>
     <string name="select_app_to_get_started">Selecione um app para começar</string>
-    <string name="choose_app_from_list_description">Escolha um app da lista para ver informações detalhadas e histórico de versões</string>
+
+    <!-- About Screen -->
+    <string name="made_with_care_by">Feito com carinho por</string>
+    <string name="privacy_first_title">Privacidade em Primeiro Lugar</string>
+    <string name="zero_tracking">Zero rastreamento</string>
+    <string name="open_source">Código Aberto</string>
+    <string name="view_on_github">Ver no GitHub</string>
+    <string name="get_in_touch">Entre em Contato</string>
+    <string name="send_feedback_or_ask_questions">Envie feedback ou faça perguntas</string>
+    <string name="version_format">Versão %s</string>
+    <string name="no_data_collection">Nenhuma coleta de dados</string>
+    <string name="everything_stays_local">Tudo permanece local</string>
+    <string name="no_internet_permissions_needed">Não precisa de permissões de internet</string>
+    <string name="open_source_transparent">Código aberto e transparente</string>
+    <string name="sdk_monitor_feedback">Feedback do SDK Monitor</string>
+    <string name="send_feedback">Enviar Feedback</string>
 </resources>

@@ -146,7 +146,7 @@ fun <T> GenericFastScroller(
         scrollToLetter(selectedLetter)
     }
 
-    val width = 40.dp
+    val width = 32.dp
 
     Box(
         modifier = modifier
@@ -157,7 +157,7 @@ fun <T> GenericFastScroller(
             modifier = Modifier
                 .fillMaxHeight()
                 .width(width)
-                .padding(vertical = 12.dp)
+                .padding(vertical = 16.dp)
                 .onGloballyPositioned { scrollerSize = it.size }
                 .pointerInput(items.hashCode()) {
                     awaitPointerEventScope {

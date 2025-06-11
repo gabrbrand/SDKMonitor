@@ -147,6 +147,7 @@ dependencies {
 
     // UI Utils
     implementation(libs.androidx.palette.ktx)
+    implementation(libs.material.kolor)
 
     // Debugging
     debugImplementation(libs.androidx.compose.ui.tooling)

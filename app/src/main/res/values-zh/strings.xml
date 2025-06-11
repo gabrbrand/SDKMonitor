@@ -79,6 +79,10 @@
     <!-- Time formatting -->
     <string name="just_now">刚刚</string>
     <string name="never">从不</string>
+    <string name="today">今天</string>
+    <string name="this_week">本周</string>
+    <string name="this_month">本月</string>
+    <string name="this_year">今年</string>
 
     <!-- Main Screen -->
     <string name="apps_count">%d个应用</string>
@@ -214,5 +218,20 @@
     <string name="app_version_format">%1$s v%2$s</string>
     <string name="unknown_error">未知错误</string>
     <string name="select_app_to_get_started">选择应用开始使用</string>
-    <string name="choose_app_from_list_description">从列表中选择一个应用以查看详细信息和版本历史</string>
+
+    <!-- About Screen -->
+    <string name="made_with_care_by">用心制作</string>
+    <string name="privacy_first_title">隐私优先</string>
+    <string name="zero_tracking">零追踪</string>
+    <string name="open_source">开源</string>
+    <string name="view_on_github">在GitHub上查看</string>
+    <string name="get_in_touch">联系我们</string>
+    <string name="send_feedback_or_ask_questions">发送反馈或提问</string>
+    <string name="version_format">版本 %s</string>
+    <string name="no_data_collection">不收集数据</string>
+    <string name="everything_stays_local">一切都保存在本地</string>
+    <string name="no_internet_permissions_needed">无需网络权限</string>
+    <string name="open_source_transparent">开源且透明</string>
+    <string name="sdk_monitor_feedback">SDK监视器反馈</string>
+    <string name="send_feedback">发送反馈</string>
 </resources>

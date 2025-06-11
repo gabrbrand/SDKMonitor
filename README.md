@@ -2,131 +2,99 @@
 
 # SDK Monitor
 
-This app tracks changes on targetSDK from your apps. Starting August 31, 2024, Google is [requiring all app updates](https://developer.android.com/distribute/best-practices/develop/target-sdk) to target at least 34 (35 is the latest).
+[![API](https://img.shields.io/badge/API-24%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=24)
+[![Kotlin](https://img.shields.io/badge/Kotlin-100%25-blue.svg)](https://kotlinlang.org)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+[![F-Droid](https://img.shields.io/f-droid/v/com.bernaferrari.sdkmonitor.svg)](https://f-droid.org/packages/com.bernaferrari.sdkmonitor/)
 
-The idea behind this project was to make it easy to see the apps which are "voluntarily" being updated regularly, and the ones that are resisting until the last second.
-I am personally a fan of [App Inspector](https://play.google.com/store/apps/details?id=bg.projectoria.appinspector), with 100K+ downloads, simple interface, and great information. I had, however, 3 issues with it:
+Since 2017, Google's Play Store policy requires apps to target recent Android API levels to ensure
+they utilize modern security and privacy features. Because this information isn't available to users
+by default, it's difficult to verify which apps are compliant.
 
-- Really long time to load when app is opened;
-- No search or way to find what you want;
-- No material design.
+SDK Monitor is a simple app that makes this information visible. It scans your installed apps and
+displays their Target SDK, helping you see at a glance which applications are up-to-date with
+platform standards. Use it to understand how other apps are perfoming in your device.
 
-Based on this, I made an improved app, with everything App Inspector has and more. SDK Monitor caches everything using Room, so time to load is **REALLY** fast.
-It also makes use of Implicit Broadcasts (where available) to automatically keep track of app installs, updates and deletions.
-Android Oreo removed these (except deletion), so the app has the option to use WorkManager to automatically fetch periodically in background for these changes.
-Every time the targetSDK value for an app is changed, the app will show a push notification.
+## ✨ Features
 
-This app also showcases the following Jetpack libraries working together: [Room](https://developer.android.com/topic/libraries/architecture/room.html), [ViewModel](https://developer.android.com/reference/android/arch/lifecycle/ViewModel.html), [WorkManager](https://developer.android.com/topic/libraries/architecture/workmanager), [DataBinding](https://developer.android.com/topic/libraries/data-binding/) and [Navigation](https://developer.android.com/topic/libraries/architecture/navigation/).
+- **📊 Interactive SDK Analytics** - Beautiful charts showing distribution with clickable insights
+  and real-time filtering
+- **🔍 Smart Search & Filtering** - Real-time search with highlighted results and advanced filtering
+  options
+- **📱 Universal Design** - Seamlessly adapts to phones, tablets, and foldables with master-detail
+  layouts
+- **⚡ Intelligent Performance** - Smart caching, smooth scrolling, and responsive interactions
+- **🎨 Material You Integration** - Dynamic theming that adapts to your system colors
+- **🔔 Background Monitoring** - Automatic tracking of app installations, updates, and SDK changes
+- **🌐 Multilingual** - English, Italian, French, Portuguese (BR), German, Spanish, Japanese, Chinese
+- **🚀 Custom Fast Scroller** - Self-healing alphabet navigation with smooth animations
 
-## Download
+## 📱 Download
 
-[<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png"
-     alt="Get it on F-Droid"
-     height="80">](https://f-droid.org/packages/com.bernaferrari.sdkmonitor/)
+[<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png" alt="Get it on F-Droid" height="80">](https://f-droid.org/packages/com.bernaferrari.sdkmonitor/)
 
-Or get the APK from the [Releases section](https://github.com/bernaferrari/SDKMonitor/releases/latest).
+[Latest Release](https://github.com/bernaferrari/SDKMonitor/releases/latest)
 
-## Screenshots
+## 🏗️ Technical Stack
 
-| Fast Scroller | Logs | Details | Settings |
-|:-:|:-:|:-:|:-:|
-| ![First](assets/main.png?raw=true) | ![Sec](assets/logs.png?raw=true) | ![Third](assets/details.jpg?raw=true) | ![Fourth](assets/settings.png?raw=true) |
+**Architecture**: Clean Architecture with MVVM + Repository pattern  
+**UI Framework**: Jetpack Compose with Material 3 Expressive  
+**Database**: Room with complex queries, migrations, and foreign keys  
+**Dependency Injection**: Hilt with proper scoping and lifecycle management  
+**Reactive Programming**: Kotlin Coroutines + Flow for seamless async operations  
+**Background Processing**: WorkManager with intelligent scheduling and constraints  
+**Navigation**: Type-safe Compose Navigation with adaptive master-detail flow
 
-## Introduction
+## 📸 Screenshots
 
-### Features
+|       Home Screen        |           SDK Analytics            |          App Details           |             Settings             |
+|:------------------------:|:----------------------------------:|:------------------------------:|:--------------------------------:|
+| ![Main](assets/main.png) | ![Analytics](assets/analytics.png) | ![Details](assets/details.jpg) | ![Settings](assets/settings.png) |
 
-This app contains the following screens:
+## 🎯 Key Implementations
 
-- A list of all installed apps that were downloaded from Play Store.
-- A settings view, that allows user to toggle auto-sync on/off and configure what is required for a sync to occur.
-- \[Eventually\] The plan is to have a filter screen (sort by name/last update/targetSDK value) and an about screen.
+### **Advanced UI Components**
 
-#### Presentation layer
+- **Interactive Charts**: Custom Canvas-based SDK distribution with gesture detection and animations
+- **Fast Scroller**: Self-healing alphabet navigation that automatically adapts to content changes
+- **Real-time Search**: Instant filtering with highlighted search terms across app names
+- **Adaptive Layouts**: Master-detail flow optimized for all screen sizes and orientations
 
-This app is a Single-Activity app, with the following components:
+### **Performance Engineering**
 
-- A main activity that handles navigation.
-- A fragment to display the list of apps currently tracked. This fragment makes use of [Mavericks](https://github.com/airbnb/mavericks) architecture, and it was a delight integrating search with database on the viewmodel.
+- **Room Database**: Complex JOIN operations with proper indexing and optimized queries
+- **Smart Caching**: Intelligent prefetching reduces database calls and improves responsiveness
+- **Memory Management**: Lifecycle-aware components with proper resource cleanup
+- **Background Sync**: Exponential backoff retry logic with battery-conscious scheduling
 
-The app uses a Model-View-ViewModel (MVVM) architecture for the presentation layer. Each of the fragments corresponds to a MVVM View.
-The View and ViewModel communicate using RxJava2 and general good principles.
+### **Modern Android Practices**
 
-#### Data layer
+- **Material 3 Expressive**: Dynamic color theming with full system integration
+- **Type-Safe Navigation**: Compile-time safety with smooth transition animations
+- **State Management**: Unidirectional data flow with reactive state updates
+- **Offline-First**: Complete functionality without network dependency, all data stays local
 
-The database is created using Room and it has two entities: a `App` and a `Version` that generate corresponding SQLite tables at runtime.
-There is a one to many relationship between them. The packageName from `App` is a foreign key on `Version`.
-App contains the app label, package name and color (to be displayed on the app, based on the icon).
-Version contains the targetSDK version, versionName and versionCode. The app only adds a new version when the targetSDK changes.
+## 🔧 Building from Source
 
-To let other components know when the data has finished populating, the `ViewModel` exposes a `Flowable` object.
-The app also makes use of Kotlin's Coroutines to deal with some callbacks.
+To build and run the project, follow these steps:
 
-#### How components were used
+**1. Prerequisites**
 
-- Mavericks and Epoxy: used on the main screen to fetch and filter (if necessary) the list of apps. Since Epoxy wasn't made for items that are changing, the Settings view makes use of Groupie.
+- Android Studio Iguana | 2023.2.1 or newer
+- JDK 17+
 
-- ViewModel: A _Observables.combineLatest_ will merge the results from database (which will be fetched if empty) and search (which will be empty when app is first opened). Following this, the _execute_ from Mavericks will copy the state to the correct EpoxyController.
+**2. Clone the Repository**
 
-- WorkManager: responsible for automatically syncing when the app is in background.
-  There are two constraints: _battery not low_ and _device charging_.
+```bash
+git clone [https://github.com/bernaferrari/SDKMonitor.git](https://github.com/bernaferrari/SDKMonitor.git)
+cd SDKMonitor
+./gradlew assembleDebug
+```
 
-#### Third Party Libraries Used
+## 📄 License
 
-- [Android-Iconics][1] deal with icons without suffering.
-- [Architecture Components][2] stated above.
-- [Epoxy][3] for making static RecyclerViews as efficient and nice as possible.
-- [Groupie][4] for making RecyclerViews as simple as possible. Unfortunately it is kind of deprecated, so a lot of work was done using Epoxy.
-- [Coroutines][5] for simple background work.
-- [Logger][6] logs that are useful and can disabled on release.
-- [material-about-library][7] \[eventually\]create an about page without suffering.
-- [Material Dialogs][8] show dialogs in a simple and easy way.
-- [Notify][9] create notifications without effort.
-- [Mavericks][10] on the main fragment.
-- [Stetho][11] debug the database easily.
-- [timeago][12] makes it easy display relative dates (i.e. 1 day ago).
-- [RxJava][13] deals with Mavericks and coordinates most of the work on the app.
-- [Dagger 2][14] dependency injection for sharedPreferences with application Context, provides singleton database instances.
+```markdown
+## 📄 License
 
-#### Special thanks
-
-A lot of the structure and ideas from this app came from [Changes](https://play.google.com/store/apps/details?id=com.saladevs.changelogclone), which is [also open source](https://github.com/GSala/Changelogs).
-
-[1]: https://github.com/mikepenz/Android-Iconics
-[2]: https://developer.android.com/topic/libraries/architecture/
-[3]: https://github.com/airbnb/epoxy
-[4]: https://github.com/lisawray/groupie
-[5]: https://github.com/Kotlin/kotlinx.coroutines
-[6]: https://github.com/orhanobut/logger
-[7]: https://github.com/daniel-stoneuk/material-about-library
-[8]: https://github.com/afollestad/material-dialogs
-[9]: https://github.com/Karn/notify
-[10]: https://github.com/airbnb/mavericks
-[11]: http://facebook.github.io/stetho/
-[12]: https://github.com/marlonlom/timeago
-[13]: https://github.com/ReactiveX/RxJava
-[14]: https://github.com/google/dagger
-
-### Reporting Issues
-
-Issues and Pull Requests are welcome.
-You can report [here](https://github.com/bernaferrari/SDKMonitor/issues).
-
-## License
-
-Copyright 2018 Bernardo Ferrari.
-
-Licensed to the Apache Software Foundation (ASF) under one or more contributor
-license agreements. See the NOTICE file distributed with this work for
-additional information regarding copyright ownership. The ASF licenses this
-file to you under the Apache License, Version 2.0 (the "License"); you may not
-use this file except in compliance with the License. You may obtain a copy of
-the License at
-
-http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-License for the specific language governing permissions and limitations under
-the License.
+This project is licensed under the Apache License, Version 2.0. See the [LICENSE](LICENSE) file for details.
+```

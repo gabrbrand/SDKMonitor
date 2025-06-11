@@ -78,6 +78,10 @@
     <!-- Time formatting -->
     <string name="just_now">Gerade jetzt</string>
     <string name="never">Niemals</string>
+    <string name="today">Heute</string>
+    <string name="this_week">Diese Woche</string>
+    <string name="this_month">Diesen Monat</string>
+    <string name="this_year">Dieses Jahr</string>
 
     <!-- Main Screen -->
     <string name="apps_count">%d Apps</string>
@@ -120,7 +124,6 @@
     <string name="try_again">Erneut Versuchen</string>
     <string name="target_sdk">Ziel-SDK</string>
     <string name="min_sdk">Min-SDK</string>
-    <string name="app_info">App-Info</string>
     <string name="play_store">Play Store</string>
     <string name="app_information">App-Informationen</string>
     <string name="package_label">Paket</string>
@@ -215,5 +218,20 @@
     <string name="app_version_format">%1$s v%2$s</string>
     <string name="unknown_error">Unbekannter Fehler</string>
     <string name="select_app_to_get_started">Wähle eine App zum Beginnen</string>
-    <string name="choose_app_from_list_description">Wähle eine App aus der Liste, um detaillierte Informationen und Versionsverlauf anzuzeigen</string>
+
+    <!-- About Screen -->
+    <string name="made_with_care_by">Liebevoll erstellt von</string>
+    <string name="privacy_first_title">Datenschutz Zuerst</string>
+    <string name="zero_tracking">Kein Tracking</string>
+    <string name="open_source">Open Source</string>
+    <string name="view_on_github">Auf GitHub ansehen</string>
+    <string name="get_in_touch">Kontakt aufnehmen</string>
+    <string name="send_feedback_or_ask_questions">Feedback senden oder Fragen stellen</string>
+    <string name="version_format">Version %s</string>
+    <string name="no_data_collection">Keine Datensammlung</string>
+    <string name="everything_stays_local">Alles bleibt lokal</string>
+    <string name="no_internet_permissions_needed">Keine Internet-Berechtigungen erforderlich</string>
+    <string name="open_source_transparent">Open Source und transparent</string>
+    <string name="sdk_monitor_feedback">SDK Monitor Feedback</string>
+    <string name="send_feedback">Feedback Senden</string>
 </resources>

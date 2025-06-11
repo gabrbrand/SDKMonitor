@@ -11,8 +11,6 @@
     <string name="theme_light_description">Siempre tema claro</string>
     <string name="theme_dark_description">Siempre tema oscuro</string>
 
-    <string name="min">min</string>
-
     <string-array name="singularTime">
         <item>minuto</item>
         <item>hora</item>
@@ -69,7 +67,7 @@
     <string name="no_logs_yet">Aún Sin Registros</string>
     <string name="app_changes_will_appear">Los cambios de las apps aparecerán aquí conforme ocurran</string>
     <string name="failed_to_load_logs">Error al Cargar Registros</string>
-    <string name="loading_logs">Cargando registros...</string>
+    <string name="loading_logs">Cargando registros…</string>
     <string name="retry">Reintentar</string>
     
     <!-- Navigation titles -->
@@ -80,6 +78,10 @@
     <!-- Time formatting -->
     <string name="just_now">Ahora mismo</string>
     <string name="never">Nunca</string>
+    <string name="today">Hoy</string>
+    <string name="this_week">Esta semana</string>
+    <string name="this_month">Este mes</string>
+    <string name="this_year">Este año</string>
 
     <!-- Main Screen -->
     <string name="apps_count" formatted="false">%d apps</string>
@@ -122,7 +124,6 @@
     <string name="try_again">Intentar de Nuevo</string>
     <string name="target_sdk">targetSDK</string>
     <string name="min_sdk">minSDK</string>
-    <string name="app_info">Info de la app</string>
     <string name="app_information">Información de la app</string>
     <string name="play_store">Play Store</string>
     <string name="package_label">Paquete</string>
@@ -217,5 +218,20 @@
     <string name="app_version_format">%1$s v%2$s</string>
     <string name="unknown_error">Error desconocido</string>
     <string name="select_app_to_get_started">Selecciona una app para comenzar</string>
-    <string name="choose_app_from_list_description">Elige una app de la lista para ver información detallada e historial de versiones</string>
+
+    <!-- About Screen -->
+    <string name="made_with_care_by">Hecho con cariño por</string>
+    <string name="privacy_first_title">Privacidad Primero</string>
+    <string name="zero_tracking">Cero seguimiento</string>
+    <string name="open_source">Código Abierto</string>
+    <string name="view_on_github">Ver en GitHub</string>
+    <string name="get_in_touch">Ponte en Contacto</string>
+    <string name="send_feedback_or_ask_questions">Envía comentarios o haz preguntas</string>
+    <string name="version_format">Versión %s</string>
+    <string name="no_data_collection">Sin recopilación de datos</string>
+    <string name="everything_stays_local">Todo se mantiene local</string>
+    <string name="no_internet_permissions_needed">No se necesitan permisos de internet</string>
+    <string name="open_source_transparent">Código abierto y transparente</string>
+    <string name="sdk_monitor_feedback">Comentarios de SDK Monitor</string>
+    <string name="send_feedback">Enviar Comentarios</string>
 </resources>

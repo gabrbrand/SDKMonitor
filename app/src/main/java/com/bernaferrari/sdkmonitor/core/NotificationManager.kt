@@ -5,9 +5,13 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.os.Build
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.core.graphics.createBitmap
 import com.bernaferrari.sdkmonitor.MainActivity
 import com.bernaferrari.sdkmonitor.R
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -33,28 +37,26 @@ class NotificationManager @Inject constructor(
     }
 
     private fun createNotificationChannels() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val sdkChangesChannel = NotificationChannel(
-                CHANNEL_ID_SDK_CHANGES,
-                "SDK Changes",
-                NotificationManager.IMPORTANCE_DEFAULT
-            ).apply {
-                description = "Notifications for target SDK changes in apps"
-            }
-
-            val debugChannel = NotificationChannel(
-                CHANNEL_ID_DEBUG,
-                "Debug",
-                NotificationManager.IMPORTANCE_LOW
-            ).apply {
-                description = "Debug notifications for background sync"
-            }
-
-            val systemNotificationManager =
-                context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-            systemNotificationManager.createNotificationChannel(sdkChangesChannel)
-            systemNotificationManager.createNotificationChannel(debugChannel)
+        val sdkChangesChannel = NotificationChannel(
+            CHANNEL_ID_SDK_CHANGES,
+            "SDK Changes",
+            NotificationManager.IMPORTANCE_DEFAULT
+        ).apply {
+            description = "Notifications for target SDK changes in apps"
         }
+
+        val debugChannel = NotificationChannel(
+            CHANNEL_ID_DEBUG,
+            "Debug",
+            NotificationManager.IMPORTANCE_LOW
+        ).apply {
+            description = "Debug notifications for background sync"
+        }
+
+        val systemNotificationManager =
+            context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        systemNotificationManager.createNotificationChannel(sdkChangesChannel)
+        systemNotificationManager.createNotificationChannel(debugChannel)
     }
 
     /**
@@ -64,7 +66,8 @@ class NotificationManager @Inject constructor(
         appName: String,
         packageName: String,
         oldSdk: Int,
-        newSdk: Int
+        newSdk: Int,
+        appIcon: Drawable? = null
     ) {
         if (!notificationManager.areNotificationsEnabled()) return
 
@@ -81,19 +84,47 @@ class NotificationManager @Inject constructor(
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
-        val notification = NotificationCompat.Builder(context, CHANNEL_ID_SDK_CHANGES)
+        val sdkDirection = if (newSdk > oldSdk) "↗" else "↘"
+
+        val contentTitle = appName
+        val contentText = "targetSDK $oldSdk → $newSdk"
+        val bigText = "$appName\ntargetSDK $oldSdk → $newSdk"
+
+        val notificationBuilder = NotificationCompat.Builder(context, CHANNEL_ID_SDK_CHANGES)
             .setSmallIcon(R.drawable.ic_target)
-            .setContentTitle(appName)
-            .setContentText("TargetSDK $oldSdk -> $newSdk")
+            .setContentTitle(contentTitle)
+            .setContentText(contentText)
             .setContentIntent(pendingIntent)
             .setAutoCancel(true)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-            .build()
+            .setStyle(
+                NotificationCompat.BigTextStyle()
+                    .bigText(bigText)
+                    .setBigContentTitle("$sdkDirection $appName")
+            )
+
+        // Convert app icon to bitmap and set as large icon
+        appIcon?.let { icon ->
+            val bitmap = drawableToBitmap(icon)
+            notificationBuilder.setLargeIcon(bitmap)
+        }
 
         notificationManager.notify(
             NOTIFICATION_ID_SDK_CHANGE + packageName.hashCode(),
-            notification
+            notificationBuilder.build()
         )
+    }
+
+    private fun drawableToBitmap(drawable: Drawable): Bitmap {
+        if (drawable is BitmapDrawable) {
+            return drawable.bitmap
+        }
+
+        val bitmap = createBitmap(drawable.intrinsicWidth, drawable.intrinsicHeight)
+        val canvas = Canvas(bitmap)
+        drawable.setBounds(0, 0, canvas.width, canvas.height)
+        drawable.draw(canvas)
+        return bitmap
     }
 
     /**

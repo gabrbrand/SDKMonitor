@@ -4,7 +4,6 @@ import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
@@ -13,7 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -112,7 +111,7 @@ fun MainScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .windowInsetsPadding(WindowInsets.statusBars)
+            .windowInsetsPadding(WindowInsets.systemBars)
     ) {
         // Compact header card with title, search, and dropdowns
         Card(
@@ -145,7 +144,7 @@ fun MainScreen(
                         is MainUiState.Success -> {
                             Surface(
                                 shape = RoundedCornerShape(12.dp),
-                                color = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
+                                color = MaterialTheme.colorScheme.surfaceContainerHighest,
                                 modifier = Modifier.padding(0.dp)
                             ) {
                                 Text(
@@ -266,12 +265,35 @@ fun MainScreen(
                                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
                             )
 
+                            // Calculate counts for each filter when success state
+                            val filterCounts = when (val currentState = uiState) {
+                                is MainUiState.Success -> {
+                                    remember(currentState.apps) {
+                                        mapOf(
+                                            AppFilter.ALL_APPS to currentState.apps.size,
+                                            AppFilter.USER_APPS to currentState.apps.count { it.isFromPlayStore },
+                                            AppFilter.SYSTEM_APPS to currentState.apps.count { !it.isFromPlayStore }
+                                        )
+                                    }
+                                }
+
+                                else -> {
+                                    mapOf(
+                                        AppFilter.ALL_APPS to 0,
+                                        AppFilter.USER_APPS to 0,
+                                        AppFilter.SYSTEM_APPS to 0
+                                    )
+                                }
+                            }
+
                             AppFilter.entries.forEach { filter ->
                                 DropdownMenuItem(text = {
                                     Row(
+                                        modifier = Modifier.fillMaxWidth(),
                                         verticalAlignment = Alignment.CenterVertically,
                                         horizontalArrangement = Arrangement.spacedBy(12.dp)
                                     ) {
+
                                         Icon(
                                             imageVector = when (filter) {
                                                 AppFilter.ALL_APPS -> Icons.Default.Apps
@@ -299,6 +321,33 @@ fun MainScreen(
                                                 MaterialTheme.colorScheme.onSurface
                                             }
                                         )
+
+
+                                        // Count badge
+                                        Surface(
+                                            shape = RoundedCornerShape(12.dp),
+                                            color = if (appFilter == filter) {
+                                                MaterialTheme.colorScheme.primaryContainer
+                                            } else {
+                                                MaterialTheme.colorScheme.surfaceContainerHighest
+                                            }
+                                        ) {
+                                            Text(
+                                                text = filterCounts[filter]?.toString() ?: "0",
+                                                modifier = Modifier.padding(
+                                                    horizontal = 8.dp,
+                                                    vertical = 4.dp
+                                                ),
+                                                style = MaterialTheme.typography.labelSmall.copy(
+                                                    fontWeight = FontWeight.Bold
+                                                ),
+                                                color = if (appFilter == filter) {
+                                                    MaterialTheme.colorScheme.primary
+                                                } else {
+                                                    MaterialTheme.colorScheme.onSurfaceVariant
+                                                }
+                                            )
+                                        }
                                     }
                                 }, onClick = {
                                     viewModel.updateAppFilter(filter)
@@ -559,23 +608,20 @@ fun MainScreen(
                             }
                         }
 
-                        Box(modifier = Modifier.fillMaxSize()) {
+                        Row(modifier = Modifier.fillMaxSize()) {
                             LazyColumn(
                                 state = listState,
                                 modifier = Modifier
-                                    .fillMaxSize()
+                                    .weight(1f)
                                     .pointerInput(Unit) {
                                         detectDragGestures(
                                             onDragStart = {
                                                 focusManager.clearFocus()
                                             }) { _, _ -> }
-                                    },
-                                contentPadding = PaddingValues(
-                                    start = 0.dp,
-                                    end = if (showFastScroller) 32.dp else 0.dp,
-                                    top = 8.dp,
-                                    bottom = 8.dp
-                                ),
+                                    }
+                                    .windowInsetsPadding(
+                                        WindowInsets.systemBars
+                                    ),
                             ) {
                                 when {
                                     groupedApps.isNotEmpty() -> {
@@ -587,12 +633,12 @@ fun MainScreen(
                                                     modifier = Modifier
                                                         .fillMaxWidth()
                                                         .padding(
-                                                            horizontal = 16.dp, vertical = 8.dp
+                                                            start = 16.dp, end = 16.dp,
+                                                            top = 8.dp, bottom = 4.dp
+//                                                            horizontal = 16.dp, vertical = 8.dp
                                                         ),
                                                     shape = RoundedCornerShape(12.dp),
-                                                    color = MaterialTheme.colorScheme.primaryContainer.copy(
-                                                        alpha = 0.3f
-                                                    )
+                                                    color = MaterialTheme.colorScheme.surfaceContainer
                                                 ) {
                                                     Text(
                                                         text = letter,
@@ -683,20 +729,18 @@ fun MainScreen(
                                         }
                                     }
                                 }
-
-                                item {
-                                    Spacer(modifier = Modifier.height(16.dp))
-                                }
                             }
 
-
-                            // Functional Fast Scroller - now self-healing!
+                            // Fast Scroller
                             if (showFastScroller) {
                                 FastScroller(
+                                    modifier = Modifier.windowInsetsPadding(
+                                        WindowInsets.systemBars
+                                    ),
                                     apps = state.filteredApps,
                                     listState = listState,
                                     appFilter = appFilter,
-                                    scrollOffsetDp = 80, // Customize offset here (default is 60dp)
+                                    scrollOffsetDp = 80,
                                     onLetterSelected = { letter ->
                                         currentScrollLetter = letter
                                         isScrollerActive = true
@@ -707,8 +751,7 @@ fun MainScreen(
                                     },
                                     onInteractionStart = {
                                         focusManager.clearFocus()
-                                    },
-                                    modifier = Modifier.align(Alignment.CenterEnd)
+                                    }
                                 )
                             }
                         }

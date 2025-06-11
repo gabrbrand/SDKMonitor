@@ -44,6 +44,7 @@ import com.bernaferrari.sdkmonitor.domain.model.AppVersion
 import com.bernaferrari.sdkmonitor.extensions.apiToColor
 import com.bernaferrari.sdkmonitor.extensions.apiToVersion
 import com.bernaferrari.sdkmonitor.extensions.normalizeString
+import com.bernaferrari.sdkmonitor.ui.isTablet
 import com.bernaferrari.sdkmonitor.ui.theme.SDKMonitorTheme
 
 @Composable
@@ -108,14 +109,14 @@ fun MainAppCard(
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(16.dp))
                 .then(
-                    if (isSelected) {
+                    if (isSelected && isTablet()) {
                         Modifier
                             .background(
-                                MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3f)
+                                MaterialTheme.colorScheme.surfaceContainerHigh
                             )
                             .border(
                                 width = 2.dp,
-                                color = MaterialTheme.colorScheme.primary.copy(alpha = 0.4f),
+                                color = MaterialTheme.colorScheme.outlineVariant,
                                 shape = RoundedCornerShape(16.dp)
                             )
                     } else Modifier
@@ -229,7 +230,7 @@ fun MainAppCard(
             }
 
             if (showVersionPill) {
-                // Modern minimalist SDK pill with better contrast
+                // Modern minimalist SDK pill with better contrast - CENTER ALIGNED
                 Column(
                     modifier = Modifier
                         .clip(RoundedCornerShape(12.dp))
@@ -273,7 +274,7 @@ fun MainAppCard(
                 .fillMaxWidth()
                 .padding(start = 88.dp, end = 16.dp)
                 .height(0.5.dp)
-                .background(if (!isLast) MaterialTheme.colorScheme.outlineVariant else Color.Transparent)
+                .background(if (!isLast && !isSelected) MaterialTheme.colorScheme.outlineVariant else Color.Transparent)
         )
 
     }

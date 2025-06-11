@@ -8,6 +8,7 @@ import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -20,8 +21,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.TrendingUp
 import androidx.compose.material.icons.filled.Analytics
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -78,23 +77,23 @@ fun SdkAnalyticsCard(
         label = "chart_animation"
     )
 
-    Card(
+    Surface(
         modifier = modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(20.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceContainer
-        ),
-        elevation = CardDefaults.cardElevation(6.dp)
+        shape = RoundedCornerShape(24.dp),
+        color = MaterialTheme.colorScheme.surfaceContainer
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(20.dp),
+                .padding(vertical = 20.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
+
             // Enhanced Header with app type filter buttons
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -105,7 +104,7 @@ fun SdkAnalyticsCard(
                     Surface(
                         modifier = Modifier.size(48.dp),
                         shape = RoundedCornerShape(16.dp),
-                        color = MaterialTheme.colorScheme.primary.copy(alpha = 0.12f)
+                        color = MaterialTheme.colorScheme.surfaceContainerHighest
                     ) {
                         Box(
                             modifier = Modifier.fillMaxSize(),
@@ -150,7 +149,10 @@ fun SdkAnalyticsCard(
                                             fontWeight = FontWeight.Bold
                                         ),
                                         color = MaterialTheme.colorScheme.onSecondaryContainer,
-                                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)
+                                        modifier = Modifier.padding(
+                                            horizontal = 8.dp,
+                                            vertical = 2.dp
+                                        )
                                     )
                                 }
                                 Text(
@@ -177,7 +179,10 @@ fun SdkAnalyticsCard(
                                             fontWeight = FontWeight.Bold
                                         ),
                                         color = MaterialTheme.colorScheme.onTertiaryContainer,
-                                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)
+                                        modifier = Modifier.padding(
+                                            horizontal = 8.dp,
+                                            vertical = 2.dp
+                                        )
                                     )
                                 }
                                 Text(
@@ -193,20 +198,25 @@ fun SdkAnalyticsCard(
                 }
             }
 
+
             // Chart with filtered data
             if (filteredData.isNotEmpty()) {
                 SdkBarChart(
                     data = filteredData,
                     animationProgress = animationProgress,
+                    onBarClick = onSdkClick, // Connect the click handler
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(200.dp)
+                        .padding(horizontal = 20.dp),
                 )
 
                 // Legend with filtered data
                 LazyRow(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    contentPadding = PaddingValues(horizontal = 20.dp)
                 ) {
                     items(filteredData.sortedByDescending { it.sdkVersion }.take(5)) { sdk ->
                         SdkLegendItem(
@@ -278,11 +288,15 @@ private fun SdkBarChart(
     Canvas(
         modifier = modifier.pointerInput(Unit) {
             detectTapGestures { offset ->
-                val barWidth = size.width / (sortedData.size * 1.5f)
+                // Ensure sortedData is not empty to avoid division by zero or negative in calculations
+                if (sortedData.isEmpty()) return@detectTapGestures
+
+                val barWidth = size.width / (sortedData.size * 1.5f - 0.5f)
                 val barSpacing = barWidth * 0.5f
 
                 sortedData.forEachIndexed { index, sdk ->
-                    val x = index * (barWidth + barSpacing) + barSpacing
+                    val x =
+                        index * (barWidth + barSpacing) // Adjusted: Removed trailing + barSpacing
                     if (offset.x >= x && offset.x <= x + barWidth) {
                         onBarClick(sdk.sdkVersion)
                         return@detectTapGestures
@@ -291,14 +305,18 @@ private fun SdkBarChart(
             }
         }
     ) {
-        val barWidth = size.width / (sortedData.size * 1.5f)
+        // Ensure sortedData is not empty to avoid division by zero or negative in calculations
+        if (sortedData.isEmpty()) return@Canvas
+
+        val barWidth =
+            size.width / (sortedData.size * 1.5f - 0.5f)
         val barSpacing = barWidth * 0.5f
         val chartHeight = size.height - 40.dp.toPx()
         val cornerRadius = 8.dp.toPx()
 
         sortedData.forEachIndexed { index, sdk ->
             val barHeight = (sdk.appCount.toFloat() / maxCount) * chartHeight * animationProgress
-            val x = index * (barWidth + barSpacing) + barSpacing
+            val x = index * (barWidth + barSpacing)
             val y = size.height - barHeight - 20.dp.toPx()
 
             val apiColor = Color(sdk.sdkVersion.apiToColor())

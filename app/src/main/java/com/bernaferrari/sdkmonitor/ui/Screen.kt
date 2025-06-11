@@ -1,4 +1,4 @@
-package com.bernaferrari.sdkmonitor.ui.navigation
+package com.bernaferrari.sdkmonitor.ui
 
 import androidx.navigation.NamedNavArgument
 import androidx.navigation.NavType

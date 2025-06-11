@@ -79,6 +79,10 @@
     <!-- Time formatting -->
     <string name="just_now">Just now</string>
     <string name="never">Never</string>
+    <string name="today">Today</string>
+    <string name="this_week">This week</string>
+    <string name="this_month">This month</string>
+    <string name="this_year">This year</string>
 
     <!-- Main Screen -->
     <string name="apps_count">%d apps</string>
@@ -132,7 +136,6 @@
     <string name="latest">LATEST</string>
     <string name="api_version">API %d</string>
     <string name="select_app_to_get_started">Select an app to get started</string>
-    <string name="choose_app_from_list_description">Choose an app from the list to view detailed information and version history</string>
     
     <!-- Settings Screen -->
     <string name="theme_mode">Theme Mode</string>
@@ -215,4 +218,20 @@
     <string name="learn_more_about_app">Learn more about this app</string>
     <string name="app_version_format">%1$s v%2$s</string>
     <string name="unknown_error">Unknown error</string>
+
+    <!-- About Screen -->
+    <string name="made_with_care_by">Made with care by</string>
+    <string name="privacy_first_title">Privacy First</string>
+    <string name="zero_tracking">Zero tracking</string>
+    <string name="open_source">Open Source</string>
+    <string name="view_on_github">View on GitHub</string>
+    <string name="get_in_touch">Get in Touch</string>
+    <string name="send_feedback_or_ask_questions">Send feedback or ask questions</string>
+    <string name="version_format">Version %s</string>
+    <string name="no_data_collection">No data collection</string>
+    <string name="everything_stays_local">Everything stays local</string>
+    <string name="no_internet_permissions_needed">No internet permissions needed</string>
+    <string name="open_source_transparent">Open source &amp; transparent</string>
+    <string name="sdk_monitor_feedback">SDK Monitor Feedback</string>
+    <string name="send_feedback">Send Feedback</string>
 </resources>

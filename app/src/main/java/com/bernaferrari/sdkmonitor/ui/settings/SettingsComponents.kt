@@ -1,5 +1,6 @@
 package com.bernaferrari.sdkmonitor.ui.settings
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -40,6 +41,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -61,9 +63,10 @@ fun SettingsItem(
     onSwitchToggle: ((Boolean) -> Unit)? = null,
     onClick: (() -> Unit)? = null,
 ) {
-    Card(
+    Surface(
         modifier = modifier
             .fillMaxWidth()
+            .clip(RoundedCornerShape(16.dp))
             .clickable {
                 if (isSwitch) {
                     onSwitchToggle?.invoke(!switchValue)
@@ -72,10 +75,11 @@ fun SettingsItem(
                 }
             },
         shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceContainer
+        color = MaterialTheme.colorScheme.surface,
+        border = BorderStroke(
+            width = 1.dp,
+            color = MaterialTheme.colorScheme.outlineVariant
         ),
-        elevation = CardDefaults.cardElevation(2.dp)
     ) {
         Row(
             modifier = Modifier
@@ -88,7 +92,7 @@ fun SettingsItem(
             Surface(
                 modifier = Modifier.size(48.dp),
                 shape = RoundedCornerShape(12.dp),
-                color = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)
+                color = MaterialTheme.colorScheme.surfaceContainerHighest
             ) {
                 Box(
                     contentAlignment = Alignment.Center,

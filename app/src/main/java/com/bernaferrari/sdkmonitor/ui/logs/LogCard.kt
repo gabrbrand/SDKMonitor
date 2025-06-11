@@ -1,18 +1,19 @@
 package com.bernaferrari.sdkmonitor.ui.logs
 
 import android.content.pm.PackageManager
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -38,44 +39,37 @@ import com.bernaferrari.sdkmonitor.extensions.apiToColor
 import com.bernaferrari.sdkmonitor.extensions.apiToVersion
 import com.bernaferrari.sdkmonitor.ui.theme.SDKMonitorTheme
 
+
 @Composable
 fun LogCard(
     modifier: Modifier = Modifier,
     log: LogEntry,
     isSelected: Boolean = false,
     onClick: () -> Unit = {},
+    isLast: Boolean = false,
 ) {
     val context = LocalContext.current
     val apiColor = Color(log.newSdk.apiToColor())
     val apiDescription = log.newSdk.apiToVersion()
-    val hasVersionChange = log.oldVersion != log.newVersion
-    val hasSdkChange = log.oldSdk != null && log.oldSdk != log.newSdk
+    val hasVersionChange = log.oldVersion != null && log.oldVersion != log.newVersion
 
-    Card(
-        onClick = onClick,
-        modifier = modifier.padding(horizontal = 16.dp),
-        shape = RoundedCornerShape(20.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = if (isSelected) {
-                MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3f)
-            } else {
-                MaterialTheme.colorScheme.surfaceContainer
-            }
-        ),
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = if (isSelected) 6.dp else 2.dp,
-            pressedElevation = 8.dp
-        )
-    ) {
-        Box(
+    Column {
+        Surface(
             modifier = Modifier
-                .fillMaxWidth()
-
+                .clip(RoundedCornerShape(20.dp))
+                .clickable { onClick() }
+                .height(100.dp),
+            shape = RoundedCornerShape(20.dp),
+            color = if (isSelected) {
+                MaterialTheme.colorScheme.surfaceContainerHighest
+            } else {
+                MaterialTheme.colorScheme.surface
+            }
         ) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(12.dp),
+                    .padding(horizontal = 16.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
@@ -121,37 +115,31 @@ fun LogCard(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
-                        Surface(
-                            shape = RoundedCornerShape(8.dp),
-                            color = MaterialTheme.colorScheme.tertiary.copy(alpha = 0.1f)
-                        ) {
-                            Text(
-                                text = formatLogTime(log.timestamp, context),
-                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
-                                style = MaterialTheme.typography.labelMedium.copy(
-                                    fontWeight = FontWeight.Medium
-                                ),
-                                color = MaterialTheme.colorScheme.tertiary
-                            )
-                        }
+                        Text(
+                            text = formatLogTime(log.timestamp, context),
+                            style = MaterialTheme.typography.labelMedium.copy(
+                                fontWeight = FontWeight.Medium
+                            ),
+                            color = MaterialTheme.colorScheme.tertiary
+                        )
 
-                        if (hasVersionChange) {
-                            Surface(
-                                shape = RoundedCornerShape(8.dp),
-                                color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.1f)
-                            ) {
-                                Text(
-                                    text = "v${log.newVersion}",
-                                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
-                                    style = MaterialTheme.typography.labelMedium.copy(
-                                        fontWeight = FontWeight.Bold
-                                    ),
-                                    color = MaterialTheme.colorScheme.secondary,
-                                    maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis
-                                )
-                            }
-                        }
+//                    if (hasVersionChange) {
+//                        Surface(
+//                            shape = RoundedCornerShape(8.dp),
+//                            color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.1f)
+//                        ) {
+//                            Text(
+//                                text = "v${log.newVersion}",
+//                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+//                                style = MaterialTheme.typography.labelMedium.copy(
+//                                    fontWeight = FontWeight.Bold
+//                                ),
+//                                color = MaterialTheme.colorScheme.secondary,
+//                                maxLines = 1,
+//                                overflow = TextOverflow.Ellipsis
+//                            )
+//                        }
+//                    }
                     }
                 }
 
@@ -160,79 +148,31 @@ fun LogCard(
                     horizontalAlignment = Alignment.End,
                     verticalArrangement = Arrangement.spacedBy(6.dp)
                 ) {
-                    // API version badge
-                    Surface(
-                        shape = RoundedCornerShape(12.dp),
-                        color = apiColor.copy(alpha = 0.12f)
-                    ) {
-                        Text(
-                            text = apiDescription,
-                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
-                            style = MaterialTheme.typography.labelSmall.copy(
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 10.sp
-                            ),
-                            color = apiColor
-                        )
-                    }
+                    ApiVersionBadge(
+                        apiDescription = apiDescription,
+                        apiColor = apiColor
+                    )
 
-                    // SDK display with compact transition
-                    if (hasSdkChange && log.oldSdk != null) {
-                        // Compact SDK transition
-                        Surface(
-                            shape = RoundedCornerShape(20.dp),
-                            color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f)
-                        ) {
-                            Row(
-                                modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(8.dp)
-                            ) {
-                                Text(
-                                    text = log.oldSdk.toString(),
-                                    style = MaterialTheme.typography.labelLarge.copy(
-                                        fontWeight = FontWeight.Medium
-                                    ),
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
-                                )
-
-                                Icon(
-                                    imageVector = Icons.AutoMirrored.Filled.ArrowForward,
-                                    contentDescription = "Updated to",
-                                    modifier = Modifier.size(12.dp),
-                                    tint = apiColor.copy(alpha = 0.8f)
-                                )
-
-                                Text(
-                                    text = log.newSdk.toString(),
-                                    style = MaterialTheme.typography.labelLarge.copy(
-                                        fontWeight = FontWeight.Bold
-                                    ),
-                                    color = apiColor
-                                )
-                            }
-                        }
-                    } else {
-                        // Current SDK badge (when no change)
-                        Surface(
-                            shape = RoundedCornerShape(16.dp),
-                            color = apiColor,
-                            shadowElevation = 6.dp
-                        ) {
-                            Text(
-                                text = log.newSdk.toString(),
-                                modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp),
-                                style = MaterialTheme.typography.titleLarge.copy(
-                                    fontWeight = FontWeight.ExtraBold
-                                ),
-                                color = Color.White
-                            )
-                        }
-                    }
+                    SdkTransitionBadge(
+                        oldSdk = log.oldSdk,
+                        newSdk = log.newSdk,
+                        apiColor = apiColor
+                    )
                 }
             }
         }
+
+        // Subtle divider line - only show if not last item
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 88.dp, end = 16.dp)
+                .height(0.5.dp)
+                .background(if (!isLast && !isSelected) MaterialTheme.colorScheme.outlineVariant else Color.Transparent)
+        )
     }
+
+
 }
 
 @Preview(showBackground = true)
@@ -251,6 +191,96 @@ private fun LogCardPreview() {
                 timestamp = System.currentTimeMillis() - 3600000 // 1 hour ago
             )
         )
+    }
+}
+
+
+@Composable
+private fun ApiVersionBadge(
+    apiDescription: String,
+    apiColor: Color,
+    modifier: Modifier = Modifier
+) {
+    Surface(
+        shape = RoundedCornerShape(12.dp),
+        color = apiColor.copy(alpha = 0.12f),
+        modifier = modifier
+    ) {
+        Text(
+            text = apiDescription,
+            modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
+            style = MaterialTheme.typography.labelSmall.copy(
+                fontWeight = FontWeight.Bold,
+                fontSize = 10.sp
+            ),
+            color = apiColor
+        )
+    }
+}
+
+@Composable
+private fun SdkTransitionBadge(
+    oldSdk: Int?,
+    newSdk: Int,
+    apiColor: Color,
+    modifier: Modifier = Modifier
+) {
+    val hasSdkChange = oldSdk != null && oldSdk != newSdk
+
+    if (hasSdkChange) {
+        // Bold SDK transition with API color background
+        Surface(
+            shape = RoundedCornerShape(16.dp),
+            color = apiColor,
+            shadowElevation = 4.dp,
+            modifier = modifier
+        ) {
+            Row(
+                modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(6.dp)
+            ) {
+                Text(
+                    text = oldSdk.toString(),
+                    style = MaterialTheme.typography.labelLarge.copy(
+                        fontWeight = FontWeight.Bold
+                    ),
+                    color = Color.White.copy(alpha = 0.8f)
+                )
+
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                    contentDescription = "Updated to",
+                    modifier = Modifier.size(12.dp),
+                    tint = Color.White
+                )
+
+                Text(
+                    text = newSdk.toString(),
+                    style = MaterialTheme.typography.labelLarge.copy(
+                        fontWeight = FontWeight.ExtraBold
+                    ),
+                    color = Color.White
+                )
+            }
+        }
+    } else {
+        // Current SDK badge (when no change)
+        Surface(
+            shape = RoundedCornerShape(16.dp),
+            color = apiColor,
+            shadowElevation = 6.dp,
+            modifier = modifier
+        ) {
+            Text(
+                text = newSdk.toString(),
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp),
+                style = MaterialTheme.typography.titleLarge.copy(
+                    fontWeight = FontWeight.ExtraBold
+                ),
+                color = Color.White
+            )
+        }
     }
 }
 

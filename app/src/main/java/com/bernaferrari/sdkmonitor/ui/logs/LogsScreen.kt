@@ -1,6 +1,7 @@
 package com.bernaferrari.sdkmonitor.ui.logs
 
 import android.content.Context
+import android.text.format.DateUtils
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloatAsState
@@ -19,7 +20,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Error
@@ -37,14 +37,15 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -79,9 +80,6 @@ fun LogsScreen(
                         style = MaterialTheme.typography.headlineSmall
                     )
                 },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.95f)
-                )
             )
         }
     ) { paddingValues ->
@@ -135,12 +133,9 @@ private fun LoadingState(
         modifier = modifier,
         contentAlignment = Alignment.Center
     ) {
-        Card(
+        Surface(
             shape = RoundedCornerShape(28.dp),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3f)
-            ),
-            elevation = CardDefaults.cardElevation(16.dp)
+            color = MaterialTheme.colorScheme.surfaceContainer,
         ) {
             Column(
                 modifier = Modifier.padding(48.dp),
@@ -384,10 +379,16 @@ private fun LogsContent(
     onNavigateToAppDetails: (String) -> Unit,
     selectedPackageName: String? = null,
 ) {
+    val context = LocalContext.current
+
+    // Group logs by time periods with localized strings
+    val groupedLogs = remember(logs, context) {
+        groupLogsByTimePeriod(logs, context)
+    }
+
     LazyColumn(
         modifier = modifier.fillMaxSize(),
         contentPadding = PaddingValues(vertical = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         item {
             TimelineHeader(
@@ -396,19 +397,152 @@ private fun LogsContent(
             )
         }
 
-        items(logs) { log ->
-            LogCard(
-                log = log,
-                onClick = { onNavigateToAppDetails(log.packageName) },
-                isSelected = selectedPackageName == log.packageName,
-                modifier = Modifier.fillMaxWidth()
-            )
+        // Show grouped logs with time period headers
+        groupedLogs.forEach { (timePeriod, logsInPeriod) ->
+            // Time period header
+            item(key = "header_$timePeriod") {
+                Surface(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 8.dp),
+                    shape = RoundedCornerShape(12.dp),
+                    color = MaterialTheme.colorScheme.surfaceContainer
+                ) {
+                    Row(
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.History,
+                            contentDescription = null,
+                            modifier = Modifier.size(20.dp),
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                        Text(
+                            text = timePeriod,
+                            style = MaterialTheme.typography.titleMedium.copy(
+                                fontWeight = FontWeight.Bold
+                            ),
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                        Surface(
+                            shape = RoundedCornerShape(8.dp),
+                            color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3f)
+                        ) {
+                            Text(
+                                text = logsInPeriod.size.toString(),
+                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                                style = MaterialTheme.typography.labelSmall.copy(
+                                    fontWeight = FontWeight.Bold
+                                ),
+                                color = MaterialTheme.colorScheme.primary
+                            )
+                        }
+                    }
+                }
+            }
+
+            // Logs in this time period with proper isLast calculation
+            logsInPeriod.forEachIndexed { index, log ->
+                item(key = "${timePeriod}_${log.id}") {
+                    LogCard(
+                        log = log,
+                        onClick = { onNavigateToAppDetails(log.packageName) },
+                        isSelected = selectedPackageName == log.packageName,
+                        isLast = index == logsInPeriod.lastIndex,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+            }
         }
 
         item {
             Spacer(modifier = Modifier.height(32.dp))
         }
     }
+}
+
+// Helper function to group logs by time periods with localization
+private fun groupLogsByTimePeriod(
+    logs: List<LogEntry>,
+    context: Context
+): LinkedHashMap<String, List<LogEntry>> {
+    val now = System.currentTimeMillis()
+    val calendar = java.util.Calendar.getInstance()
+
+    // Get current year
+    calendar.timeInMillis = now
+    val currentYear = calendar.get(java.util.Calendar.YEAR)
+
+    // Get start of today, this week, this month for proper grouping
+    val startOfToday = calendar.apply {
+        set(java.util.Calendar.HOUR_OF_DAY, 0)
+        set(java.util.Calendar.MINUTE, 0)
+        set(java.util.Calendar.SECOND, 0)
+        set(java.util.Calendar.MILLISECOND, 0)
+    }.timeInMillis
+
+    calendar.timeInMillis = now
+    val startOfThisWeek = calendar.apply {
+        set(java.util.Calendar.DAY_OF_WEEK, calendar.firstDayOfWeek)
+        set(java.util.Calendar.HOUR_OF_DAY, 0)
+        set(java.util.Calendar.MINUTE, 0)
+        set(java.util.Calendar.SECOND, 0)
+        set(java.util.Calendar.MILLISECOND, 0)
+    }.timeInMillis
+
+    calendar.timeInMillis = now
+    val startOfThisMonth = calendar.apply {
+        set(java.util.Calendar.DAY_OF_MONTH, 1)
+        set(java.util.Calendar.HOUR_OF_DAY, 0)
+        set(java.util.Calendar.MINUTE, 0)
+        set(java.util.Calendar.SECOND, 0)
+        set(java.util.Calendar.MILLISECOND, 0)
+    }.timeInMillis
+
+    val grouped = LinkedHashMap<String, MutableList<LogEntry>>()
+
+    logs.forEach { log ->
+        calendar.timeInMillis = log.timestamp
+        val logYear = calendar.get(java.util.Calendar.YEAR)
+
+        val period = when {
+            log.timestamp >= startOfToday -> {
+                // Use Android's localized "Today"
+                DateUtils.formatDateTime(
+                    context, log.timestamp,
+                    DateUtils.FORMAT_SHOW_DATE or DateUtils.FORMAT_NO_YEAR or DateUtils.FORMAT_ABBREV_RELATIVE
+                )
+                    .takeIf { it.contains("today", ignoreCase = true) }
+                    ?: context.getString(R.string.today)
+            }
+
+            log.timestamp >= startOfThisWeek -> {
+                context.getString(R.string.this_week)
+            }
+
+            log.timestamp >= startOfThisMonth -> {
+                context.getString(R.string.this_month)
+            }
+
+            logYear == currentYear -> {
+                context.getString(R.string.this_year)
+            }
+
+            else -> {
+                // For years, just use the year number (universal)
+                logYear.toString()
+            }
+        }
+
+        grouped.getOrPut(period) { mutableListOf() }.add(log)
+    }
+
+    // Convert to LinkedHashMap with List values and sort by recency
+    return grouped.mapValues { (_, logs) ->
+        logs.sortedByDescending { it.timestamp }
+    }.toMap(LinkedHashMap())
 }
 
 @Composable
@@ -418,13 +552,10 @@ private fun TimelineHeader(
 ) {
     val viewModel: LogsViewModel = hiltViewModel()
 
-    Card(
+    Surface(
         modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(24.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceContainer
-        ),
-        elevation = CardDefaults.cardElevation(4.dp)
+        color = MaterialTheme.colorScheme.surfaceContainer
     ) {
         Column(
             modifier = Modifier
@@ -442,7 +573,7 @@ private fun TimelineHeader(
                     modifier = Modifier
                         .size(56.dp)
                         .background(
-                            color = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
+                            color = MaterialTheme.colorScheme.surfaceContainerHighest,
                             shape = RoundedCornerShape(16.dp)
                         ),
                     contentAlignment = Alignment.Center
@@ -480,7 +611,7 @@ private fun TimelineHeader(
 
                         Surface(
                             shape = RoundedCornerShape(8.dp),
-                            color = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)
+                            color = MaterialTheme.colorScheme.surfaceContainerHighest
                         ) {
                             Text(
                                 text = getFilterDisplayName(viewModel.getCurrentFilter()),
@@ -553,7 +684,7 @@ private fun ProgressSection(
             count = weeklyLogs,
             total = totalLogs,
             color = MaterialTheme.colorScheme.primary,
-            backgroundColor = MaterialTheme.colorScheme.primaryContainer,
+            backgroundColor = MaterialTheme.colorScheme.surfaceContainerHighest,
             modifier = Modifier.fillMaxWidth()
         )
 
@@ -563,7 +694,7 @@ private fun ProgressSection(
             count = monthlyLogs,
             total = totalLogs,
             color = MaterialTheme.colorScheme.primary,
-            backgroundColor = MaterialTheme.colorScheme.primaryContainer,
+            backgroundColor = MaterialTheme.colorScheme.surfaceContainerHighest,
             modifier = Modifier.fillMaxWidth()
         )
 
@@ -573,7 +704,7 @@ private fun ProgressSection(
             count = sixMonthLogs,
             total = totalLogs,
             color = MaterialTheme.colorScheme.primary,
-            backgroundColor = MaterialTheme.colorScheme.primaryContainer,
+            backgroundColor = MaterialTheme.colorScheme.surfaceContainerHighest,
             modifier = Modifier.fillMaxWidth()
         )
     }
@@ -650,7 +781,6 @@ private fun EnhancedProgressIndicator(
 
         LinearProgressIndicator(
             progress = { animatedProgress },
-
             modifier = Modifier
                 .fillMaxWidth()
                 .height(12.dp),

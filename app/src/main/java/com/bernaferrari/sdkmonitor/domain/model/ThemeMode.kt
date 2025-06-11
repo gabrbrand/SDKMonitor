@@ -5,6 +5,10 @@ import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material.icons.filled.PhoneAndroid
+import androidx.compose.material.icons.outlined.DarkMode
+import androidx.compose.material.icons.outlined.LightMode
+import androidx.compose.material.icons.outlined.Palette
+import androidx.compose.material.icons.outlined.PhoneAndroid
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.bernaferrari.sdkmonitor.R
 
@@ -16,25 +20,30 @@ enum class ThemeMode(
     val displayNameRes: Int,
     val descriptionRes: Int,
     val icon: ImageVector,
+    val selectedIcon: ImageVector,
 ) {
     SYSTEM(
         displayNameRes = R.string.theme_system,
         descriptionRes = R.string.theme_system_description,
-        icon = Icons.Default.PhoneAndroid,
+        icon = Icons.Outlined.PhoneAndroid,
+        selectedIcon = Icons.Filled.PhoneAndroid,
     ),
     MATERIAL_YOU(
         displayNameRes = R.string.theme_material_you,
         descriptionRes = R.string.theme_material_you_description,
-        icon = Icons.Default.Palette,
+        icon = Icons.Outlined.Palette,
+        selectedIcon = Icons.Filled.Palette,
     ),
     LIGHT(
         displayNameRes = R.string.theme_light,
         descriptionRes = R.string.theme_light_description,
-        icon = Icons.Default.LightMode,
+        icon = Icons.Outlined.LightMode,
+        selectedIcon = Icons.Filled.LightMode,
     ),
     DARK(
         displayNameRes = R.string.theme_dark,
         descriptionRes = R.string.theme_dark_description,
-        icon = Icons.Default.DarkMode,
+        icon = Icons.Outlined.DarkMode,
+        selectedIcon = Icons.Filled.DarkMode,
     ),
 }

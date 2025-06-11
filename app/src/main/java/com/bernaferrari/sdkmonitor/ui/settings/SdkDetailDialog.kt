@@ -57,13 +57,13 @@ fun SdkDetailDialog(
             dismissOnBackPress = true,
             dismissOnClickOutside = true,
             usePlatformDefaultWidth = false
-        )
+        ),
     ) {
         Surface(
             modifier = modifier
                 .fillMaxSize()
                 .padding(24.dp),
-            shape = RoundedCornerShape(28.dp),
+            shape = RoundedCornerShape(24.dp),
             color = MaterialTheme.colorScheme.surface,
             shadowElevation = 24.dp
         ) {

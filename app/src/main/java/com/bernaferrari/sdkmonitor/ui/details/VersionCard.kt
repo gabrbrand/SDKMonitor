@@ -64,7 +64,7 @@ fun VersionTimelineEntry(
                     modifier = Modifier
                         .width(1.dp)
                         .height(40.dp)
-                        .background(MaterialTheme.colorScheme.outline.copy(alpha = 0.3f))
+                        .background(MaterialTheme.colorScheme.outlineVariant)
                 )
             }
         }

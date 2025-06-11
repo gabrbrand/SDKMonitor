@@ -97,7 +97,7 @@ class MainViewModel @Inject constructor(
                 MainUiState.Loading
             } else {
                 MainUiState.Success(
-                    apps = orderedApps,
+                    apps = apps,
                     filteredApps = searchFiltered,
                     totalCount = orderedApps.size
                 )

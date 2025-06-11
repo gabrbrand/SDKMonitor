@@ -2,6 +2,7 @@ package com.bernaferrari.sdkmonitor.ui.logs
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.bernaferrari.sdkmonitor.data.App
 import com.bernaferrari.sdkmonitor.domain.model.AppFilter
 import com.bernaferrari.sdkmonitor.domain.model.LogEntry
 import com.bernaferrari.sdkmonitor.domain.repository.AppsRepository
@@ -34,12 +35,34 @@ class LogsViewModel @Inject constructor(
     private val _uiState = MutableStateFlow<LogsUiState>(LogsUiState.Loading)
     val uiState: StateFlow<LogsUiState> = _uiState.asStateFlow()
 
+    // Expose apps data for filtering - use App instead of AppVersion
+    private val _apps = MutableStateFlow<List<App>>(emptyList())
+    val apps: StateFlow<List<App>> = _apps.asStateFlow()
+
+    // Expose app filter
+    private val _appFilter = MutableStateFlow(AppFilter.ALL_APPS)
+    val appFilter: StateFlow<AppFilter> = _appFilter.asStateFlow()
+
     init {
-        // React to preference changes automatically
+        // Load apps data and set up preference observation
         viewModelScope.launch {
+            // Load apps first
+            loadAppsData()
+
+            // Then observe preferences
             preferencesRepository.getUserPreferences().collect { preferences ->
+                _appFilter.value = preferences.appFilter
                 loadLogsWithFilter(preferences.appFilter)
             }
+        }
+    }
+
+    private suspend fun loadAppsData() {
+        try {
+            val allApps = appsRepository.getAllApps()
+            _apps.value = allApps
+        } catch (e: Exception) {
+            // Handle error if needed
         }
     }
 
@@ -49,7 +72,7 @@ class LogsViewModel @Inject constructor(
                 _uiState.value = LogsUiState.Loading
 
                 val allVersions = appsRepository.getAllVersions()
-                val allApps = appsRepository.getAllApps()
+                val allApps = _apps.value
 
                 val appMap = allApps.associateBy { it.packageName }
 
@@ -62,24 +85,46 @@ class LogsViewModel @Inject constructor(
 
                 val filteredPackageNames = filteredApps.map { it.packageName }.toSet()
 
-                val logEntries = allVersions
+                // Group versions by package and sort by timestamp to track changes
+                val versionsByPackage = allVersions
                     .filter { version -> version.packageName in filteredPackageNames }
-                    .mapNotNull { version ->
-                        val app = appMap[version.packageName] ?: return@mapNotNull null
-                        LogEntry(
-                            id = version.versionId.toLong(),
-                            packageName = version.packageName,
-                            appName = app.title,
-                            oldSdk = null, // Previous SDK version would need to be tracked separately
-                            newSdk = version.targetSdk,
-                            oldVersion = null, // Previous version would need to be tracked separately
-                            newVersion = version.versionName,
-                            timestamp = version.lastUpdateTime
-                        )
-                    }.sortedByDescending { it.timestamp } // Most recent first
+                    .groupBy { it.packageName }
+                    .mapValues { (_, versions) ->
+                        versions.sortedBy { it.lastUpdateTime }
+                    }
+
+                val logEntries = mutableListOf<LogEntry>()
+
+                versionsByPackage.forEach { (packageName, versions) ->
+                    val app = appMap[packageName] ?: return@forEach
+
+                    versions.forEachIndexed { index, currentVersion ->
+                        val previousVersion = if (index > 0) versions[index - 1] else null
+
+                        // Only create log entry if there's actually a change
+                        val hasVersionChange =
+                            previousVersion?.versionName != currentVersion.versionName
+                        val hasSdkChange = previousVersion?.targetSdk != currentVersion.targetSdk
+
+                        if (hasVersionChange || hasSdkChange) {
+                            logEntries.add(
+                                LogEntry(
+                                    id = currentVersion.versionId.toLong(),
+                                    packageName = currentVersion.packageName,
+                                    appName = app.title,
+                                    oldSdk = previousVersion?.targetSdk,
+                                    newSdk = currentVersion.targetSdk,
+                                    oldVersion = previousVersion?.versionName,
+                                    newVersion = currentVersion.versionName,
+                                    timestamp = currentVersion.lastUpdateTime
+                                )
+                            )
+                        }
+                    }
+                }
 
                 _uiState.value = LogsUiState.Success(
-                    logs = logEntries,
+                    logs = logEntries.sortedByDescending { it.timestamp }, // Most recent first
                     totalCount = logEntries.size
                 )
             } catch (e: Exception) {
@@ -87,6 +132,12 @@ class LogsViewModel @Inject constructor(
                     e.message ?: "Failed to load logs"
                 )
             }
+        }
+    }
+
+    fun updateAppFilter(filter: AppFilter) {
+        viewModelScope.launch {
+            preferencesRepository.updateAppFilter(filter)
         }
     }
 

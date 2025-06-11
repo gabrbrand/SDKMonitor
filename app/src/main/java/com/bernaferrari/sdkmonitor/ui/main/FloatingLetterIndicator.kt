@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -15,6 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
@@ -26,10 +28,10 @@ fun FloatingLetterIndicator(
     modifier: Modifier = Modifier
 ) {
     val density = LocalDensity.current
-    
+
     Surface(
         modifier = modifier
-            .size(80.dp)
+            .size(140.dp)
             .aspectRatio(1f)
             .offset {
                 IntOffset(
@@ -40,18 +42,21 @@ fun FloatingLetterIndicator(
         shape = RoundedCornerShape(12.dp),
         color = MaterialTheme.colorScheme.primary,
     ) {
-        Box(
-            modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = letter,
-                style = MaterialTheme.typography.headlineMedium.copy(
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onPrimary,
-                ),
-            )
-        }
+
+        Text(
+            text = letter,
+            style = MaterialTheme.typography.headlineMedium.copy(
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onPrimary,
+                lineHeightStyle = LineHeightStyle(
+                    alignment = LineHeightStyle.Alignment.Proportional,
+                    trim = LineHeightStyle.Trim.Both
+                )
+            ),
+            modifier = Modifier
+                .fillMaxSize()
+                .wrapContentSize(Alignment.Center)
+        )
     }
 }
 
@@ -88,13 +93,13 @@ fun FloatingLetterIndicatorVariationsPreview() {
                 yPosition = 50f,
                 modifier = Modifier.align(Alignment.TopCenter)
             )
-            
+
             FloatingLetterIndicator(
                 letter = "#",
                 yPosition = 100f,
                 modifier = Modifier.align(Alignment.Center)
             )
-            
+
             FloatingLetterIndicator(
                 letter = "Z",
                 yPosition = 150f,

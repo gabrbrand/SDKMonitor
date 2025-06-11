@@ -75,6 +75,10 @@
     <!-- Time formatting -->
     <string name="just_now">たった今</string>
     <string name="never">なし</string>
+    <string name="today">今日</string>
+    <string name="this_week">今週</string>
+    <string name="this_month">今月</string>
+    <string name="this_year">今年</string>
 
     <!-- Main Screen -->
     <string name="apps_count">%d個のアプリ</string>
@@ -212,5 +216,20 @@
     <string name="unit">単位</string>
     <string name="required">必須</string>
     <string name="select_app_to_get_started">開始するアプリを選択</string>
-    <string name="choose_app_from_list_description">リストからアプリを選択して、詳細情報とバージョン履歴を表示します</string>
+
+    <!-- About Screen -->
+    <string name="made_with_care_by">愛情を込めて作成</string>
+    <string name="privacy_first_title">プライバシー優先</string>
+    <string name="zero_tracking">ゼロトラッキング</string>
+    <string name="open_source">オープンソース</string>
+    <string name="view_on_github">GitHubで表示</string>
+    <string name="get_in_touch">お問い合わせ</string>
+    <string name="send_feedback_or_ask_questions">フィードバックの送信やご質問</string>
+    <string name="version_format">バージョン %s</string>
+    <string name="no_data_collection">データ収集なし</string>
+    <string name="everything_stays_local">すべてローカルに保存</string>
+    <string name="no_internet_permissions_needed">インターネット権限不要</string>
+    <string name="open_source_transparent">オープンソースで透明性</string>
+    <string name="sdk_monitor_feedback">SDKモニターフィードバック</string>
+    <string name="send_feedback">フィードバック送信</string>
 </resources>
