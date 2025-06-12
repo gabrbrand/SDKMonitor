@@ -15,6 +15,7 @@ data class SettingsUiState(
     val sdkDistribution: List<SdkDistribution> = emptyList(),
     val totalApps: Int = 0,
     val allAppsForSdk: List<AppVersion> = emptyList(),
+    val isAnalyticsLoading: Boolean = false
 ) {
     val hasError: Boolean get() = errorMessage != null
 }

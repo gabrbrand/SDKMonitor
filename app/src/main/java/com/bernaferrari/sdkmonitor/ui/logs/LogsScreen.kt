@@ -264,13 +264,10 @@ private fun EmptyLogsContent(
         modifier = modifier,
         contentAlignment = Alignment.Center
     ) {
-        Card(
+        Surface(
             modifier = Modifier.padding(32.dp),
             shape = RoundedCornerShape(32.dp),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surfaceContainer
-            ),
-            elevation = CardDefaults.cardElevation(16.dp)
+            color = MaterialTheme.colorScheme.surfaceContainer
         ) {
             Box(
                 modifier = Modifier
@@ -305,22 +302,11 @@ private fun EmptyLogsContent(
                             .size(120.dp)
                             .graphicsLayer(translationY = floatOffset),
                         shape = RoundedCornerShape(32.dp),
-                        color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3f),
-                        shadowElevation = 12.dp
+                        color = MaterialTheme.colorScheme.surfaceContainerHighest,
                     ) {
                         Box(
                             modifier = Modifier
-                                .fillMaxSize()
-                                .background(
-                                    brush = Brush.radialGradient(
-                                        colors = listOf(
-                                            MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
-                                            MaterialTheme.colorScheme.primaryContainer.copy(
-                                                alpha = 0.3f
-                                            )
-                                        )
-                                    )
-                                ),
+                                .fillMaxSize(),
                             contentAlignment = Alignment.Center
                         ) {
                             Icon(
@@ -338,7 +324,6 @@ private fun EmptyLogsContent(
                             fontWeight = FontWeight.ExtraBold
                         ),
                         color = MaterialTheme.colorScheme.onSurface,
-                        textAlign = TextAlign.Center
                     )
 
                     Text(
@@ -347,12 +332,11 @@ private fun EmptyLogsContent(
                             lineHeight = 24.sp
                         ),
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        textAlign = TextAlign.Center
                     )
 
                     Surface(
                         shape = RoundedCornerShape(20.dp),
-                        color = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.5f)
+                        color = MaterialTheme.colorScheme.surfaceContainerHighest
                     ) {
                         Text(
                             text = stringResource(R.string.sdk_monitor_watching),

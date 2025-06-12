@@ -1,7 +1,9 @@
 package com.bernaferrari.sdkmonitor.ui.settings
 
 import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -15,20 +17,19 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.TrendingUp
-import androidx.compose.material.icons.filled.Analytics
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -44,7 +45,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.bernaferrari.sdkmonitor.R
-import com.bernaferrari.sdkmonitor.domain.model.AppFilter
 import com.bernaferrari.sdkmonitor.extensions.apiToColor
 import com.bernaferrari.sdkmonitor.extensions.apiToVersion
 import com.bernaferrari.sdkmonitor.ui.theme.SDKMonitorTheme
@@ -62,11 +62,9 @@ fun SdkAnalyticsCard(
     totalApps: Int,
     onSdkClick: (Int) -> Unit = {},
 ) {
-    val currentAppFilter by remember { mutableStateOf(AppFilter.ALL_APPS) }
-
     // Filter data based on app type - you'll need to add app type info to SdkDistribution
     // For now, showing all data as placeholder
-    val filteredData = sdkDistribution // TODO: Filter by app type when data structure supports it
+    val filteredData = sdkDistribution
 
     val animationProgress by animateFloatAsState(
         targetValue = 1f,
@@ -204,7 +202,7 @@ fun SdkAnalyticsCard(
                 SdkBarChart(
                     data = filteredData,
                     animationProgress = animationProgress,
-                    onBarClick = onSdkClick, // Connect the click handler
+                    onBarClick = onSdkClick,
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(200.dp)
@@ -213,8 +211,7 @@ fun SdkAnalyticsCard(
 
                 // Legend with filtered data
                 LazyRow(
-                    modifier = Modifier
-                        .fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     contentPadding = PaddingValues(horizontal = 20.dp)
                 ) {
@@ -224,43 +221,6 @@ fun SdkAnalyticsCard(
                             appCount = sdk.appCount,
                             percentage = sdk.percentage,
                             onClick = { onSdkClick(sdk.sdkVersion) }
-                        )
-                    }
-                }
-            } else {
-                // Empty state for filtered data
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(120.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Analytics,
-                            contentDescription = null,
-                            modifier = Modifier.size(32.dp),
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                        Text(
-                            text = stringResource(
-                                R.string.no_filtered_apps_found,
-                                when (currentAppFilter) {
-                                    AppFilter.ALL_APPS -> stringResource(R.string.all_apps)
-                                    AppFilter.USER_APPS -> stringResource(R.string.user_apps)
-                                    AppFilter.SYSTEM_APPS -> stringResource(R.string.system_apps)
-                                }.lowercase()
-                            ),
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                        Text(
-                            text = stringResource(R.string.try_changing_filter),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
                         )
                     }
                 }
@@ -441,6 +401,170 @@ private fun SdkLegendItem(
     }
 }
 
+@Composable
+fun SdkAnalyticsEmptyState(
+    modifier: Modifier = Modifier,
+) {
+    Surface(
+        modifier = modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(24.dp),
+        color = MaterialTheme.colorScheme.surfaceContainer
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(32.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            Surface(
+                modifier = Modifier.size(64.dp),
+                shape = RoundedCornerShape(20.dp),
+                color = MaterialTheme.colorScheme.surfaceContainerHighest
+            ) {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.TrendingUp,
+                        contentDescription = null,
+                        modifier = Modifier.size(32.dp),
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            }
+
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Text(
+                    text = stringResource(R.string.no_apps_found),
+                    style = MaterialTheme.typography.titleMedium.copy(
+                        fontWeight = FontWeight.Bold
+                    ),
+                    color = MaterialTheme.colorScheme.onSurface,
+                    textAlign = TextAlign.Center
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun SdkAnalyticsPlaceholder(
+    modifier: Modifier = Modifier
+) {
+    val shimmerAlpha by animateFloatAsState(
+        targetValue = 0.3f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(1200),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "shimmer_animation"
+    )
+
+    Surface(
+        modifier = modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(24.dp),
+        color = MaterialTheme.colorScheme.surfaceContainer
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 20.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            // Header placeholder
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp),
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Surface(
+                    modifier = Modifier.size(48.dp),
+                    shape = RoundedCornerShape(16.dp),
+                    color = MaterialTheme.colorScheme.surfaceContainerHighest.copy(alpha = shimmerAlpha)
+                ) {}
+
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Surface(
+                        modifier = Modifier
+                            .width(140.dp)
+                            .height(24.dp),
+                        shape = RoundedCornerShape(6.dp),
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = shimmerAlpha)
+                    ) {}
+
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(20.dp)
+                    ) {
+                        repeat(2) {
+                            Surface(
+                                modifier = Modifier
+                                    .width(60.dp)
+                                    .height(16.dp),
+                                shape = RoundedCornerShape(4.dp),
+                                color = MaterialTheme.colorScheme.onSurface.copy(alpha = shimmerAlpha * 0.7f)
+                            ) {}
+                        }
+                    }
+                }
+            }
+
+            // Chart placeholder with centered loading
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(200.dp)
+                    .padding(horizontal = 20.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    shape = RoundedCornerShape(12.dp),
+                    color = MaterialTheme.colorScheme.surfaceContainerHighest.copy(alpha = 0.2f)
+                ) {}
+
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(28.dp),
+                        color = MaterialTheme.colorScheme.primary,
+                        strokeWidth = 2.5.dp
+                    )
+                }
+            }
+
+            // Legend placeholder
+            LazyRow(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                contentPadding = PaddingValues(horizontal = 20.dp)
+            ) {
+                items(4) { index ->
+                    Surface(
+                        modifier = Modifier
+                            .width(80.dp)
+                            .height(120.dp),
+                        shape = RoundedCornerShape(12.dp),
+                        color = MaterialTheme.colorScheme.surfaceContainerHighest.copy(
+                            alpha = shimmerAlpha * (0.8f - index * 0.1f)
+                        )
+                    ) {}
+                }
+            }
+        }
+    }
+}
+
 @Preview(showBackground = true)
 @Composable
 private fun SdkAnalyticsCardPreview() {
@@ -466,6 +590,26 @@ private fun SdkAnalyticsCardEmptyPreview() {
         SdkAnalyticsCard(
             sdkDistribution = emptyList(),
             totalApps = 0,
+            modifier = Modifier.padding(16.dp)
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun SdkAnalyticsPlaceholderPreview() {
+    SDKMonitorTheme {
+        SdkAnalyticsPlaceholder(
+            modifier = Modifier.padding(16.dp)
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun SdkAnalyticsEmptyStatePreview() {
+    SDKMonitorTheme {
+        SdkAnalyticsEmptyState(
             modifier = Modifier.padding(16.dp)
         )
     }

@@ -28,15 +28,16 @@ fun FloatingLetterIndicator(
     modifier: Modifier = Modifier
 ) {
     val density = LocalDensity.current
+    val indicatorSize = 80.dp
 
     Surface(
         modifier = modifier
-            .size(140.dp)
+            .size(indicatorSize)
             .aspectRatio(1f)
             .offset {
                 IntOffset(
-                    x = with(density) { (-60).dp.roundToPx() },
-                    y = (yPosition - with(density) { 30.dp.toPx() }).toInt()
+                    x = with(density) { (-60).dp.roundToPx() }, // Position to the left of the scroller
+                    y = (yPosition - with(density) { (indicatorSize / 2).toPx() }).toInt() // Center vertically on touch point
                 )
             },
         shape = RoundedCornerShape(12.dp),
@@ -45,7 +46,7 @@ fun FloatingLetterIndicator(
 
         Text(
             text = letter,
-            style = MaterialTheme.typography.headlineMedium.copy(
+            style = MaterialTheme.typography.headlineSmall.copy(
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onPrimary,
                 lineHeightStyle = LineHeightStyle(

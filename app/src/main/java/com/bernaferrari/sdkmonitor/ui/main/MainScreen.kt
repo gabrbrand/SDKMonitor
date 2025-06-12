@@ -439,7 +439,10 @@ fun MainScreen(
         when (val state = uiState) {
             is MainUiState.Loading -> {
                 Box(
-                    modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(end = 16.dp),
+                    contentAlignment = Alignment.Center
                 ) {
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
@@ -460,7 +463,10 @@ fun MainScreen(
 
             is MainUiState.Error -> {
                 Box(
-                    modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(end = 16.dp),
+                    contentAlignment = Alignment.Center
                 ) {
                     Card(
                         modifier = Modifier.padding(24.dp), colors = CardDefaults.cardColors(
@@ -510,7 +516,10 @@ fun MainScreen(
                 when {
                     state.filteredApps.isEmpty() && searchQuery.isNotBlank() -> {
                         Box(
-                            modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(end = 16.dp),
+                            contentAlignment = Alignment.Center
                         ) {
                             Column(
                                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -541,7 +550,10 @@ fun MainScreen(
 
                     state.filteredApps.isEmpty() -> {
                         Box(
-                            modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(end = 16.dp),
+                            contentAlignment = Alignment.Center
                         ) {
                             Column(
                                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -574,9 +586,10 @@ fun MainScreen(
                     }
 
                     else -> {
-                        // Only show fast scroller when sorting by name and has apps
+                        // Only show fast scroller when sorting by name or SDK and has enough apps
                         val showFastScroller =
-                            sortOption == SortOption.NAME && state.filteredApps.size > 15 && searchQuery.isBlank()
+                            (sortOption == SortOption.NAME || sortOption == SortOption.SDK) &&
+                                    state.filteredApps.size > 15 && searchQuery.isBlank()
 
                         // Group apps by first letter when sorting alphabetically
                         val groupedApps = remember(state.filteredApps, sortOption) {
@@ -608,20 +621,19 @@ fun MainScreen(
                             }
                         }
 
-                        Row(modifier = Modifier.fillMaxSize()) {
+                        Box(modifier = Modifier.fillMaxSize()) {
                             LazyColumn(
                                 state = listState,
                                 modifier = Modifier
-                                    .weight(1f)
+                                    .fillMaxSize()
                                     .pointerInput(Unit) {
                                         detectDragGestures(
                                             onDragStart = {
                                                 focusManager.clearFocus()
                                             }) { _, _ -> }
                                     }
-                                    .windowInsetsPadding(
-                                        WindowInsets.systemBars
-                                    ),
+                                    .windowInsetsPadding(WindowInsets.systemBars)
+                                    .padding(end = 32.dp),
                             ) {
                                 when {
                                     groupedApps.isNotEmpty() -> {
@@ -731,15 +743,16 @@ fun MainScreen(
                                 }
                             }
 
-                            // Fast Scroller
+                            // Fast Scroller - positioned as overlay
                             if (showFastScroller) {
                                 FastScroller(
-                                    modifier = Modifier.windowInsetsPadding(
-                                        WindowInsets.systemBars
-                                    ),
+                                    modifier = Modifier
+                                        .align(Alignment.CenterEnd)
+                                        .windowInsetsPadding(WindowInsets.systemBars),
                                     apps = state.filteredApps,
                                     listState = listState,
                                     appFilter = appFilter,
+                                    sortOption = sortOption,
                                     scrollOffsetDp = 80,
                                     onLetterSelected = { letter ->
                                         currentScrollLetter = letter

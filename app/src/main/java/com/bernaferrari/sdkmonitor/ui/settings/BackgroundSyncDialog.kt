@@ -1,7 +1,8 @@
 package com.bernaferrari.sdkmonitor.ui.settings
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -218,8 +219,6 @@ fun BackgroundSyncDialog(
                 // Sync Frequency Selection (only when enabled)
                 AnimatedVisibility(
                     visible = enabled,
-                    enter = expandVertically(animationSpec = spring()) + fadeIn(),
-                    exit = shrinkVertically(animationSpec = spring()) + fadeOut()
                 ) {
                     Column(
                         verticalArrangement = Arrangement.spacedBy(16.dp)
@@ -255,8 +254,22 @@ fun BackgroundSyncDialog(
                         // Custom Interval Input
                         AnimatedVisibility(
                             visible = selectedPreset == SyncPreset.CUSTOM,
-                            enter = expandVertically(animationSpec = spring()) + fadeIn(),
-                            exit = shrinkVertically(animationSpec = spring()) + fadeOut()
+                            enter = expandVertically(
+                                animationSpec = tween(
+                                    durationMillis = 250,
+                                    easing = androidx.compose.animation.core.FastOutSlowInEasing
+                                )
+                            ) + fadeIn(
+                                animationSpec = tween(durationMillis = 250, delayMillis = 100)
+                            ),
+                            exit = fadeOut(
+                                animationSpec = tween(durationMillis = 150)
+                            ) + shrinkVertically(
+                                animationSpec = tween(
+                                    durationMillis = 250,
+                                    easing = androidx.compose.animation.core.FastOutSlowInEasing
+                                )
+                            )
                         ) {
                             Card(
                                 colors = CardDefaults.cardColors(
@@ -433,6 +446,20 @@ private fun ElegantSyncToggleWithDescription(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    // Animate corner radius: 16.dp (rounded) -> 32.dp (circular)
+    val cornerRadius by animateDpAsState(
+        targetValue = if (isSelected) 32.dp else 16.dp,
+        animationSpec = tween(durationMillis = 300),
+        label = "cornerRadius"
+    )
+
+    // Animate border width for extra feedback
+    val borderWidth by animateDpAsState(
+        targetValue = if (isSelected) 2.dp else 1.dp,
+        animationSpec = tween(durationMillis = 300),
+        label = "borderWidth"
+    )
+
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -441,7 +468,7 @@ private fun ElegantSyncToggleWithDescription(
         OutlinedCard(
             onClick = onClick,
             modifier = Modifier.height(64.dp),
-            shape = RoundedCornerShape(16.dp),
+            shape = RoundedCornerShape(cornerRadius),
             colors = CardDefaults.outlinedCardColors(
                 containerColor = if (isSelected) {
                     MaterialTheme.colorScheme.primaryContainer
@@ -450,7 +477,7 @@ private fun ElegantSyncToggleWithDescription(
                 }
             ),
             border = BorderStroke(
-                width = if (isSelected) 2.dp else 1.dp,
+                width = borderWidth,
                 color = if (isSelected) {
                     MaterialTheme.colorScheme.inversePrimary
                 } else {

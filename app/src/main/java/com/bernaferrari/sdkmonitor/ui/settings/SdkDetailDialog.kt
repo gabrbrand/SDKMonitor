@@ -5,16 +5,17 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -39,7 +40,6 @@ import com.bernaferrari.sdkmonitor.extensions.apiToVersion
 import com.bernaferrari.sdkmonitor.ui.main.MainAppCard
 import com.bernaferrari.sdkmonitor.ui.theme.SDKMonitorTheme
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SdkDetailDialog(
     modifier: Modifier = Modifier,
@@ -73,8 +73,7 @@ fun SdkDetailDialog(
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(140.dp) // Increased height to prevent cutoff
-                        .clip(RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp))
+                        .clip(RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp))
                         .background(
                             brush = Brush.horizontalGradient(
                                 colors = listOf(
@@ -83,65 +82,74 @@ fun SdkDetailDialog(
                                 )
                             )
                         )
+                        .padding(16.dp)
                 ) {
-                    // Close button
-                    IconButton(
-                        onClick = onDismiss,
+                    Row(
                         modifier = Modifier
-                            .align(Alignment.TopEnd)
-                            .padding(16.dp)
+                            .fillMaxWidth(),
+                        verticalAlignment = Alignment.Top
                     ) {
-                        Icon(
-                            imageVector = Icons.Default.Close,
-                            contentDescription = "Close",
-                            tint = Color.White
-                        )
-                    }
+                        // Title content taking available space
+                        Column(
+                            modifier = Modifier
+                                .weight(1f),
+                            verticalArrangement = Arrangement.spacedBy(4.dp)
+                        ) {
+                            Text(
+                                text = "Target SDK $sdkVersion",
+                                style = MaterialTheme.typography.headlineMedium.copy(
+                                    fontWeight = FontWeight.Bold
+                                ),
+                                color = Color.White,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
 
-                    // Header content with better spacing
-                    Column(
-                        modifier = Modifier
-                            .align(Alignment.BottomStart)
-                            .padding(
-                                start = 24.dp,
-                                end = 60.dp,
-                                bottom = 20.dp,
-                                top = 60.dp
-                            ), // Added end padding to avoid close button
-                        verticalArrangement = Arrangement.spacedBy(6.dp)
-                    ) {
-                        Text(
-                            text = "Target SDK $sdkVersion",
-                            style = MaterialTheme.typography.headlineMedium.copy(
-                                fontWeight = FontWeight.Bold
-                            ),
-                            color = Color.White,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
-                        )
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    text = apiDescription,
+                                    style = MaterialTheme.typography.bodyLarge,
+                                    color = Color.White.copy(alpha = 0.9f),
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis
+                                )
 
-                        Text(
-                            text = apiDescription,
-                            style = MaterialTheme.typography.bodyLarge,
-                            color = Color.White.copy(alpha = 0.9f),
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
-                        )
+                                Text(
+                                    text = "-",
+                                    color = Color.White.copy(alpha = 0.9f),
+                                )
 
-                        Text(
-                            text = "${apps.size} ${if (apps.size == 1) "app" else "apps"}",
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = Color.White.copy(alpha = 0.8f)
-                        )
+                                Text(
+                                    text = "${apps.size} ${if (apps.size == 1) "app" else "apps"}",
+                                    style = MaterialTheme.typography.bodyLarge,
+                                    color = Color.White.copy(alpha = 0.8f)
+                                )
+                            }
+
+                        }
+
+                        IconButton(
+                            onClick = onDismiss
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Close,
+                                contentDescription = "Close",
+                                tint = Color.White
+                            )
+                        }
                     }
                 }
 
-                // Apps List
+                // Apps List - Modified to use weight for proper bottom button placement
                 if (apps.isEmpty()) {
                     Box(
                         modifier = Modifier
-                            .fillMaxSize()
-                            .padding(24.dp),
+                            .weight(1f)
+                            .padding(horizontal = 24.dp),
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
@@ -153,10 +161,7 @@ fun SdkDetailDialog(
                     }
                 } else {
                     LazyColumn(
-                        modifier = Modifier
-                            .fillMaxSize(),
-                        contentPadding = PaddingValues(vertical = 20.dp),
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                        modifier = Modifier.weight(1f),
                     ) {
                         items(apps.sortedBy { it.title.lowercase() }) { app ->
                             MainAppCard(
@@ -166,6 +171,29 @@ fun SdkDetailDialog(
                                 onClick = { onAppClick(app.packageName) }
                             )
                         }
+                    }
+                }
+
+                // Bottom Close Button - Smaller and positioned bottom-right
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(MaterialTheme.colorScheme.surfaceContainer)
+                        .padding(horizontal = 16.dp, vertical = 8.dp),
+                    horizontalArrangement = Arrangement.End
+                ) {
+                    Button(
+                        onClick = onDismiss,
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.primary
+                        ),
+                        shape = RoundedCornerShape(8.dp),
+                        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
+                    ) {
+                        Text(
+                            text = "Close",
+                            style = MaterialTheme.typography.labelMedium
+                        )
                     }
                 }
             }

@@ -2,6 +2,7 @@ package com.bernaferrari.sdkmonitor.ui.components
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
+import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.gestures.awaitTouchSlopOrCancellation
 import androidx.compose.foundation.gestures.drag
@@ -13,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -25,6 +27,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.pointerInput
@@ -76,16 +79,32 @@ fun <T> GenericFastScroller(
 
         items.forEach { item ->
             val key = getIndexKey(item)
-            val firstChar = key.firstOrNull()?.uppercaseChar()
-            if (firstChar?.isLetter() == true) {
-                letterSet.add(firstChar.toString())
+
+            // For SDK sorting, treat all numeric strings as SDK versions
+            // For NAME sorting, only treat single first characters
+            if (key.all { it.isDigit() } && key.length <= 3) { // SDK versions are typically 1-3 digits
+                letterSet.add(key)
             } else {
-                hasNonLetters = true
+                val firstChar = key.firstOrNull()?.uppercaseChar()
+                if (firstChar?.isLetter() == true) {
+                    letterSet.add(firstChar.toString())
+                } else {
+                    hasNonLetters = true
+                }
             }
         }
 
-        val result = letterSet.sorted().toMutableList()
-        if (hasNonLetters) {
+        // Sort appropriately based on content type
+        val result = if (letterSet.any { it.all { char -> char.isDigit() } }) {
+            // If we have numeric values (SDK versions), sort them numerically descending
+            letterSet.sortedByDescending { it.toIntOrNull() ?: 0 }.toMutableList()
+        } else {
+            // Regular alphabetical sorting
+            letterSet.sorted().toMutableList()
+        }
+
+        // Only add "#" for alphabetical sorting when there are non-letters
+        if (hasNonLetters && result.none { it.all { char -> char.isDigit() } }) {
             result.add(0, "#")
         }
         result
@@ -124,7 +143,7 @@ fun <T> GenericFastScroller(
     fun handlePositionAndSelectLetter(yPosition: Float) {
         if (scrollerSize.height <= 0 || letters.isEmpty()) return
 
-        val verticalPaddingPx = with(density) { 12.dp.toPx() }
+        val verticalPaddingPx = with(density) { 16.dp.toPx() } // Updated to match new padding
         val usableHeight = (scrollerSize.height - (verticalPaddingPx * 2)).coerceAtLeast(1f)
         val adjustedY = (yPosition - verticalPaddingPx).coerceIn(0f, usableHeight)
 
@@ -146,18 +165,22 @@ fun <T> GenericFastScroller(
         scrollToLetter(selectedLetter)
     }
 
-    val width = 32.dp
+    val width = 40.dp
 
     Box(
         modifier = modifier
             .fillMaxHeight()
-            .width(width),
+            .width(width)
+            .background(
+                color = Color.Transparent, // MaterialTheme.colorScheme.surface.copy(alpha = 0.8f),
+                shape = RoundedCornerShape(20.dp)
+            ),
     ) {
         Column(
             modifier = Modifier
                 .fillMaxHeight()
                 .width(width)
-                .padding(vertical = 16.dp)
+                .padding(vertical = 16.dp) // More vertical padding, less horizontal
                 .onGloballyPositioned { scrollerSize = it.size }
                 .pointerInput(items.hashCode()) {
                     awaitPointerEventScope {
@@ -192,7 +215,7 @@ fun <T> GenericFastScroller(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             // Calculate current position once, outside the loop
-            val verticalPaddingPx = with(density) { 12.dp.toPx() }
+            val verticalPaddingPx = with(density) { 16.dp.toPx() } // Updated to match new padding
             val usableHeight =
                 (scrollerSize.height - (verticalPaddingPx * 2)).coerceAtLeast(1f)
             val adjustedDragPosition =
@@ -246,7 +269,7 @@ fun <T> GenericFastScroller(
                         text = letter,
                         style = MaterialTheme.typography.labelSmall.copy(
                             fontWeight = FontWeight.Bold,
-                            fontSize = 11.sp
+                            fontSize = if (letter.length > 2) 9.sp else 11.sp // Smaller font for longer numbers
                         ),
                         color = MaterialTheme.colorScheme.primary,
                         modifier = Modifier

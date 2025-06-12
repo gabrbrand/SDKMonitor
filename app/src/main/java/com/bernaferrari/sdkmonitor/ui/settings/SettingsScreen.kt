@@ -51,7 +51,7 @@ import com.bernaferrari.sdkmonitor.domain.model.ThemeMode
 @Composable
 fun SettingsScreen(
     onNavigateToAppDetails: (String) -> Unit,
-    onNavigateToAbout: (() -> Unit)? = null, // New parameter for about navigation
+    onNavigateToAbout: (() -> Unit)? = null,
     viewModel: SettingsViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -160,7 +160,7 @@ fun SettingsScreen(
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(paddingValues) // Apply padding from this Scaffold
+                        .padding(paddingValues)
                         .verticalScroll(rememberScrollState())
                 ) {
                     val prefs = uiState.preferences
@@ -179,23 +179,35 @@ fun SettingsScreen(
                                 )
                             }
                         }
-
                     }
 
-                    if (uiState.sdkDistribution.isNotEmpty()) {
-                        AnalyticsSection(
-                            title = stringResource(R.string.analytics),
-                            currentFilter = prefs.appFilter,
-                            onFilterChange = { filter -> viewModel.updateAppFilter(filter) }
-                        ) {
-                            SdkAnalyticsCard(
-                                sdkDistribution = uiState.sdkDistribution,
-                                totalApps = uiState.totalApps,
-                                onSdkClick = { sdkVersion ->
-                                    selectedSdkVersion = sdkVersion
-                                    showSdkDialog = true
-                                }
-                            )
+                    // Analytics Section - Always show, handle states internally
+                    AnalyticsSection(
+                        title = stringResource(R.string.analytics),
+                        currentFilter = prefs.appFilter,
+                        onFilterChange = { filter -> viewModel.updateAppFilter(filter) }
+                    ) {
+                        when {
+                            uiState.isAnalyticsLoading -> {
+                                SdkAnalyticsPlaceholder()
+                            }
+
+                            uiState.totalApps == 0 && !uiState.isAnalyticsLoading -> {
+                                SdkAnalyticsEmptyState(
+                                    currentFilter = prefs.appFilter
+                                )
+                            }
+
+                            else -> {
+                                SdkAnalyticsCard(
+                                    sdkDistribution = uiState.sdkDistribution,
+                                    totalApps = uiState.totalApps,
+                                    onSdkClick = { sdkVersion ->
+                                        selectedSdkVersion = sdkVersion
+                                        showSdkDialog = true
+                                    }
+                                )
+                            }
                         }
                     }
 

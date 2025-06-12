@@ -30,7 +30,7 @@ class SettingsViewModel @Inject constructor(
 
     init {
         observePreferences()
-        loadAnalytics()
+        // Remove initial loadAnalytics() call since it will be triggered by preference observer
     }
 
     private fun observePreferences() {
@@ -59,8 +59,13 @@ class SettingsViewModel @Inject constructor(
                             errorMessage = null
                         )
 
-                        // Refresh analytics when preferences change
-                        loadAnalytics()
+                        // Only reload analytics if this is the first load or filter changed
+                        val shouldReloadAnalytics = _uiState.value.sdkDistribution.isEmpty() ||
+                                _uiState.value.preferences.appFilter != userPreferences.appFilter
+
+                        if (shouldReloadAnalytics) {
+                            loadAnalytics()
+                        }
                     }
             } catch (e: Exception) {
                 _uiState.value = _uiState.value.copy(
@@ -73,37 +78,49 @@ class SettingsViewModel @Inject constructor(
 
     private fun loadAnalytics() {
         viewModelScope.launch {
+            _uiState.update { it.copy(isAnalyticsLoading = true) }
+
             try {
                 val appFilter = _uiState.value.preferences.appFilter
                 val allApps = appsRepository.getAllAppsAsAppVersions()
 
-                // Filter apps based on current app filter preference - FIXED LOGIC
+                // Filter apps based on current app filter preference
                 val filteredApps = when (appFilter) {
-                    AppFilter.USER_APPS -> allApps.filter { it.isFromPlayStore } // User apps
-                    AppFilter.SYSTEM_APPS -> allApps.filter { !it.isFromPlayStore } // System apps  
-                    AppFilter.ALL_APPS -> allApps // All apps
+                    AppFilter.USER_APPS -> allApps.filter { it.isFromPlayStore }
+                    AppFilter.SYSTEM_APPS -> allApps.filter { !it.isFromPlayStore }
+                    AppFilter.ALL_APPS -> allApps
                 }
 
-                val distribution = filteredApps
-                    .groupBy { it.sdkVersion }
-                    .map { (sdk, appList) ->
-                        SdkDistribution(
-                            sdkVersion = sdk,
-                            appCount = appList.size,
-                            percentage = appList.size.toFloat() / filteredApps.size.coerceAtLeast(1)
-                        )
-                    }
-                    .sortedByDescending { it.sdkVersion }
+                val distribution = if (filteredApps.isNotEmpty()) {
+                    filteredApps
+                        .groupBy { it.sdkVersion }
+                        .map { (sdk, appList) ->
+                            SdkDistribution(
+                                sdkVersion = sdk,
+                                appCount = appList.size,
+                                percentage = appList.size.toFloat() / filteredApps.size
+                            )
+                        }
+                        .sortedByDescending { it.sdkVersion }
+                } else {
+                    emptyList()
+                }
 
                 _uiState.update { currentState ->
                     currentState.copy(
+                        isAnalyticsLoading = false,
                         sdkDistribution = distribution,
                         totalApps = filteredApps.size,
                         allAppsForSdk = filteredApps
                     )
                 }
             } catch (e: Exception) {
-                // Handle error silently for analytics, it's not critical
+                _uiState.update {
+                    it.copy(
+                        isAnalyticsLoading = false,
+                        errorMessage = "Failed to load analytics: ${e.message}"
+                    )
+                }
             }
         }
     }

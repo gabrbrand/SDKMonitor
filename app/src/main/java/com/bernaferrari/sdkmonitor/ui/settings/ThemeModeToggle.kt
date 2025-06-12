@@ -1,6 +1,8 @@
 package com.bernaferrari.sdkmonitor.ui.settings
 
 import android.graphics.Color
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,6 +19,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -33,6 +36,20 @@ fun ThemeModeToggle(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    // Animate corner radius: 16.dp (rounded) -> 32.dp (circular)
+    val cornerRadius by animateDpAsState(
+        targetValue = if (isSelected) 32.dp else 16.dp,
+        animationSpec = tween(durationMillis = 300),
+        label = "cornerRadius"
+    )
+
+    // Optionally animate border width for extra feedback
+    val borderWidth by animateDpAsState(
+        targetValue = if (isSelected) 2.dp else 1.dp,
+        animationSpec = tween(durationMillis = 300),
+        label = "borderWidth"
+    )
+
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally
@@ -40,7 +57,7 @@ fun ThemeModeToggle(
         OutlinedCard(
             onClick = onClick,
             modifier = Modifier.height(64.dp),
-            shape = RoundedCornerShape(16.dp),
+            shape = RoundedCornerShape(cornerRadius),
             colors = CardDefaults.outlinedCardColors(
                 containerColor = if (isSelected) {
                     MaterialTheme.colorScheme.primaryContainer
@@ -49,7 +66,7 @@ fun ThemeModeToggle(
                 }
             ),
             border = androidx.compose.foundation.BorderStroke(
-                width = if (isSelected) 2.dp else 1.dp,
+                width = borderWidth,
                 color = if (isSelected) {
                     MaterialTheme.colorScheme.inversePrimary
                 } else {
