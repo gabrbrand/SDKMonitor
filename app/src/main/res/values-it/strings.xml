@@ -111,7 +111,7 @@
     <string name="loading_change_history">✨ Caricamento cronologia modifiche</string>
     <string name="analyzing_app_ecosystem">Analizzando il tuo ecosistema di app…</string>
     <string name="oops_something_went_wrong">Ops! Qualcosa è andato storto</string>
-    <string name="no_changes_yet">🌟 Nessuna modifica ancora</string>
+    <string name="no_changes_yet">Nessuna modifica ancora</string>
     <string name="when_apps_update_description">Quando le app aggiornano le loro versioni SDK target, vedrai una bella timeline delle modifiche qui</string>
     <string name="sdk_monitor_watching">✨ SDK Monitor sta guardando</string>
     <string name="change_timeline">Cronologia modifiche</string>

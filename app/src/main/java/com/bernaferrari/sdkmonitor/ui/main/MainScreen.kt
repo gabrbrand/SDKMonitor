@@ -291,40 +291,44 @@ fun MainScreen(
                                     Row(
                                         modifier = Modifier.fillMaxWidth(),
                                         verticalAlignment = Alignment.CenterVertically,
-                                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                                        horizontalArrangement = Arrangement.SpaceBetween
                                     ) {
-
-                                        Icon(
-                                            imageVector = when (filter) {
-                                                AppFilter.ALL_APPS -> Icons.Default.Apps
-                                                AppFilter.USER_APPS -> Icons.Default.Person
-                                                AppFilter.SYSTEM_APPS -> Icons.Default.Android
-                                            },
-                                            contentDescription = null,
-                                            modifier = Modifier.size(18.dp),
-                                            tint = if (appFilter == filter) {
-                                                MaterialTheme.colorScheme.primary
-                                            } else {
-                                                MaterialTheme.colorScheme.onSurfaceVariant
-                                            }
-                                        )
-                                        Text(
-                                            text = when (filter) {
-                                                AppFilter.ALL_APPS -> stringResource(R.string.all_apps)
-                                                AppFilter.USER_APPS -> stringResource(R.string.user_apps)
-                                                AppFilter.SYSTEM_APPS -> stringResource(R.string.system_apps)
-                                            }, style = MaterialTheme.typography.bodyMedium.copy(
-                                                fontWeight = if (appFilter == filter) FontWeight.Bold else FontWeight.Normal
-                                            ), color = if (appFilter == filter) {
-                                                MaterialTheme.colorScheme.primary
-                                            } else {
-                                                MaterialTheme.colorScheme.onSurface
-                                            }
-                                        )
-
+                                        Row(
+                                            verticalAlignment = Alignment.CenterVertically,
+                                            horizontalArrangement = Arrangement.spacedBy(12.dp)
+                                        ) {
+                                            Icon(
+                                                imageVector = when (filter) {
+                                                    AppFilter.ALL_APPS -> Icons.Default.Apps
+                                                    AppFilter.USER_APPS -> Icons.Default.Person
+                                                    AppFilter.SYSTEM_APPS -> Icons.Default.Android
+                                                },
+                                                contentDescription = null,
+                                                modifier = Modifier.size(18.dp),
+                                                tint = if (appFilter == filter) {
+                                                    MaterialTheme.colorScheme.primary
+                                                } else {
+                                                    MaterialTheme.colorScheme.onSurfaceVariant
+                                                }
+                                            )
+                                            Text(
+                                                text = when (filter) {
+                                                    AppFilter.ALL_APPS -> stringResource(R.string.all_apps)
+                                                    AppFilter.USER_APPS -> stringResource(R.string.user_apps)
+                                                    AppFilter.SYSTEM_APPS -> stringResource(R.string.system_apps)
+                                                }, style = MaterialTheme.typography.bodyMedium.copy(
+                                                    fontWeight = if (appFilter == filter) FontWeight.Bold else FontWeight.Normal
+                                                ), color = if (appFilter == filter) {
+                                                    MaterialTheme.colorScheme.primary
+                                                } else {
+                                                    MaterialTheme.colorScheme.onSurface
+                                                }
+                                            )
+                                        }
 
                                         // Count badge
                                         Surface(
+                                            modifier = Modifier.padding(start = 12.dp),
                                             shape = RoundedCornerShape(12.dp),
                                             color = if (appFilter == filter) {
                                                 MaterialTheme.colorScheme.primaryContainer

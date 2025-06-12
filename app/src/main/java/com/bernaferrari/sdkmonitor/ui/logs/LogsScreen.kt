@@ -284,35 +284,25 @@ private fun EmptyLogsContent(
             ) {
                 Column(
                     modifier = Modifier.padding(48.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
+                    horizontalAlignment = Alignment.Start,
                     verticalArrangement = Arrangement.spacedBy(24.dp)
                 ) {
-                    // Mesmerizing floating icon
-                    val floatOffset by animateFloatAsState(
-                        targetValue = 10f,
-                        animationSpec = infiniteRepeatable(
-                            animation = tween(3000, easing = FastOutSlowInEasing),
-                            repeatMode = RepeatMode.Reverse
-                        ),
-                        label = "float_animation"
-                    )
+
 
                     Surface(
-                        modifier = Modifier
-                            .size(120.dp)
-                            .graphicsLayer(translationY = floatOffset),
-                        shape = RoundedCornerShape(32.dp),
-                        color = MaterialTheme.colorScheme.surfaceContainerHighest,
+                        modifier = Modifier.size(96.dp),
+                        shape = RoundedCornerShape(16.dp),
+                        color = MaterialTheme.colorScheme.surfaceContainerHighest
                     ) {
                         Box(
-                            modifier = Modifier
-                                .fillMaxSize(),
+                            modifier = Modifier.fillMaxSize(),
                             contentAlignment = Alignment.Center
                         ) {
                             Icon(
+                                modifier = Modifier
+                                    .size(48.dp),
                                 imageVector = Icons.Default.History,
                                 contentDescription = null,
-                                modifier = Modifier.size(48.dp),
                                 tint = MaterialTheme.colorScheme.primary
                             )
                         }
@@ -333,23 +323,6 @@ private fun EmptyLogsContent(
                         ),
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
-
-                    Surface(
-                        shape = RoundedCornerShape(20.dp),
-                        color = MaterialTheme.colorScheme.surfaceContainerHighest
-                    ) {
-                        Text(
-                            text = stringResource(R.string.sdk_monitor_watching),
-                            modifier = Modifier.padding(
-                                horizontal = 24.dp,
-                                vertical = 12.dp
-                            ),
-                            style = MaterialTheme.typography.labelLarge.copy(
-                                fontWeight = FontWeight.SemiBold
-                            ),
-                            color = MaterialTheme.colorScheme.onSecondaryContainer
-                        )
-                    }
                 }
             }
         }

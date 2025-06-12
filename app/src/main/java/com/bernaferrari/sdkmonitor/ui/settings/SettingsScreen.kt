@@ -193,9 +193,7 @@ fun SettingsScreen(
                             }
 
                             uiState.totalApps == 0 && !uiState.isAnalyticsLoading -> {
-                                SdkAnalyticsEmptyState(
-                                    currentFilter = prefs.appFilter
-                                )
+                                SdkAnalyticsEmptyState()
                             }
 
                             else -> {
