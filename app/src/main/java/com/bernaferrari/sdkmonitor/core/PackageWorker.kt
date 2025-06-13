@@ -32,6 +32,7 @@ class PackageWorker
             ) {
                 val workRequest =
                     OneTimeWorkRequestBuilder<PackageWorker>()
+                        .addTag("work")
                         .setInputData(
                             Data
                                 .Builder()
@@ -48,6 +49,7 @@ class PackageWorker
             ) {
                 val workRequest =
                     OneTimeWorkRequestBuilder<PackageWorker>()
+                        .addTag("work")
                         .setInputData(
                             Data
                                 .Builder()
@@ -64,6 +66,7 @@ class PackageWorker
             ) {
                 val workRequest =
                     OneTimeWorkRequestBuilder<PackageWorker>()
+                        .addTag("work")
                         .setInputData(
                             Data
                                 .Builder()

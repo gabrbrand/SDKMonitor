@@ -26,21 +26,25 @@
     <plurals name="searchApps">
         <item quantity="one">Rechercher %d app</item>
         <item quantity="many">Rechercher %d apps</item>
+        <item quantity="other">Rechercher %d apps</item>
     </plurals>
 
     <plurals name="minutes_ago">
         <item quantity="one">il y a %d minute</item>
         <item quantity="many">il y a %d minutes</item>
+        <item quantity="other">il y a %d minutes</item>
     </plurals>
 
     <plurals name="hours_ago">
         <item quantity="one">il y a %d heure</item>
         <item quantity="many">il y a %d heures</item>
+        <item quantity="other">il y a %d heures</item>
     </plurals>
 
     <plurals name="days_ago">
         <item quantity="one">il y a %d jour</item>
         <item quantity="many">il y a %d jours</item>
+        <item quantity="other">il y a %d jours</item>
     </plurals>
 
     <string name="sync_every" formatted="false">Synchroniser toutes les %d %s</string>

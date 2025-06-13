@@ -3,11 +3,13 @@ package com.bernaferrari.sdkmonitor.ui.settings
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.bernaferrari.sdkmonitor.core.SyncScheduler
 import com.bernaferrari.sdkmonitor.domain.model.AppFilter
 import com.bernaferrari.sdkmonitor.domain.model.ThemeMode
 import com.bernaferrari.sdkmonitor.domain.repository.AppsRepository
 import com.bernaferrari.sdkmonitor.domain.repository.PreferencesRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import io.github.aakira.napier.Napier
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -30,6 +32,7 @@ class SettingsViewModel
     constructor(
         private val preferencesRepository: PreferencesRepository,
         private val appsRepository: AppsRepository,
+        private val syncScheduler: SyncScheduler,
     ) : ViewModel() {
         private val _uiState = MutableStateFlow(SettingsUiState())
         val uiState: StateFlow<SettingsUiState> = _uiState.asStateFlow()
@@ -207,7 +210,42 @@ class SettingsViewModel
             viewModelScope.launch {
                 try {
                     val current = _uiState.value.preferences.backgroundSync
-                    preferencesRepository.updateBackgroundSync(!current)
+                    val newValue = !current
+
+                    // Update preference first
+                    preferencesRepository.updateBackgroundSync(newValue)
+
+                    // Handle WorkManager scheduling
+                    val schedulingSuccess =
+                        if (newValue) {
+                            // Schedule work with current interval
+                            val currentInterval =
+                                formatSyncInterval(
+                                    _uiState.value.preferences.syncInterval,
+                                    _uiState.value.preferences.syncLocalTimeUnit,
+                                )
+                            syncScheduler.schedulePeriodicSync(currentInterval)
+                        } else {
+                            // Cancel work
+                            syncScheduler.cancelPeriodicSync()
+                        }
+
+                    // Verify the scheduling worked
+                    if (!schedulingSuccess) {
+                        val action = if (newValue) "schedule" else "cancel"
+                        _uiState.value =
+                            _uiState.value.copy(
+                                errorMessage = "Failed to $action background sync. Please try again.",
+                            )
+
+                        // Revert the preference change if scheduling failed
+                        preferencesRepository.updateBackgroundSync(current)
+                    } else {
+                        // Log success with work status for debugging
+                        val status = syncScheduler.getSyncWorkStatus()
+                        val action = if (newValue) "scheduled" else "cancelled"
+                        println("✅ Background sync $action successfully. Work status: $status")
+                    }
                 } catch (e: Exception) {
                     _uiState.value =
                         _uiState.value.copy(
@@ -228,6 +266,23 @@ class SettingsViewModel
                 try {
                     val formattedInterval = formatSyncInterval(interval, localTimeUnit)
                     preferencesRepository.updateSyncInterval(formattedInterval)
+
+                    // If background sync is enabled, reschedule with new interval
+                    if (_uiState.value.preferences.backgroundSync) {
+                        val schedulingSuccess = syncScheduler.schedulePeriodicSync(formattedInterval)
+
+                        if (!schedulingSuccess) {
+                            _uiState.value =
+                                _uiState.value.copy(
+                                    errorMessage = @Suppress("ktlint:standard:max-line-length")
+                                    "Updated interval but failed to reschedule background sync. Please toggle sync off and on again.",
+                                )
+                        } else {
+                            // Log success for debugging
+                            val status = syncScheduler.getSyncWorkStatus()
+                            Napier.d("✅ Background sync rescheduled with new interval: $formattedInterval. Work status: $status")
+                        }
+                    }
                 } catch (e: Exception) {
                     _uiState.value =
                         _uiState.value.copy(
@@ -236,6 +291,16 @@ class SettingsViewModel
                 }
             }
         }
+
+        /**
+         * Check if background sync is currently scheduled (for debugging/verification)
+         */
+        suspend fun isSyncCurrentlyScheduled(): Boolean =
+            try {
+                syncScheduler.isSyncScheduled()
+            } catch (e: Exception) {
+                false
+            }
 
         /**
          * Clear all logs/data

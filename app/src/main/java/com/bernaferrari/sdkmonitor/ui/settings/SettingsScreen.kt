@@ -380,10 +380,12 @@ fun SettingsScreen(
                 currentUnit = uiState.preferences.syncLocalTimeUnit,
                 onDismiss = { showSyncDialog = false },
                 onSave = { enabled, interval, unit ->
+                    // Handle background sync toggle
                     if (enabled != uiState.preferences.backgroundSync) {
                         viewModel.toggleBackgroundSync()
                     }
-                    if (enabled) {
+                    // Handle interval change (will also reschedule if sync is enabled)
+                    if (enabled && (interval != uiState.preferences.syncInterval || unit != uiState.preferences.syncLocalTimeUnit)) {
                         viewModel.setSyncInterval(interval, unit)
                     }
                 },

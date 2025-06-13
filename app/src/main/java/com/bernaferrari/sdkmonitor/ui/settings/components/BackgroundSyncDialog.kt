@@ -602,7 +602,9 @@ fun BackgroundSyncDialog(
                                 } else {
                                     Pair("0", LocalTimeUnit.HOURS)
                                 }
-                            onSave(enabled, interval, unit) // Pass enabled state directly
+
+                            // Call onSave with the new values - this will trigger scheduling in ViewModel
+                            onSave(enabled, interval, unit)
                             onDismiss()
                         },
                         modifier = Modifier.weight(1f),

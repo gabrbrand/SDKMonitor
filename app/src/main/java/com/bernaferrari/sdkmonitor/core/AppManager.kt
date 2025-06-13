@@ -105,6 +105,12 @@ class AppManager
             oldTargetSDK: Int,
             newTargetSDK: Int,
         ) {
+            // Only show notifications for user apps (from Play Store)
+            if (!isUserApp(packageInfo.applicationInfo)) {
+                Napier.d("🔕 Skipping notification for system app: ${packageInfo.packageName}")
+                return
+            }
+
             val appName = getAppLabel(packageInfo)
             notificationManager.showSdkChangeNotification(
                 appName = appName,
