@@ -9,6 +9,19 @@
 
 **SDK Monitor** shows you which Android API levels your installed apps are targeting. Since 2017 Google requires apps to target recent API levels for better security and privacy, this tool helps you see how up-to-date your apps really are.
 
+
+## 📱 Get it
+
+[<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png" alt="Get it on F-Droid" height="80">](https://f-droid.org/packages/com.bernaferrari.sdkmonitor/)
+
+[Download from GitHub](https://github.com/bernaferrari/SDKMonitor/releases/latest)
+
+## 📸 Screenshots
+
+|       Home Screen        |             Logs              |          App Details           |             Settings             |
+| :----------------------: |:-----------------------------:|:------------------------------:| :------------------------------: |
+| ![Main](assets/main.png) | ![Analytics](assets/logs.png) | ![Details](assets/details.png) | ![Settings](assets/settings.png) |
+
 ## Why does this matter?
 
 Newer Android versions come with better security and privacy features. When apps target recent API levels, they're forced to use these improvements. But Android doesn't show you this information by default, so SDK Monitor makes it visible. It also helps you see which apps are updating because they have to, versus those that genuinely want to improve.
@@ -33,18 +46,6 @@ Newer Android versions come with better security and privacy features. When apps
 ### Languages
 
 English, Italian, French, Portuguese (BR), German, Spanish, Japanese, and Chinese.
-
-## 📱 Get it
-
-[<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png" alt="Get it on F-Droid" height="80">](https://f-droid.org/packages/com.bernaferrari.sdkmonitor/)
-
-[Download from GitHub](https://github.com/bernaferrari/SDKMonitor/releases/latest)
-
-## 📸 Screenshots
-
-|       Home Screen        |             Logs              |          App Details           |             Settings             |
-| :----------------------: |:-----------------------------:|:------------------------------:| :------------------------------: |
-| ![Main](assets/main.png) | ![Analytics](assets/logs.png) | ![Details](assets/details.png) | ![Settings](assets/settings.png) |
 
 ## 🏗️ How it's built
 
