@@ -42,9 +42,9 @@ English, Italian, French, Portuguese (BR), German, Spanish, Japanese, and Chines
 
 ## 📸 Screenshots
 
-|       Home Screen        |           SDK Analytics            |          App Details           |             Settings             |
-| :----------------------: | :--------------------------------: | :----------------------------: | :------------------------------: |
-| ![Main](assets/main.png) | ![Analytics](assets/analytics.png) | ![Details](assets/details.jpg) | ![Settings](assets/settings.png) |
+|       Home Screen        |             Logs              |          App Details           |             Settings             |
+| :----------------------: |:-----------------------------:|:------------------------------:| :------------------------------: |
+| ![Main](assets/main.png) | ![Analytics](assets/logs.png) | ![Details](assets/details.png) | ![Settings](assets/settings.png) |
 
 ## 🏗️ How it's built
 
