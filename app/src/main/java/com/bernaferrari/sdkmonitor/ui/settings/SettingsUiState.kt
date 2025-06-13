@@ -32,10 +32,10 @@ data class SettingsPreferences(
     val backgroundSync: Boolean = false,
     val orderBySdk: Boolean = false,
     val syncInterval: String = "30",
-    val syncTimeUnit: TimeUnit = TimeUnit.MINUTES,
+    val syncLocalTimeUnit: LocalTimeUnit = LocalTimeUnit.MINUTES,
 )
 
-enum class TimeUnit(
+enum class LocalTimeUnit(
     val code: Int,
 ) {
     MINUTES(0),

@@ -100,6 +100,8 @@
     <string name="sort_by_name">Nome</string>
     <string name="sort_by_sdk">Versione SDK</string>
     <string name="loading_apps">Caricamento app…</string>
+    <string name="setting_up_your_apps">Configurazione delle tue app…</string>
+    <string name="apps_sync_progress">%1$d di %2$d app</string>
     <string name="something_went_wrong">Qualcosa è andato storto</string>
     <string name="no_apps_found">Nessuna app trovata</string>
     <string name="try_searching_different_terms">Prova a cercare con termini diversi</string>
@@ -244,4 +246,14 @@
     <string name="export_data_description">Scarica i dati della tua app come backup CSV</string>
     <string name="export_sdk_monitor_data">Esporta Dati SDK Monitor</string>
     <string name="sdk_monitor_data_backup">Backup dati SDK Monitor creato il %s</string>
+
+    <!-- Notification Permission Strings -->
+    <string name="notifications_disabled">Notifiche Disabilitate</string>
+    <string name="notifications_required_for_background_sync">Le notifiche sono necessarie per il funzionamento della sincronizzazione in background</string>
+    <string name="background_sync_requires_notifications">La sincronizzazione in background utilizza le notifiche per pianificare aggiornamenti automatici. Abilita le notifiche nelle impostazioni del dispositivo.</string>
+    <string name="open_settings">Apri Impostazioni</string>
+    <string name="enable_notifications">Abilita Notifiche</string>
+    <string name="notifications_help_background_sync">Le notifiche aiutano a mantenere aggiornate le tue app in background</string>
+    <string name="allow_notifications">Consenti Notifiche</string>
+
 </resources>

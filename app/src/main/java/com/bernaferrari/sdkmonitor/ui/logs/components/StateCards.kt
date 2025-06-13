@@ -12,6 +12,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.TrendingUp
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Sync
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.FilledTonalButton
@@ -23,12 +25,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.bernaferrari.sdkmonitor.R
 import com.bernaferrari.sdkmonitor.ui.theme.SDKMonitorTheme
 
 @Composable
@@ -150,7 +150,7 @@ fun ErrorStateCard(
                     contentAlignment = Alignment.Center,
                 ) {
                     Icon(
-                        imageVector = ImageVector.vectorResource(R.drawable.ic_info),
+                        imageVector = Icons.Filled.Info,
                         contentDescription = title,
                         modifier = Modifier.size(40.dp),
                         tint = MaterialTheme.colorScheme.error,
@@ -186,7 +186,7 @@ fun ErrorStateCard(
                 modifier = Modifier.padding(top = 8.dp),
             ) {
                 Icon(
-                    imageVector = ImageVector.vectorResource(R.drawable.ic_sync),
+                    imageVector = Icons.Filled.Sync,
                     contentDescription = null,
                     modifier = Modifier.size(18.dp),
                 )

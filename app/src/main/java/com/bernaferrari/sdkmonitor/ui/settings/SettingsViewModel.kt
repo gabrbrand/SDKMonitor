@@ -57,8 +57,10 @@ class SettingsViewModel
                                     appFilter = userPreferences.appFilter,
                                     backgroundSync = userPreferences.backgroundSync,
                                     syncInterval = interval,
-                                    syncTimeUnit = timeUnit,
+                                    syncLocalTimeUnit = timeUnit,
                                 )
+
+                            val previousFilter = _uiState.value.preferences.appFilter
 
                             _uiState.value =
                                 _uiState.value.copy(
@@ -67,10 +69,10 @@ class SettingsViewModel
                                     errorMessage = null,
                                 )
 
-                            // Only reload analytics if this is the first load or filter changed
+                            // Reload analytics if this is the first load or filter changed
                             val shouldReloadAnalytics =
                                 _uiState.value.sdkDistribution.isEmpty() ||
-                                    _uiState.value.preferences.appFilter != userPreferences.appFilter
+                                    previousFilter != userPreferences.appFilter
 
                             if (shouldReloadAnalytics) {
                                 loadAnalytics()
@@ -164,38 +166,38 @@ class SettingsViewModel
             }
         }
 
-        private fun parseSyncInterval(interval: String): Pair<String, TimeUnit> {
+        private fun parseSyncInterval(interval: String): Pair<String, LocalTimeUnit> {
             // Parse interval like "30m", "1h", "2d", "7d", "30d" into number and unit
             return try {
                 when {
-                    interval.endsWith("m") -> Pair(interval.dropLast(1), TimeUnit.MINUTES)
-                    interval.endsWith("h") -> Pair(interval.dropLast(1), TimeUnit.HOURS)
-                    interval.endsWith("d") -> Pair(interval.dropLast(1), TimeUnit.DAYS)
+                    interval.endsWith("m") -> Pair(interval.dropLast(1), LocalTimeUnit.MINUTES)
+                    interval.endsWith("h") -> Pair(interval.dropLast(1), LocalTimeUnit.HOURS)
+                    interval.endsWith("d") -> Pair(interval.dropLast(1), LocalTimeUnit.DAYS)
                     // Handle legacy formats without unit suffix
                     interval.toIntOrNull() != null -> {
                         val value = interval.toInt()
                         when {
-                            value <= 24 -> Pair(interval, TimeUnit.HOURS)
-                            value <= 168 -> Pair((value / 24).toString(), TimeUnit.DAYS)
-                            else -> Pair("7", TimeUnit.DAYS)
+                            value <= 24 -> Pair(interval, LocalTimeUnit.HOURS)
+                            value <= 168 -> Pair((value / 24).toString(), LocalTimeUnit.DAYS)
+                            else -> Pair("7", LocalTimeUnit.DAYS)
                         }
                     }
 
-                    else -> Pair("7", TimeUnit.DAYS) // Default to weekly
+                    else -> Pair("7", LocalTimeUnit.DAYS) // Default to weekly
                 }
             } catch (e: Exception) {
-                Pair("7", TimeUnit.DAYS) // Default to weekly on any error
+                Pair("7", LocalTimeUnit.DAYS) // Default to weekly on any error
             }
         }
 
         private fun formatSyncInterval(
             interval: String,
-            timeUnit: TimeUnit,
+            localTimeUnit: LocalTimeUnit,
         ): String =
-            when (timeUnit) {
-                TimeUnit.MINUTES -> "${interval}m"
-                TimeUnit.HOURS -> "${interval}h"
-                TimeUnit.DAYS -> "${interval}d"
+            when (localTimeUnit) {
+                LocalTimeUnit.MINUTES -> "${interval}m"
+                LocalTimeUnit.HOURS -> "${interval}h"
+                LocalTimeUnit.DAYS -> "${interval}d"
             }
 
         /**
@@ -220,11 +222,11 @@ class SettingsViewModel
          */
         fun setSyncInterval(
             interval: String,
-            timeUnit: TimeUnit,
+            localTimeUnit: LocalTimeUnit,
         ) {
             viewModelScope.launch {
                 try {
-                    val formattedInterval = formatSyncInterval(interval, timeUnit)
+                    val formattedInterval = formatSyncInterval(interval, localTimeUnit)
                     preferencesRepository.updateSyncInterval(formattedInterval)
                 } catch (e: Exception) {
                     _uiState.value =

@@ -55,13 +55,18 @@ class MainViewModel
 
         private val hasLoaded = MutableStateFlow(false)
 
+        // Expose first sync state
+        val isFirstSync = appManager.isFirstSync
+        val syncProgress = appManager.syncProgress
+
         val uiState: StateFlow<MainUiState> =
             combine(
                 appsRepository.getAppsWithVersions(),
                 preferencesRepository.getUserPreferences(),
                 _searchQuery,
                 hasLoaded,
-            ) { apps, prefs, query, hasLoaded ->
+                isFirstSync,
+            ) { apps, prefs, query, hasLoaded, isFirstSync ->
                 try {
                     // Update filter and sort states from preferences
                     _appFilter.value = prefs.appFilter
@@ -96,7 +101,8 @@ class MainViewModel
                             }
                         }
 
-                    if (!hasLoaded && orderedApps.isEmpty()) {
+                    // Show loading only if first sync or empty and not loaded yet
+                    if ((!hasLoaded && orderedApps.isEmpty()) || isFirstSync) {
                         MainUiState.Loading
                     } else {
                         MainUiState.Success(

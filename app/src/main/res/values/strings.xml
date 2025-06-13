@@ -96,6 +96,8 @@
     <string name="sort_by_name">Name</string>
     <string name="sort_by_sdk">SDK Version</string>
     <string name="loading_apps">Loading apps…</string>
+    <string name="setting_up_your_apps">Setting up your apps…</string>
+    <string name="apps_sync_progress">%1$d of %2$d apps</string>
     <string name="something_went_wrong">Something went wrong</string>
     <string name="no_apps_found">No apps found</string>
     <string name="try_searching_different_terms">Try searching with different terms</string>
@@ -240,4 +242,14 @@
     <string name="export_data_description">Download your app data as CSV backup</string>
     <string name="export_sdk_monitor_data">Export SDK Monitor Data</string>
     <string name="sdk_monitor_data_backup">SDK Monitor data backup created on %s</string>
+
+    <!-- Notification Permission Strings -->
+    <string name="notifications_disabled">Notifications Disabled</string>
+    <string name="notifications_required_for_background_sync">Notifications are required for background sync to work</string>
+    <string name="background_sync_requires_notifications">Background sync uses notifications to schedule automatic updates. Please enable notifications in your device settings.</string>
+    <string name="open_settings">Open Settings</string>
+    <string name="enable_notifications">Enable Notifications</string>
+    <string name="notifications_help_background_sync">Notifications help keep your apps updated in the background</string>
+    <string name="allow_notifications">Allow Notifications</string>
+
 </resources>

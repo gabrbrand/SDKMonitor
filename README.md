@@ -7,94 +7,148 @@
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![F-Droid](https://img.shields.io/f-droid/v/com.bernaferrari.sdkmonitor.svg)](https://f-droid.org/packages/com.bernaferrari.sdkmonitor/)
 
-Since 2017, Google's Play Store policy requires apps to target recent Android API levels to ensure
-they utilize modern security and privacy features. Because this information isn't available to users
-by default, it's difficult to verify which apps are compliant.
+**SDK Monitor** shows you which Android API levels your installed apps are targeting. Since 2017 Google requires apps to target recent API levels for better security and privacy, this tool helps you see how up-to-date your apps really are.
 
-SDK Monitor is a simple app that makes this information visible. It scans your installed apps and
-displays their Target SDK, helping you see at a glance which applications are up-to-date with
-platform standards. Use it to understand how other apps are perfoming in your device.
+## Why does this matter?
+
+Newer Android versions come with better security and privacy features. When apps target recent API levels, they're forced to use these improvements. But Android doesn't show you this information by default, so SDK Monitor makes it visible. It also helps you see which apps are updating because they have to, versus those that genuinely want to improve.
 
 ## ✨ Features
 
-- **📊 Interactive SDK Analytics** - Beautiful charts showing distribution with clickable insights
-  and real-time filtering
-- **🔍 Smart Search & Filtering** - Real-time search with highlighted results and advanced filtering
-  options
-- **📱 Universal Design** - Seamlessly adapts to phones, tablets, and foldables with master-detail
-  layouts
-- **⚡ Intelligent Performance** - Smart caching, smooth scrolling, and responsive interactions
-- **🎨 Material You Integration** - Dynamic theming that adapts to your system colors
-- **🔔 Background Monitoring** - Automatic tracking of app installations, updates, and SDK changes
-- **🌐 Multilingual** - English, Italian, French, Portuguese (BR), German, Spanish, Japanese, Chinese
-- **🚀 Custom Fast Scroller** - Self-healing alphabet navigation with smooth animations
+### What it does
 
-## 📱 Download
+- **SDK Analysis** - See targetSDK versions for all your apps
+- **Visual Charts** - Nice graphs showing how your apps are distributed
+- **Search & Filter** - Find apps quickly with live search
+- **App Details** - Full info including permissions and install dates
+- **Background Updates** - Automatically tracks changes when you install or update apps
+
+### How it works
+
+- **Adaptive Design** - Looks great on phones, tablets, and foldables
+- **Material You** - Matches your system colors
+- **Fast Scrolling** - Jump through long app lists easily
+- **Fully Offline** - No internet required, everything stays on your device
+
+### Languages
+
+English, Italian, French, Portuguese (BR), German, Spanish, Japanese, and Chinese.
+
+## 📱 Get it
 
 [<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png" alt="Get it on F-Droid" height="80">](https://f-droid.org/packages/com.bernaferrari.sdkmonitor/)
 
-[Latest Release](https://github.com/bernaferrari/SDKMonitor/releases/latest)
-
-## 🏗️ Technical Stack
-
-**Architecture**: Clean Architecture with MVVM + Repository pattern  
-**UI Framework**: Jetpack Compose with Material 3 Expressive  
-**Database**: Room with complex queries, migrations, and foreign keys  
-**Dependency Injection**: Hilt with proper scoping and lifecycle management  
-**Reactive Programming**: Kotlin Coroutines + Flow for seamless async operations  
-**Background Processing**: WorkManager with intelligent scheduling and constraints  
-**Navigation**: Type-safe Compose Navigation with adaptive master-detail flow
+[Download from GitHub](https://github.com/bernaferrari/SDKMonitor/releases/latest)
 
 ## 📸 Screenshots
 
 |       Home Screen        |           SDK Analytics            |          App Details           |             Settings             |
-|:------------------------:|:----------------------------------:|:------------------------------:|:--------------------------------:|
+| :----------------------: | :--------------------------------: | :----------------------------: | :------------------------------: |
 | ![Main](assets/main.png) | ![Analytics](assets/analytics.png) | ![Details](assets/details.jpg) | ![Settings](assets/settings.png) |
 
-## 🎯 Key Implementations
+## 🏗️ How it's built
 
-### **Advanced UI Components**
+### Tech stack
 
-- **Interactive Charts**: Custom Canvas-based SDK distribution with gesture detection and animations
-- **Fast Scroller**: Self-healing alphabet navigation that automatically adapts to content changes
-- **Real-time Search**: Instant filtering with highlighted search terms across app names
-- **Adaptive Layouts**: Master-detail flow optimized for all screen sizes and orientations
+- **Architecture**: Clean Architecture with MVVM
+- **UI**: Jetpack Compose with Material 3
+- **Database**: Room for storing app data
+- **DI**: Hilt for dependency injection
+- **Async**: Kotlin Coroutines and Flow
+- **Background**: WorkManager for scheduled tasks
+- **Navigation**: Compose Navigation with type safety
 
-### **Performance Engineering**
+### What's inside
 
-- **Room Database**: Complex JOIN operations with proper indexing and optimized queries
-- **Smart Caching**: Intelligent prefetching reduces database calls and improves responsiveness
-- **Memory Management**: Lifecycle-aware components with proper resource cleanup
-- **Background Sync**: Exponential backoff retry logic with battery-conscious scheduling
+**Data handling**
 
-### **Modern Android Practices**
+- Room database for local storage
+- Repository pattern for data access
+- Syncs with system when apps change
 
-- **Material 3 Expressive**: Dynamic color theming with full system integration
-- **Type-Safe Navigation**: Compile-time safety with smooth transition animations
-- **State Management**: Unidirectional data flow with reactive state updates
-- **Offline-First**: Complete functionality without network dependency, all data stays local
+**User interface**
 
-## 🔧 Building from Source
+- Reactive UI with Compose and Flow
+- Custom charts built with Canvas
+- Responsive layouts for different screen sizes
 
-To build and run the project, follow these steps:
+**App logic**
 
-**1. Prerequisites**
+- Business logic separated into use cases
+- Integrates with Android's PackageManager
+- Analyzes and categorizes SDK versions
 
-- Android Studio Iguana | 2023.2.1 or newer
+## 🔧 Building from source
+
+### What you need
+
+- Android Studio Hedgehog | 2023.1.1 or newer
 - JDK 17+
+- Android SDK with API 34+
 
-**2. Clone the Repository**
+### Getting started
 
 ```bash
-git clone [https://github.com/bernaferrari/SDKMonitor.git](https://github.com/bernaferrari/SDKMonitor.git)
+git clone https://github.com/bernaferrari/SDKMonitor.git
 cd SDKMonitor
 ./gradlew assembleDebug
 ```
 
+### Running tests
+
+```bash
+./gradlew test
+./gradlew connectedAndroidTest
+```
+
+## 📊 About SDK versions
+
+Here's what different API levels mean:
+
+- **API 34** (Android 14): Partial photo/video access
+- **API 33** (Android 13): Themed app icons, per-app language preferences, notification permission
+- **API 32** (Android 12L): Improved large screen support, new splash screen API
+- **API 31** (Android 12): Material You, approximate location permission, clipboard access notifications
+- **API 30** (Android 11): Scoped storage enforcement, one-time permissions, background location restrictions
+- **API 29** (Android 10): Scoped storage (optional), dark theme, gesture navigation
+- **API 28** (Android 9): Network security config required, Apache HTTP client removed
+- **API 26-27** (Android 8.x): Background execution limits, notification channels, adaptive icons
+- **API 24-25** (Android 7.x): File provider requirements, doze mode, multi-window support
+- **Below API 24**: Missing modern security and privacy features
+
+Higher API levels mean apps must adopt newer security and privacy protections.
+
+## 🤝 Contributing
+
+Want to help? Check out our [Contributing Guidelines](CONTRIBUTING.md) for:
+
+- Code style
+- How to submit changes
+- Reporting bugs
+- Suggesting features
+
+## 🐛 Need help?
+
+- **Bug reports**: [GitHub Issues](https://github.com/bernaferrari/SDKMonitor/issues)
+- **Questions**: [GitHub Discussions](https://github.com/bernaferrari/SDKMonitor/discussions)
+- **F-Droid**: [Package page](https://f-droid.org/packages/com.bernaferrari.sdkmonitor/)
+
 ## 📄 License
 
-```markdown
-## 📄 License
+Licensed under Apache 2.0. See [LICENSE](LICENSE) for details.
 
-This project is licensed under the Apache License, Version 2.0. See the [LICENSE](LICENSE) file for details.
+```
+Copyright 2024 Bernardo Ferrari
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
 ```

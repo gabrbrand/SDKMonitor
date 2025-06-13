@@ -1,5 +1,12 @@
 package com.bernaferrari.sdkmonitor.ui.settings.components
 
+import android.Manifest
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
+import android.provider.Settings
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
@@ -11,6 +18,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -24,11 +32,17 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.NotificationAdd
+import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material.icons.filled.NotificationsOff
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Tune
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material.icons.outlined.CalendarMonth
 import androidx.compose.material.icons.outlined.CalendarToday
 import androidx.compose.material.icons.outlined.DateRange
 import androidx.compose.material.icons.outlined.Tune
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenuItem
@@ -46,6 +60,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -53,6 +68,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -63,8 +79,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import androidx.core.app.NotificationManagerCompat
+import androidx.core.content.ContextCompat
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.bernaferrari.sdkmonitor.R
-import com.bernaferrari.sdkmonitor.ui.settings.TimeUnit
+import com.bernaferrari.sdkmonitor.ui.settings.LocalTimeUnit
 import com.bernaferrari.sdkmonitor.ui.theme.SDKMonitorTheme
 
 enum class SyncPreset(
@@ -73,7 +94,7 @@ enum class SyncPreset(
     val icon: ImageVector,
     val iconSelected: ImageVector,
     val intervalValue: String,
-    val timeUnit: TimeUnit,
+    val localTimeUnit: LocalTimeUnit,
 ) {
     DAILY(
         R.string.daily,
@@ -81,7 +102,7 @@ enum class SyncPreset(
         Icons.Outlined.CalendarToday,
         Icons.Filled.CalendarToday,
         "1",
-        TimeUnit.DAYS,
+        LocalTimeUnit.DAYS,
     ),
     WEEKLY(
         R.string.weekly,
@@ -89,7 +110,7 @@ enum class SyncPreset(
         Icons.Outlined.DateRange,
         Icons.Filled.DateRange,
         "7",
-        TimeUnit.DAYS,
+        LocalTimeUnit.DAYS,
     ),
     MONTHLY(
         R.string.monthly,
@@ -97,7 +118,7 @@ enum class SyncPreset(
         Icons.Outlined.CalendarMonth,
         Icons.Filled.CalendarMonth,
         "30",
-        TimeUnit.DAYS,
+        LocalTimeUnit.DAYS,
     ),
     CUSTOM(
         R.string.custom,
@@ -105,7 +126,7 @@ enum class SyncPreset(
         Icons.Outlined.Tune,
         Icons.Filled.Tune,
         "",
-        TimeUnit.HOURS,
+        LocalTimeUnit.HOURS,
     ),
 }
 
@@ -114,30 +135,68 @@ enum class SyncPreset(
 fun BackgroundSyncDialog(
     isEnabled: Boolean = false,
     currentInterval: String = "30",
-    currentUnit: TimeUnit = TimeUnit.MINUTES,
+    currentUnit: LocalTimeUnit = LocalTimeUnit.MINUTES,
     onDismiss: () -> Unit = {},
-    onSave: (enabled: Boolean, interval: String, unit: TimeUnit) -> Unit = { _, _, _ -> },
+    onSave: (enabled: Boolean, interval: String, unit: LocalTimeUnit) -> Unit = { _, _, _ -> },
 ) {
+    val context = LocalContext.current
+    val lifecycleOwner = LocalLifecycleOwner.current
+    val notificationManager = NotificationManagerCompat.from(context)
+
+    var notificationsEnabled by remember { mutableStateOf(notificationManager.areNotificationsEnabled()) }
+    var hasRequestedPermission by remember { mutableStateOf(false) }
+
+    // Permission launcher for Android 13+
+    val permissionLauncher =
+        rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.RequestPermission(),
+        ) { isGranted ->
+            notificationsEnabled = isGranted
+            hasRequestedPermission = true
+        }
+
+    // Check if we can request notification permission (Android 13+)
+    val canRequestPermission =
+        Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+            ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.POST_NOTIFICATIONS,
+            ) != PackageManager.PERMISSION_GRANTED
+
+    // Listen for app resume to refresh notification permission
+    DisposableEffect(lifecycleOwner) {
+        val observer =
+            LifecycleEventObserver { _, event ->
+                if (event == Lifecycle.Event.ON_RESUME) {
+                    notificationsEnabled = notificationManager.areNotificationsEnabled()
+                }
+            }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
+    }
+
     var enabled by remember { mutableStateOf(isEnabled) }
     var selectedPreset by remember {
         mutableStateOf(
             when {
-                currentInterval == "1" && currentUnit == TimeUnit.DAYS -> SyncPreset.DAILY
-                currentInterval == "7" && currentUnit == TimeUnit.DAYS -> SyncPreset.WEEKLY
-                currentInterval == "30" && currentUnit == TimeUnit.DAYS -> SyncPreset.MONTHLY
+                currentInterval == "1" && currentUnit == LocalTimeUnit.DAYS -> SyncPreset.DAILY
+                currentInterval == "7" && currentUnit == LocalTimeUnit.DAYS -> SyncPreset.WEEKLY
+                currentInterval == "30" && currentUnit == LocalTimeUnit.DAYS -> SyncPreset.MONTHLY
                 else -> SyncPreset.CUSTOM
             },
         )
     }
     var customInterval by remember { mutableStateOf(if (selectedPreset == SyncPreset.CUSTOM) currentInterval else "1") }
-    var customUnit by remember { mutableStateOf(if (selectedPreset == SyncPreset.CUSTOM) currentUnit else TimeUnit.HOURS) }
+    var customUnit by remember { mutableStateOf(if (selectedPreset == SyncPreset.CUSTOM) currentUnit else LocalTimeUnit.HOURS) }
 
     val singularTimeArray = stringArrayResource(R.array.singularTime)
     val pluralTimeArray = stringArrayResource(R.array.pluralTime)
 
     // Helper function to get the correct time unit display name
     fun getTimeUnitDisplayName(
-        unit: TimeUnit,
+        unit: LocalTimeUnit,
         value: Int,
     ): String =
         if (value == 1) {
@@ -169,18 +228,60 @@ fun BackgroundSyncDialog(
                     Modifier
                         .verticalScroll(rememberScrollState())
                         .padding(20.dp),
-                verticalArrangement = Arrangement.spacedBy(20.dp),
+//                verticalArrangement = Arrangement.spacedBy(16.dp), // Reduced from 20.dp
             ) {
+                // Notification Permission Request/Warning
+                AnimatedVisibility(
+                    visible = !notificationsEnabled,
+                    enter = expandVertically() + fadeIn(),
+                    exit = shrinkVertically() + fadeOut(),
+                ) {
+                    Column {
+                        if (canRequestPermission && !hasRequestedPermission) {
+                            // Friendly permission request for Android 13+
+                            NotificationPermissionRequestCard(
+                                onRequestPermission = {
+                                    permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                                },
+                            )
+                        } else {
+                            // Warning card for manual settings or after permission denied
+                            NotificationWarningCard(
+                                onOpenSettings = {
+                                    val intent =
+                                        Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
+                                            putExtra(
+                                                Settings.EXTRA_APP_PACKAGE,
+                                                context.packageName,
+                                            )
+                                        }
+                                    context.startActivity(intent)
+                                },
+                            )
+                        }
+                        Spacer(modifier = Modifier.height(16.dp))
+                    }
+                }
+
                 // Fully Clickable Enable/Disable Card
                 Card(
-                    onClick = { enabled = !enabled },
+                    onClick = { enabled = !enabled }, // Always allow toggle
                     colors =
                         CardDefaults.cardColors(
                             containerColor =
-                                if (enabled) {
-                                    MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3f)
-                                } else {
-                                    MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
+                                when {
+                                    !notificationsEnabled && enabled ->
+                                        MaterialTheme.colorScheme.errorContainer.copy(
+                                            alpha = 0.4f,
+                                        )
+
+                                    !notificationsEnabled ->
+                                        MaterialTheme.colorScheme.errorContainer.copy(
+                                            alpha = 0.2f,
+                                        )
+
+                                    enabled -> MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3f)
+                                    else -> MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
                                 },
                         ),
                     shape = RoundedCornerShape(16.dp),
@@ -193,6 +294,19 @@ fun BackgroundSyncDialog(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(16.dp),
                     ) {
+                        // Icon indicating notification status
+                        Icon(
+                            imageVector = if (notificationsEnabled) Icons.Default.Notifications else Icons.Default.NotificationsOff,
+                            contentDescription = null,
+                            modifier = Modifier.size(24.dp),
+                            tint =
+                                if (notificationsEnabled) {
+                                    MaterialTheme.colorScheme.primary
+                                } else {
+                                    MaterialTheme.colorScheme.error
+                                },
+                        )
+
                         Column(
                             modifier = Modifier.weight(1f),
                         ) {
@@ -208,16 +322,24 @@ fun BackgroundSyncDialog(
                             )
                             Text(
                                 text =
-                                    if (enabled) {
-                                        stringResource(R.string.apps_will_update_automatically)
-                                    } else {
-                                        stringResource(
-                                            R.string.tap_to_enable_automatic_updates,
-                                        )
+                                    when {
+                                        !notificationsEnabled && enabled ->
+                                            stringResource(
+                                                R.string.notifications_required_for_background_sync,
+                                            )
+
+                                        !notificationsEnabled -> stringResource(R.string.notifications_required_for_background_sync)
+                                        enabled -> stringResource(R.string.apps_will_update_automatically)
+                                        else -> stringResource(R.string.tap_to_enable_automatic_updates)
                                     },
                                 style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                maxLines = 1,
+                                color =
+                                    if (notificationsEnabled) {
+                                        MaterialTheme.colorScheme.onSurfaceVariant
+                                    } else {
+                                        MaterialTheme.colorScheme.error
+                                    },
+                                maxLines = 2,
                                 overflow = TextOverflow.Ellipsis,
                             )
                         }
@@ -225,17 +347,47 @@ fun BackgroundSyncDialog(
                         Switch(
                             checked = enabled,
                             onCheckedChange = null, // Disable switch click since card handles it
+                            enabled = true, // Always enabled
                         )
                     }
                 }
 
                 // Sync Frequency Selection (only when enabled)
                 AnimatedVisibility(
-                    visible = enabled,
+                    visible = enabled, // Show when enabled, regardless of notifications
+                    enter =
+                        expandVertically(
+                            animationSpec =
+                                tween(
+                                    durationMillis = 300,
+                                    easing = androidx.compose.animation.core.FastOutSlowInEasing,
+                                ),
+                        ) +
+                            fadeIn(
+                                animationSpec =
+                                    tween(
+                                        durationMillis = 300,
+                                        delayMillis = 50,
+                                    ),
+                            ),
+                    exit =
+                        fadeOut(
+                            animationSpec = tween(durationMillis = 200),
+                        ) +
+                            shrinkVertically(
+                                animationSpec =
+                                    tween(
+                                        durationMillis = 300,
+                                        easing = androidx.compose.animation.core.FastOutSlowInEasing,
+                                    ),
+                            ),
                 ) {
                     Column(
                         verticalArrangement = Arrangement.spacedBy(16.dp),
                     ) {
+                        // Add top spacing within the animated container
+                        Spacer(modifier = Modifier.height(4.dp))
+
                         Text(
                             text = stringResource(R.string.sync_frequency),
                             style =
@@ -388,7 +540,7 @@ fun BackgroundSyncDialog(
                                                 expanded = expanded,
                                                 onDismissRequest = { expanded = false },
                                             ) {
-                                                TimeUnit.entries.forEach { unit ->
+                                                LocalTimeUnit.entries.forEach { unit ->
                                                     DropdownMenuItem(
                                                         text = {
                                                             Text(
@@ -414,7 +566,8 @@ fun BackgroundSyncDialog(
                     }
                 }
 
-                // Action Buttons
+                Spacer(modifier = Modifier.height(16.dp))
+
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(12.dp),
@@ -429,27 +582,27 @@ fun BackgroundSyncDialog(
                     FilledTonalButton(
                         onClick = {
                             val (interval, unit) =
-                                if (enabled) {
+                                if (enabled) { // Remove notification check here
                                     when (selectedPreset) {
                                         SyncPreset.CUSTOM -> {
                                             val validInterval = customInterval.toIntOrNull()
                                             if (validInterval != null && validInterval > 0) {
                                                 Pair(customInterval, customUnit)
                                             } else {
-                                                Pair("1", TimeUnit.HOURS)
+                                                Pair("1", LocalTimeUnit.HOURS)
                                             }
                                         }
 
                                         else ->
                                             Pair(
                                                 selectedPreset.intervalValue,
-                                                selectedPreset.timeUnit,
+                                                selectedPreset.localTimeUnit,
                                             )
                                     }
                                 } else {
-                                    Pair("0", TimeUnit.HOURS)
+                                    Pair("0", LocalTimeUnit.HOURS)
                                 }
-                            onSave(enabled, interval, unit)
+                            onSave(enabled, interval, unit) // Pass enabled state directly
                             onDismiss()
                         },
                         modifier = Modifier.weight(1f),
@@ -464,6 +617,169 @@ fun BackgroundSyncDialog(
                     ) {
                         Text(stringResource(R.string.save))
                     }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun NotificationPermissionRequestCard(
+    modifier: Modifier = Modifier,
+    onRequestPermission: () -> Unit = {},
+) {
+    Card(
+        modifier = modifier.fillMaxWidth(),
+        colors =
+            CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3f),
+            ),
+        shape = RoundedCornerShape(16.dp),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.3f)),
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                verticalAlignment = Alignment.Top,
+            ) {
+                Icon(
+                    imageVector = Icons.Default.NotificationAdd,
+                    contentDescription = null,
+                    modifier = Modifier.size(20.dp),
+                    tint = MaterialTheme.colorScheme.primary,
+                )
+
+                Column(
+                    modifier = Modifier.weight(1f),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
+                    Text(
+                        text = stringResource(R.string.enable_notifications),
+                        style =
+                            MaterialTheme.typography.titleSmall.copy(
+                                fontWeight = FontWeight.SemiBold,
+                            ),
+                        color = MaterialTheme.colorScheme.onPrimaryContainer,
+                    )
+
+                    Text(
+                        text = stringResource(R.string.notifications_help_background_sync),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer,
+                    )
+                }
+            }
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.End,
+            ) {
+                FilledTonalButton(
+                    onClick = onRequestPermission,
+                    colors =
+                        ButtonDefaults.filledTonalButtonColors(
+                            contentColor = MaterialTheme.colorScheme.primary,
+                            containerColor = MaterialTheme.colorScheme.primaryContainer,
+                        ),
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.NotificationAdd,
+                        contentDescription = null,
+                        modifier = Modifier.size(16.dp),
+                    )
+                    Text(
+                        text = stringResource(R.string.allow_notifications),
+                        modifier = Modifier.padding(start = 4.dp),
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun NotificationWarningCard(
+    modifier: Modifier = Modifier,
+    onOpenSettings: () -> Unit = {},
+) {
+    val context = LocalContext.current
+
+    Card(
+        modifier = modifier.fillMaxWidth(),
+        colors =
+            CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.15f),
+            ),
+        shape = RoundedCornerShape(16.dp),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.error.copy(alpha = 0.3f)),
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                verticalAlignment = Alignment.Top,
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Warning,
+                    contentDescription = null,
+                    modifier = Modifier.size(20.dp),
+                    tint = MaterialTheme.colorScheme.error,
+                )
+
+                Column(
+                    modifier = Modifier.weight(1f),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
+                    Text(
+                        text = stringResource(R.string.notifications_disabled),
+                        style =
+                            MaterialTheme.typography.titleSmall.copy(
+                                fontWeight = FontWeight.SemiBold,
+                            ),
+                        color = MaterialTheme.colorScheme.error,
+                    )
+
+                    Text(
+                        text = stringResource(R.string.background_sync_requires_notifications),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onErrorContainer,
+                    )
+                }
+            }
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.End,
+            ) {
+                FilledTonalButton(
+                    onClick = {
+                        val intent =
+                            Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
+                                putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
+                            }
+                        context.startActivity(intent)
+                        onOpenSettings()
+                    },
+                    colors =
+                        ButtonDefaults.textButtonColors(
+                            contentColor = MaterialTheme.colorScheme.error,
+                            containerColor = MaterialTheme.colorScheme.errorContainer,
+                        ),
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Settings,
+                        contentDescription = null,
+                        modifier = Modifier.size(16.dp),
+                    )
+                    Text(
+                        text = stringResource(R.string.open_settings),
+                        modifier = Modifier.padding(start = 4.dp),
+                    )
                 }
             }
         }
@@ -567,7 +883,7 @@ private fun BackgroundSyncDialogPreview() {
         BackgroundSyncDialog(
             isEnabled = true,
             currentInterval = "7",
-            currentUnit = TimeUnit.DAYS,
+            currentUnit = LocalTimeUnit.DAYS,
         )
     }
 }

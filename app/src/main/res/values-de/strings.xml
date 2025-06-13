@@ -95,6 +95,8 @@
     <string name="sort_by_name">Name</string>
     <string name="sort_by_sdk">SDK-Version</string>
     <string name="loading_apps">Lade Apps…</string>
+    <string name="setting_up_your_apps">Richte deine Apps ein…</string>
+    <string name="apps_sync_progress">%1$d von %2$d Apps</string>
     <string name="something_went_wrong">Etwas ist schief gelaufen</string>
     <string name="no_apps_found">Keine Apps gefunden</string>
     <string name="try_searching_different_terms">Versuche die Suche mit anderen Begriffen</string>
@@ -240,4 +242,14 @@
     <string name="export_data_description">Lade deine App-Daten als CSV-Backup herunter</string>
     <string name="export_sdk_monitor_data">SDK Monitor Daten Exportieren</string>
     <string name="sdk_monitor_data_backup">SDK Monitor Daten-Backup erstellt am %s</string>
+
+    <!-- Notification Permission Strings -->
+    <string name="notifications_disabled">Benachrichtigungen Deaktiviert</string>
+    <string name="notifications_required_for_background_sync">Benachrichtigungen sind erforderlich, damit die Hintergrundsynchronisation funktioniert</string>
+    <string name="background_sync_requires_notifications">Die Hintergrundsynchronisation verwendet Benachrichtigungen, um automatische Updates zu planen. Bitte aktiviere Benachrichtigungen in deinen Geräteeinstellungen.</string>
+    <string name="open_settings">Einstellungen Öffnen</string>
+    <string name="enable_notifications">Benachrichtigungen Aktivieren</string>
+    <string name="notifications_help_background_sync">Benachrichtigungen helfen dabei, deine Apps im Hintergrund aktuell zu halten</string>
+    <string name="allow_notifications">Benachrichtigungen Erlauben</string>
+
 </resources>

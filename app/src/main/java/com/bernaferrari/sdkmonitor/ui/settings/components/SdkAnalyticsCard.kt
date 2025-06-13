@@ -57,10 +57,6 @@ fun SdkAnalyticsCard(
     totalApps: Int,
     onSdkClick: (Int) -> Unit = {},
 ) {
-    // Filter data based on app type - you'll need to add app type info to SdkDistribution
-    // For now, showing all data as placeholder
-    val filteredData = sdkDistribution
-
     val animationProgress by animateFloatAsState(
         targetValue = 1f,
         animationSpec =
@@ -83,7 +79,7 @@ fun SdkAnalyticsCard(
                     .padding(vertical = 20.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
-            // Enhanced Header with app type filter buttons
+            // Enhanced Header
             Row(
                 modifier =
                     Modifier
@@ -173,7 +169,7 @@ fun SdkAnalyticsCard(
                                     color = MaterialTheme.colorScheme.tertiaryContainer,
                                 ) {
                                     Text(
-                                        text = filteredData.size.toString(),
+                                        text = sdkDistribution.size.toString(),
                                         style =
                                             MaterialTheme.typography.labelLarge.copy(
                                                 fontWeight = FontWeight.Bold,
@@ -200,10 +196,10 @@ fun SdkAnalyticsCard(
                 }
             }
 
-            // Chart with filtered data
-            if (filteredData.isNotEmpty()) {
+            // Chart with data
+            if (sdkDistribution.isNotEmpty()) {
                 SdkBarChart(
-                    data = filteredData,
+                    data = sdkDistribution,
                     animationProgress = animationProgress,
                     onBarClick = onSdkClick,
                     modifier =
@@ -213,13 +209,13 @@ fun SdkAnalyticsCard(
                             .padding(horizontal = 20.dp),
                 )
 
-                // Legend with filtered data
+                // Legend with data
                 LazyRow(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     contentPadding = PaddingValues(horizontal = 20.dp),
                 ) {
-                    items(filteredData.sortedByDescending { it.sdkVersion }.take(5)) { sdk ->
+                    items(sdkDistribution.sortedByDescending { it.sdkVersion }.take(5)) { sdk ->
                         SdkLegendItem(
                             sdkVersion = sdk.sdkVersion,
                             appCount = sdk.appCount,

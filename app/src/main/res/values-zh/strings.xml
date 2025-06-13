@@ -96,6 +96,8 @@
     <string name="sort_by_name">名称</string>
     <string name="sort_by_sdk">SDK版本</string>
     <string name="loading_apps">正在加载应用…</string>
+    <string name="setting_up_your_apps">正在设置您的应用…</string>
+    <string name="apps_sync_progress">%1$d / %2$d 个应用</string>
     <string name="something_went_wrong">出现了问题</string>
     <string name="no_apps_found">未找到应用</string>
     <string name="try_searching_different_terms">尝试使用不同的搜索词</string>
@@ -240,4 +242,14 @@
     <string name="export_data_description">将您的应用数据下载为CSV备份</string>
     <string name="export_sdk_monitor_data">导出SDK监视器数据</string>
     <string name="sdk_monitor_data_backup">SDK监视器数据备份创建于%s</string>
+
+    <!-- Notification Permission Strings -->
+    <string name="notifications_disabled">通知已禁用</string>
+    <string name="notifications_required_for_background_sync">后台同步需要通知权限才能正常工作</string>
+    <string name="background_sync_requires_notifications">后台同步使用通知来安排自动更新。请在设备设置中启用通知。</string>
+    <string name="open_settings">打开设置</string>
+    <string name="enable_notifications">启用通知</string>
+    <string name="notifications_help_background_sync">通知有助于让您的应用在后台保持更新</string>
+    <string name="allow_notifications">允许通知</string>
+
 </resources>

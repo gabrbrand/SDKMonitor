@@ -1,5 +1,17 @@
 package com.bernaferrari.sdkmonitor.ui.settings
 
+import android.Manifest
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
+import android.provider.Settings
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -28,6 +40,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -36,17 +49,25 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.core.app.NotificationManagerCompat
+import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.bernaferrari.sdkmonitor.BuildConfig
 import com.bernaferrari.sdkmonitor.R
 import com.bernaferrari.sdkmonitor.domain.model.ThemeMode
 import com.bernaferrari.sdkmonitor.ui.settings.components.AnalyticsSection
 import com.bernaferrari.sdkmonitor.ui.settings.components.BackgroundSyncDialog
+import com.bernaferrari.sdkmonitor.ui.settings.components.NotificationPermissionRequestCard
+import com.bernaferrari.sdkmonitor.ui.settings.components.NotificationWarningCard
 import com.bernaferrari.sdkmonitor.ui.settings.components.SdkAnalyticsCard
 import com.bernaferrari.sdkmonitor.ui.settings.components.SdkAnalyticsEmptyState
 import com.bernaferrari.sdkmonitor.ui.settings.components.SdkAnalyticsPlaceholder
@@ -61,17 +82,51 @@ fun SettingsScreen(
     onNavigateToAbout: (() -> Unit)? = null,
     viewModel: SettingsViewModel = hiltViewModel(),
 ) {
+    val context = LocalContext.current
+    val lifecycleOwner = LocalLifecycleOwner.current
+    val notificationManager = NotificationManagerCompat.from(context)
+
     val uiState by viewModel.uiState.collectAsState()
     var showSyncDialog by remember { mutableStateOf(false) }
     var selectedSdkVersion by remember { mutableIntStateOf(0) }
     var showSdkDialog by remember { mutableStateOf(false) }
+    var notificationsEnabled by remember { mutableStateOf(notificationManager.areNotificationsEnabled()) }
+    var hasRequestedPermission by remember { mutableStateOf(false) }
+
+    // Permission launcher for Android 13+
+    val permissionLauncher =
+        rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.RequestPermission(),
+        ) { isGranted ->
+            notificationsEnabled = isGranted
+            hasRequestedPermission = true
+        }
+
+    // Check if we can request notification permission (Android 13+)
+    val canRequestPermission =
+        Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+            ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED
+
+    // Listen for app resume to refresh notification permission
+    DisposableEffect(lifecycleOwner) {
+        val observer =
+            LifecycleEventObserver { _, event ->
+                if (event == Lifecycle.Event.ON_RESUME) {
+                    notificationsEnabled = notificationManager.areNotificationsEnabled()
+                }
+            }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
+    }
 
     val singularTimeArray = stringArrayResource(R.array.singularTime)
     val pluralTimeArray = stringArrayResource(R.array.pluralTime)
 
     // Helper function to get the correct time unit display name
     fun getTimeUnitDisplayName(
-        unit: TimeUnit,
+        unit: LocalTimeUnit,
         value: String,
     ): String {
         val intValue = value.toIntOrNull() ?: 1
@@ -227,40 +282,66 @@ fun SettingsScreen(
 
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    // Background Sync Section - SIMPLIFIED AND ELEGANT
                     SettingsSection(title = stringResource(R.string.background_sync)) {
+                        // Notification Permission Request/Warning
+                        AnimatedVisibility(
+                            visible = !notificationsEnabled,
+                            enter = expandVertically() + fadeIn(),
+                            exit = shrinkVertically() + fadeOut(),
+                        ) {
+                            Column {
+                                if (canRequestPermission && !hasRequestedPermission) {
+                                    // Friendly permission request for Android 13+
+                                    NotificationPermissionRequestCard(
+                                        onRequestPermission = {
+                                            permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                                        },
+                                    )
+                                } else {
+                                    // Warning card for manual settings or after permission denied
+                                    NotificationWarningCard(
+                                        onOpenSettings = {
+                                            val intent =
+                                                Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
+                                                    putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
+                                                }
+                                            context.startActivity(intent)
+                                        },
+                                    )
+                                }
+                                Spacer(modifier = Modifier.height(16.dp))
+                            }
+                        }
+
                         SettingsItem(
                             title = stringResource(R.string.background_sync),
                             subtitle =
-                                if (prefs.backgroundSync) {
-                                    when {
-                                        prefs.syncInterval == "1" && prefs.syncTimeUnit == TimeUnit.DAYS ->
-                                            stringResource(
-                                                R.string.enabled_daily_updates,
-                                            )
+                                when {
+                                    !notificationsEnabled -> stringResource(R.string.notifications_required_for_background_sync)
+                                    prefs.backgroundSync -> {
+                                        when {
+                                            prefs.syncInterval == "1" && prefs.syncLocalTimeUnit == LocalTimeUnit.DAYS ->
+                                                stringResource(R.string.enabled_daily_updates)
 
-                                        prefs.syncInterval == "7" && prefs.syncTimeUnit == TimeUnit.DAYS ->
-                                            stringResource(
-                                                R.string.enabled_weekly_updates,
-                                            )
+                                            prefs.syncInterval == "7" && prefs.syncLocalTimeUnit == LocalTimeUnit.DAYS ->
+                                                stringResource(R.string.enabled_weekly_updates)
 
-                                        prefs.syncInterval == "30" && prefs.syncTimeUnit == TimeUnit.DAYS ->
-                                            stringResource(
-                                                R.string.enabled_monthly_updates,
-                                            )
+                                            prefs.syncInterval == "30" && prefs.syncLocalTimeUnit == LocalTimeUnit.DAYS ->
+                                                stringResource(R.string.enabled_monthly_updates)
 
-                                        else ->
-                                            stringResource(
-                                                R.string.enabled_every,
-                                                prefs.syncInterval,
-                                                getTimeUnitDisplayName(
-                                                    prefs.syncTimeUnit,
+                                            else ->
+                                                stringResource(
+                                                    R.string.enabled_every,
                                                     prefs.syncInterval,
-                                                ).lowercase(),
-                                            )
+                                                    getTimeUnitDisplayName(
+                                                        prefs.syncLocalTimeUnit,
+                                                        prefs.syncInterval,
+                                                    ).lowercase(),
+                                                )
+                                        }
                                     }
-                                } else {
-                                    stringResource(R.string.tap_to_configure_automatic_updates)
+
+                                    else -> stringResource(R.string.tap_to_configure_automatic_updates)
                                 },
                             icon = if (prefs.backgroundSync) Icons.Default.Sync else Icons.Default.SyncDisabled,
                             onClick = { showSyncDialog = true },
@@ -296,7 +377,7 @@ fun SettingsScreen(
             BackgroundSyncDialog(
                 isEnabled = uiState.preferences.backgroundSync,
                 currentInterval = uiState.preferences.syncInterval,
-                currentUnit = uiState.preferences.syncTimeUnit,
+                currentUnit = uiState.preferences.syncLocalTimeUnit,
                 onDismiss = { showSyncDialog = false },
                 onSave = { enabled, interval, unit ->
                     if (enabled != uiState.preferences.backgroundSync) {

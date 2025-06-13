@@ -18,6 +18,9 @@ import com.bernaferrari.sdkmonitor.extensions.darken
 import dagger.hilt.android.qualifiers.ApplicationContext
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -33,6 +36,19 @@ class AppManager
         private val notificationManager: NotificationManager,
     ) {
         private val packageManager: PackageManager = context.packageManager
+
+        // Track first sync progress
+        private val _isFirstSync = MutableStateFlow(false)
+        val isFirstSync: StateFlow<Boolean> = _isFirstSync.asStateFlow()
+
+        private val _syncProgress = MutableStateFlow(SyncProgress())
+        val syncProgress: StateFlow<SyncProgress> = _syncProgress.asStateFlow()
+
+        data class SyncProgress(
+            val current: Int = 0,
+            val total: Int = 0,
+            val isActive: Boolean = false,
+        )
 
         private fun isUserApp(ai: ApplicationInfo?): Boolean {
             if (ai == null) return false
@@ -108,15 +124,15 @@ class AppManager
             if (appsRepository.getAppsMap()[packageInfo.packageName] != null) return
             if (packageInfo.applicationInfo == null) return
 
-            val icon = packageManager.getApplicationIcon(packageInfo.applicationInfo!!).toBitmap()
-            val backgroundColor = getPaletteColor(Palette.from(icon).generate())
+//            val icon = packageManager.getApplicationIcon(packageInfo.applicationInfo!!).toBitmap()
+//            val backgroundColor = getPaletteColor(Palette.from(icon).generate())
             val label = getAppLabel(packageInfo)
 
             appsRepository.insertApp(
                 App(
                     packageName = packageInfo.packageName,
                     title = label,
-                    backgroundColor = backgroundColor,
+                    backgroundColor = 0,
                     isFromPlayStore = isUserApp(packageInfo.applicationInfo),
                 ),
             )
@@ -215,13 +231,18 @@ class AppManager
             try {
                 Napier.d("🔄 Starting app sync with cleanup")
 
+                // Check if this is first sync (empty database)
+                val dbApps = appsRepository.getAllApps()
+                val isFirstTime = dbApps.isEmpty()
+
+                if (isFirstTime) {
+                    _isFirstSync.value = true
+                }
+
                 // Get all installed packages
                 val installedPackages =
                     packageManager.getInstalledPackages(PackageManager.GET_META_DATA)
                 val installedPackageNames = installedPackages.map { it.packageName }.toSet()
-
-                // Get all apps from database
-                val dbApps = appsRepository.getAllApps()
                 val dbPackageNames = dbApps.map { it.packageName }.toSet()
 
                 // Find apps in DB but not installed anymore
@@ -236,18 +257,44 @@ class AppManager
                     }
                 }
 
+                // Start progress tracking for first sync
+                if (isFirstTime) {
+                    _syncProgress.value =
+                        SyncProgress(
+                            current = 0,
+                            total = installedPackages.size,
+                            isActive = true,
+                        )
+                }
+
                 // Sync all currently installed apps
-                installedPackages.forEach { packageInfo ->
+                installedPackages.forEachIndexed { index, packageInfo ->
                     try {
                         insertNewApp(packageInfo)
                         insertNewVersion(packageInfo)
+
+                        // Update progress for first sync
+                        if (isFirstTime) {
+                            _syncProgress.value =
+                                _syncProgress.value.copy(
+                                    current = index + 1,
+                                )
+                        }
                     } catch (e: Exception) {
                         Napier.e("❌ Failed to sync package: ${packageInfo.packageName}", e)
                     }
                 }
 
+                // Complete first sync
+                if (isFirstTime) {
+                    _syncProgress.value = SyncProgress(isActive = false)
+                    _isFirstSync.value = false
+                }
+
                 Napier.d("✅ App sync completed with cleanup")
             } catch (e: Exception) {
+                _syncProgress.value = SyncProgress(isActive = false)
+                _isFirstSync.value = false
                 Napier.e("❌ Failed to sync apps", e)
                 throw e
             }

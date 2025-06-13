@@ -95,6 +95,8 @@
     <string name="sort_by_name">Nombre</string>
     <string name="sort_by_sdk">Versión SDK</string>
     <string name="loading_apps">Cargando apps…</string>
+    <string name="setting_up_your_apps">Configurando tus apps…</string>
+    <string name="apps_sync_progress">%1$d de %2$d apps</string>
     <string name="something_went_wrong">Algo salió mal</string>
     <string name="no_apps_found">No se encontraron apps</string>
     <string name="try_searching_different_terms">Intenta buscar con términos diferentes</string>
@@ -240,4 +242,14 @@
     <string name="export_data_description">Descarga los datos de tu app como respaldo CSV</string>
     <string name="export_sdk_monitor_data">Exportar Datos de SDK Monitor</string>
     <string name="sdk_monitor_data_backup">Respaldo de datos de SDK Monitor creado el %s</string>
+
+    <!-- Notification Permission Strings -->
+    <string name="notifications_disabled">Notificaciones Deshabilitadas</string>
+    <string name="notifications_required_for_background_sync">Las notificaciones son necesarias para que funcione la sincronización en segundo plano</string>
+    <string name="background_sync_requires_notifications">La sincronización en segundo plano usa notificaciones para programar actualizaciones automáticas. Por favor habilita las notificaciones en la configuración de tu dispositivo.</string>
+    <string name="open_settings">Abrir Configuración</string>
+    <string name="enable_notifications">Habilitar Notificaciones</string>
+    <string name="notifications_help_background_sync">Las notificaciones ayudan a mantener tus apps actualizadas en segundo plano</string>
+    <string name="allow_notifications">Permitir Notificaciones</string>
+
 </resources>

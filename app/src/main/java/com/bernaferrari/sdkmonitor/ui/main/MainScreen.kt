@@ -37,6 +37,7 @@ import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -76,6 +77,8 @@ fun MainScreen(
     val searchQuery by viewModel.searchQuery.collectAsStateWithLifecycle()
     val appFilter by viewModel.appFilter.collectAsStateWithLifecycle()
     val sortOption by viewModel.sortOption.collectAsStateWithLifecycle()
+    val isFirstSync by viewModel.isFirstSync.collectAsStateWithLifecycle()
+    val syncProgress by viewModel.syncProgress.collectAsStateWithLifecycle()
 
     // Add focus manager for keyboard dismissal
     val focusManager = LocalFocusManager.current
@@ -501,17 +504,58 @@ fun MainScreen(
                 ) {
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.spacedBy(12.dp),
+                        verticalArrangement = Arrangement.spacedBy(16.dp),
                     ) {
                         CircularProgressIndicator(
-                            modifier = Modifier.size(40.dp),
+                            modifier = Modifier.size(48.dp),
                             color = MaterialTheme.colorScheme.primary,
                         )
-                        Text(
-                            text = stringResource(R.string.loading_apps),
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        )
+
+                        if (isFirstSync && syncProgress.isActive) {
+                            // First sync with progress
+                            Text(
+                                text = stringResource(R.string.setting_up_your_apps),
+                                style =
+                                    MaterialTheme.typography.titleMedium.copy(
+                                        fontWeight = FontWeight.Bold,
+                                    ),
+                                color = MaterialTheme.colorScheme.onSurface,
+                            )
+
+                            Text(
+                                text =
+                                    stringResource(
+                                        R.string.apps_sync_progress,
+                                        syncProgress.current,
+                                        syncProgress.total,
+                                    ),
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+
+                            LinearProgressIndicator(
+                                progress = {
+                                    if (syncProgress.total > 0) {
+                                        syncProgress.current.toFloat() / syncProgress.total.toFloat()
+                                    } else {
+                                        0f
+                                    }
+                                },
+                                modifier =
+                                    Modifier
+                                        .fillMaxWidth(0.7f)
+                                        .height(8.dp),
+                                color = MaterialTheme.colorScheme.primary,
+                                trackColor = MaterialTheme.colorScheme.surfaceVariant,
+                            )
+                        } else {
+                            // Regular loading
+                            Text(
+                                text = stringResource(R.string.loading_apps),
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                        }
                     }
                 }
             }
@@ -710,7 +754,7 @@ fun MainScreen(
                                                 },
                                             ) { _, _ -> }
                                         }.windowInsetsPadding(WindowInsets.systemBars)
-                                        .padding(end = 32.dp),
+                                        .padding(end = if (showFastScroller) 32.dp else 0.dp),
                             ) {
                                 when {
                                     groupedApps.isNotEmpty() -> {
