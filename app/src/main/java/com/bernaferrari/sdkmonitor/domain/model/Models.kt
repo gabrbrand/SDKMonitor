@@ -16,7 +16,7 @@ data class AppDetails(
     val minSdk: Int,
     val size: Long,
     val lastUpdateTime: String,
-    val isSystemApp: Boolean = false
+    val isSystemApp: Boolean = false,
 )
 
 /**
@@ -31,13 +31,13 @@ data class AppVersion(
     val versionName: String = "",
     val versionCode: Long = 0L,
     val backgroundColor: Int = 0,
-    val isFromPlayStore: Boolean = false
+    val isFromPlayStore: Boolean = false,
 )
 
 enum class AppFilter {
     ALL_APPS,
     USER_APPS,
-    SYSTEM_APPS
+    SYSTEM_APPS,
 }
 
 /**
@@ -49,16 +49,18 @@ data class UserPreferences(
     val backgroundSync: Boolean = false,
     val orderBySdk: Boolean = false,
     val syncInterval: String = "30m",
-    val themeMode: ThemeMode = ThemeMode.MATERIAL_YOU
+    val themeMode: ThemeMode = ThemeMode.MATERIAL_YOU,
 )
-
 
 /**
  * Sort options for the main screen
  */
-enum class SortOption(val displayName: String, val icon: ImageVector) {
+enum class SortOption(
+    val displayName: String,
+    val icon: ImageVector,
+) {
     NAME("Name", androidx.compose.material.icons.Icons.Default.SortByAlpha),
-    SDK("Target SDK", androidx.compose.material.icons.Icons.Default.Android)
+    SDK("Target SDK", androidx.compose.material.icons.Icons.Default.Android),
 }
 
 /**
@@ -72,5 +74,5 @@ data class LogEntry(
     val newSdk: Int,
     val oldVersion: String?,
     val newVersion: String,
-    val timestamp: Long
+    val timestamp: Long,
 )

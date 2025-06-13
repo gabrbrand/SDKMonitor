@@ -8,7 +8,7 @@ import kotlinx.parcelize.Parcelize
 
 @Entity(
     tableName = "apps",
-    indices = [(Index(value = ["packageName"], unique = true))]
+    indices = [(Index(value = ["packageName"], unique = true))],
 )
 @Parcelize
 data class App(
@@ -16,5 +16,5 @@ data class App(
     val packageName: String,
     val title: String,
     val backgroundColor: Int,
-    val isFromPlayStore: Boolean
+    val isFromPlayStore: Boolean,
 ) : Parcelable

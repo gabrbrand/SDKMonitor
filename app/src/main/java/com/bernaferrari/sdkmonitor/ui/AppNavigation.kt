@@ -11,7 +11,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Apps
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -51,21 +50,21 @@ import com.bernaferrari.sdkmonitor.ui.settings.AboutScreen
 import com.bernaferrari.sdkmonitor.ui.settings.SettingsScreen
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppNavigation(
     modifier: Modifier = Modifier,
-    initialPackageName: String? = null
+    initialPackageName: String? = null,
 ) {
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
 
-    val bottomNavItems = listOf(
-        BottomNavItem.Main,
-        BottomNavItem.Logs,
-        BottomNavItem.Settings
-    )
+    val bottomNavItems =
+        listOf(
+            BottomNavItem.Main,
+            BottomNavItem.Logs,
+            BottomNavItem.Settings,
+        )
 
     NavigationSuiteScaffold(
         navigationSuiteItems = {
@@ -74,7 +73,7 @@ fun AppNavigation(
                     icon = {
                         Icon(
                             imageVector = item.icon,
-                            contentDescription = null
+                            contentDescription = null,
                         )
                     },
                     label = { Text(stringResource(item.label)) },
@@ -87,23 +86,24 @@ fun AppNavigation(
                             launchSingleTop = true
                             restoreState = true
                         }
-                    }
+                    },
                 )
             }
         },
-        modifier = modifier
+        modifier = modifier,
     ) {
         NavHost(
             navController = navController,
             startDestination = Screen.Main.route,
-            modifier = Modifier
-                .fillMaxSize()
+            modifier =
+                Modifier
+                    .fillMaxSize(),
         ) {
             composable(Screen.Main.route) {
                 MainScreenWithListDetail(
                     navController = navController,
                     appStartupPackageName = initialPackageName,
-                    screenRoute = Screen.Main.route
+                    screenRoute = Screen.Main.route,
                 )
             }
 
@@ -123,7 +123,7 @@ private fun MainScreenWithListDetail(
     modifier: Modifier = Modifier,
     navController: NavHostController,
     appStartupPackageName: String?,
-    screenRoute: String
+    screenRoute: String,
 ) {
     val listDetailNavigator = rememberListDetailPaneScaffoldNavigator<String>()
     val scope = rememberCoroutineScope()
@@ -143,7 +143,7 @@ private fun MainScreenWithListDetail(
                 ) {
                     listDetailNavigator.navigateTo(
                         ListDetailPaneScaffoldRole.Detail,
-                        appStartupPackageName
+                        appStartupPackageName,
                     )
                 }
                 startupDeepLinkApplied = true
@@ -168,11 +168,11 @@ private fun MainScreenWithListDetail(
                         scope.launch {
                             listDetailNavigator.navigateTo(
                                 ListDetailPaneScaffoldRole.Detail,
-                                packageName
+                                packageName,
                             )
                         }
                     },
-                    selectedPackageName = listDetailNavigator.currentDestination?.contentKey
+                    selectedPackageName = listDetailNavigator.currentDestination?.contentKey,
                 )
             }
         },
@@ -186,19 +186,17 @@ private fun MainScreenWithListDetail(
                                 listDetailNavigator.navigateBack()
                             }
                         },
-                        isTabletSize = isTablet()
+                        isTabletSize = isTablet(),
                     )
                 } ?: EmptyDetailState()
             }
         },
-        modifier = modifier
+        modifier = modifier,
     )
 }
 
 @Composable
-private fun LogsScreenWithListDetail(
-    modifier: Modifier = Modifier
-) {
+private fun LogsScreenWithListDetail(modifier: Modifier = Modifier) {
     val listDetailNavigator = rememberListDetailPaneScaffoldNavigator<String>()
     val scope = rememberCoroutineScope()
 
@@ -211,11 +209,11 @@ private fun LogsScreenWithListDetail(
                         scope.launch {
                             listDetailNavigator.navigateTo(
                                 ListDetailPaneScaffoldRole.Detail,
-                                packageName
+                                packageName,
                             )
                         }
                     },
-                    selectedPackageName = listDetailNavigator.currentDestination?.contentKey
+                    selectedPackageName = listDetailNavigator.currentDestination?.contentKey,
                 )
             }
         },
@@ -229,19 +227,17 @@ private fun LogsScreenWithListDetail(
                                 listDetailNavigator.navigateBack()
                             }
                         },
-                        isTabletSize = isTablet()
+                        isTabletSize = isTablet(),
                     )
                 } ?: EmptyDetailState()
             }
         },
-        modifier = modifier
+        modifier = modifier,
     )
 }
 
 @Composable
-private fun SettingsScreenWithListDetail(
-    modifier: Modifier = Modifier
-) {
+private fun SettingsScreenWithListDetail(modifier: Modifier = Modifier) {
     val listDetailNavigator = rememberListDetailPaneScaffoldNavigator<String>()
     val scope = rememberCoroutineScope()
 
@@ -254,7 +250,7 @@ private fun SettingsScreenWithListDetail(
                         scope.launch {
                             listDetailNavigator.navigateTo(
                                 ListDetailPaneScaffoldRole.Detail,
-                                packageName
+                                packageName,
                             )
                         }
                     },
@@ -262,7 +258,7 @@ private fun SettingsScreenWithListDetail(
                         scope.launch {
                             listDetailNavigator.navigateTo(
                                 ListDetailPaneScaffoldRole.Detail,
-                                "about"
+                                "about",
                             )
                         }
                     },
@@ -279,11 +275,11 @@ private fun SettingsScreenWithListDetail(
                                     listDetailNavigator.navigateBack()
                                 }
                             },
-                            isTabletSize = isTablet()
+                            isTabletSize = isTablet(),
                         )
                     }
 
-                    null -> { /* Empty - no default content needed */
+                    null -> { // Empty - no default content needed
                     }
 
                     else -> {
@@ -294,38 +290,37 @@ private fun SettingsScreenWithListDetail(
                                     listDetailNavigator.navigateBack()
                                 }
                             },
-                            isTabletSize = isTablet()
+                            isTabletSize = isTablet(),
                         )
                     }
                 }
             }
         },
-        modifier = modifier
+        modifier = modifier,
     )
 }
 
 @Composable
 private fun EmptyDetailState() {
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(48.dp),
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .padding(48.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+        verticalArrangement = Arrangement.Center,
     ) {
         Surface(
             color = MaterialTheme.colorScheme.surfaceContainer,
-            shape = RoundedCornerShape(8.dp)
+            shape = RoundedCornerShape(8.dp),
         ) {
             Text(
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
                 text = stringResource(R.string.select_app_to_get_started),
                 style = MaterialTheme.typography.bodyLarge,
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
             )
-
         }
-
     }
 }
 
@@ -338,14 +333,15 @@ fun isTablet(): Boolean {
     }
 }
 
-
 private sealed class BottomNavItem(
     val route: String,
     val icon: androidx.compose.ui.graphics.vector.ImageVector,
-    val label: Int
+    val label: Int,
 ) {
     data object Main : BottomNavItem(Screen.Main.route, Icons.Default.Apps, R.string.main_title)
+
     data object Logs : BottomNavItem(Screen.Logs.route, Icons.Default.History, R.string.logs_title)
+
     data object Settings :
         BottomNavItem(Screen.Settings.route, Icons.Default.Settings, R.string.settings_title)
 }

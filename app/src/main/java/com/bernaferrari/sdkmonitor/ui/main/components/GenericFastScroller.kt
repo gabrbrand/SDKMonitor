@@ -65,49 +65,51 @@ fun <T> GenericFastScroller(
     scrollOffsetPx: Int = 0,
     onLetterSelected: (String) -> Unit = {},
     onScrollFinished: () -> Unit = {},
-    onInteractionStart: () -> Unit = {}
+    onInteractionStart: () -> Unit = {},
 ) {
     val coroutineScope = rememberCoroutineScope()
     val density = LocalDensity.current
     val hapticFeedback = LocalHapticFeedback.current
 
     // Get unique letters from items
-    val letters = remember(items.hashCode()) {
-        val letterSet = mutableSetOf<String>()
-        var hasNonLetters = false
+    val letters =
+        remember(items.hashCode()) {
+            val letterSet = mutableSetOf<String>()
+            var hasNonLetters = false
 
-        items.forEach { item ->
-            val key = getIndexKey(item)
+            items.forEach { item ->
+                val key = getIndexKey(item)
 
-            // For SDK sorting, treat all numeric strings as SDK versions
-            // For NAME sorting, only treat single first characters
-            if (key.all { it.isDigit() } && key.length <= 3) { // SDK versions are typically 1-3 digits
-                letterSet.add(key)
-            } else {
-                val firstChar = key.firstOrNull()?.uppercaseChar()
-                if (firstChar?.isLetter() == true) {
-                    letterSet.add(firstChar.toString())
+                // For SDK sorting, treat all numeric strings as SDK versions
+                // For NAME sorting, only treat single first characters
+                if (key.all { it.isDigit() } && key.length <= 3) { // SDK versions are typically 1-3 digits
+                    letterSet.add(key)
                 } else {
-                    hasNonLetters = true
+                    val firstChar = key.firstOrNull()?.uppercaseChar()
+                    if (firstChar?.isLetter() == true) {
+                        letterSet.add(firstChar.toString())
+                    } else {
+                        hasNonLetters = true
+                    }
                 }
             }
-        }
 
-        // Sort appropriately based on content type
-        val result = if (letterSet.any { it.all { char -> char.isDigit() } }) {
-            // If we have numeric values (SDK versions), sort them numerically descending
-            letterSet.sortedByDescending { it.toIntOrNull() ?: 0 }.toMutableList()
-        } else {
-            // Regular alphabetical sorting
-            letterSet.sorted().toMutableList()
-        }
+            // Sort appropriately based on content type
+            val result =
+                if (letterSet.any { it.all { char -> char.isDigit() } }) {
+                    // If we have numeric values (SDK versions), sort them numerically descending
+                    letterSet.sortedByDescending { it.toIntOrNull() ?: 0 }.toMutableList()
+                } else {
+                    // Regular alphabetical sorting
+                    letterSet.sorted().toMutableList()
+                }
 
-        // Only add "#" for alphabetical sorting when there are non-letters
-        if (hasNonLetters && result.none { it.all { char -> char.isDigit() } }) {
-            result.add(0, "#")
+            // Only add "#" for alphabetical sorting when there are non-letters
+            if (hasNonLetters && result.none { it.all { char -> char.isDigit() } }) {
+                result.add(0, "#")
+            }
+            result
         }
-        result
-    }
 
     var isInteracting by remember { mutableStateOf(false) }
     var currentDragPosition by remember { mutableFloatStateOf(0f) }
@@ -129,7 +131,7 @@ fun <T> GenericFastScroller(
                 if (scrollOffsetPx > 0) {
                     listState.scrollToItem(
                         index = index,
-                        scrollOffset = -scrollOffsetPx
+                        scrollOffset = -scrollOffsetPx,
                     )
                 } else {
                     listState.scrollToItem(index)
@@ -147,8 +149,10 @@ fun <T> GenericFastScroller(
         val adjustedY = (yPosition - verticalPaddingPx).coerceIn(0f, usableHeight)
 
         val progress = (adjustedY / usableHeight).coerceIn(0f, 1f)
-        val letterIndex = (progress * (letters.size - 1)).toInt()
-            .coerceIn(0, letters.size - 1)
+        val letterIndex =
+            (progress * (letters.size - 1))
+                .toInt()
+                .coerceIn(0, letters.size - 1)
 
         val selectedLetter = letters[letterIndex]
 
@@ -167,51 +171,55 @@ fun <T> GenericFastScroller(
     val width = 40.dp
 
     Box(
-        modifier = modifier
-            .fillMaxHeight()
-            .width(width)
-            .background(
-                color = Color.Transparent, // MaterialTheme.colorScheme.surface.copy(alpha = 0.8f),
-                shape = RoundedCornerShape(20.dp)
-            ),
-    ) {
-        Column(
-            modifier = Modifier
+        modifier =
+            modifier
                 .fillMaxHeight()
                 .width(width)
-                .padding(vertical = 16.dp) // More vertical padding, less horizontal
-                .onGloballyPositioned { scrollerSize = it.size }
-                .pointerInput(items.hashCode()) {
-                    awaitPointerEventScope {
-                        while (true) {
-                            val down = awaitFirstDown()
-                            onInteractionStart()
-                            isInteracting = true
+                .background(
+                    color = Color.Transparent, // MaterialTheme.colorScheme.surface.copy(alpha = 0.8f),
+                    shape = RoundedCornerShape(20.dp),
+                ),
+    ) {
+        Column(
+            modifier =
+                Modifier
+                    .fillMaxHeight()
+                    .width(width)
+                    .padding(vertical = 16.dp) // More vertical padding, less horizontal
+                    .onGloballyPositioned { scrollerSize = it.size }
+                    .pointerInput(items.hashCode()) {
+                        awaitPointerEventScope {
+                            while (true) {
+                                val down = awaitFirstDown()
+                                onInteractionStart()
+                                isInteracting = true
 
-                            // Haptic feedback on initial touch
-                            hapticFeedback.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                                // Haptic feedback on initial touch
+                                hapticFeedback.performHapticFeedback(HapticFeedbackType.TextHandleMove)
 
-                            currentDragPosition = down.position.y
-                            handlePositionAndSelectLetter(down.position.y)
+                                currentDragPosition = down.position.y
+                                handlePositionAndSelectLetter(down.position.y)
 
-                            val change = awaitTouchSlopOrCancellation(down.id) { change, _ ->
-                                change.consume()
-                            }
+                                val change =
+                                    awaitTouchSlopOrCancellation(down.id) { change, _ ->
+                                        change.consume()
+                                    }
 
-                            if (change != null) {
-                                drag(change.id) { dragChange ->
-                                    currentDragPosition = dragChange.position.y
-                                        .coerceIn(0f, scrollerSize.height.toFloat())
-                                    handlePositionAndSelectLetter(currentDragPosition)
+                                if (change != null) {
+                                    drag(change.id) { dragChange ->
+                                        currentDragPosition =
+                                            dragChange.position.y
+                                                .coerceIn(0f, scrollerSize.height.toFloat())
+                                        handlePositionAndSelectLetter(currentDragPosition)
+                                    }
                                 }
+                                isInteracting = false
+                                previousSelectedLetter = "" // Reset for next interaction
+                                onScrollFinished()
                             }
-                            isInteracting = false
-                            previousSelectedLetter = "" // Reset for next interaction
-                            onScrollFinished()
                         }
-                    }
-                },
-            horizontalAlignment = Alignment.CenterHorizontally
+                    },
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             // Calculate current position once, outside the loop
             val verticalPaddingPx = with(density) { 16.dp.toPx() } // Updated to match new padding
@@ -219,64 +227,74 @@ fun <T> GenericFastScroller(
                 (scrollerSize.height - (verticalPaddingPx * 2)).coerceAtLeast(1f)
             val adjustedDragPosition =
                 (currentDragPosition - verticalPaddingPx).coerceIn(0f, usableHeight)
-            val currentPosition = if (usableHeight > 0) {
-                (adjustedDragPosition / usableHeight).coerceIn(0f, 1f)
-            } else {
-                0f
-            }
+            val currentPosition =
+                if (usableHeight > 0) {
+                    (adjustedDragPosition / usableHeight).coerceIn(0f, 1f)
+                } else {
+                    0f
+                }
 
             letters.forEachIndexed { index, letter ->
-                val letterPosition = if (letters.size > 1) {
-                    index.toFloat() / (letters.size - 1)
-                } else {
-                    0.5f
-                }
+                val letterPosition =
+                    if (letters.size > 1) {
+                        index.toFloat() / (letters.size - 1)
+                    } else {
+                        0.5f
+                    }
 
                 val distance = abs(letterPosition - currentPosition)
 
                 val scale by animateFloatAsState(
-                    targetValue = if (isInteracting) {
-                        when {
-                            distance < 0.05f -> 1.6f
-                            distance < 0.1f -> 1.3f
-                            distance < 0.15f -> 1.1f
-                            else -> 0.9f
-                        }
-                    } else 1.0f,
+                    targetValue =
+                        if (isInteracting) {
+                            when {
+                                distance < 0.05f -> 1.6f
+                                distance < 0.1f -> 1.3f
+                                distance < 0.15f -> 1.1f
+                                else -> 0.9f
+                            }
+                        } else {
+                            1.0f
+                        },
                     animationSpec = spring(dampingRatio = 0.8f),
-                    label = "letter_scale_$index"
+                    label = "letter_scale_$index",
                 )
 
                 val alpha by animateFloatAsState(
-                    targetValue = if (isInteracting) {
-                        when {
-                            distance < 0.05f -> 1.0f
-                            distance < 0.1f -> 0.9f
-                            distance < 0.15f -> 0.7f
-                            else -> 0.5f
-                        }
-                    } else 0.7f,
+                    targetValue =
+                        if (isInteracting) {
+                            when {
+                                distance < 0.05f -> 1.0f
+                                distance < 0.1f -> 0.9f
+                                distance < 0.15f -> 0.7f
+                                else -> 0.5f
+                            }
+                        } else {
+                            0.7f
+                        },
                     animationSpec = spring(),
-                    label = "letter_alpha_$index"
+                    label = "letter_alpha_$index",
                 )
 
                 Box(
                     modifier = Modifier.weight(1f),
-                    contentAlignment = Alignment.Center
+                    contentAlignment = Alignment.Center,
                 ) {
                     Text(
                         text = letter,
-                        style = MaterialTheme.typography.labelSmall.copy(
-                            fontWeight = FontWeight.Bold,
-                            fontSize = if (letter.length > 2) 9.sp else 11.sp // Smaller font for longer numbers
-                        ),
+                        style =
+                            MaterialTheme.typography.labelSmall.copy(
+                                fontWeight = FontWeight.Bold,
+                                fontSize = if (letter.length > 2) 9.sp else 11.sp, // Smaller font for longer numbers
+                            ),
                         color = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier
-                            .graphicsLayer(
-                                scaleX = scale,
-                                scaleY = scale,
-                                alpha = alpha
-                            )
+                        modifier =
+                            Modifier
+                                .graphicsLayer(
+                                    scaleX = scale,
+                                    scaleY = scale,
+                                    alpha = alpha,
+                                ),
                     )
                 }
             }
@@ -286,80 +304,88 @@ fun <T> GenericFastScroller(
         if (isInteracting && currentSelectedLetter.isNotEmpty()) {
             FloatingLetterIndicator(
                 letter = currentSelectedLetter,
-                yPosition = currentDragPosition
+                yPosition = currentDragPosition,
             )
         }
     }
 }
 
 // Example data class for preview
-data class SampleItem(val name: String, val category: String)
+data class SampleItem(
+    val name: String,
+    val category: String,
+)
 
 @Preview(showBackground = true, heightDp = 600)
 @Composable
 fun GenericFastScrollerPreview() {
     MaterialTheme {
-        val mockItems = remember {
-            listOf(
-                SampleItem("Apple", "Fruit"),
-                SampleItem("Banana", "Fruit"),
-                SampleItem("Carrot", "Vegetable"),
-                SampleItem("Dog", "Animal"),
-                SampleItem("Elephant", "Animal"),
-                SampleItem("Fish", "Animal"),
-                SampleItem("Grape", "Fruit"),
-                SampleItem("Horse", "Animal"),
-                SampleItem("Ice", "Other"),
-                SampleItem("Juice", "Drink"),
-                SampleItem("Kiwi", "Fruit"),
-                SampleItem("Lemon", "Fruit"),
-                SampleItem("Mouse", "Animal"),
-                SampleItem("Notebook", "Object"),
-                SampleItem("Orange", "Fruit"),
-                SampleItem("Pen", "Object"),
-                SampleItem("Queen", "Person"),
-                SampleItem("Rabbit", "Animal"),
-                SampleItem("Sun", "Nature"),
-                SampleItem("Tree", "Nature"),
-                SampleItem("Umbrella", "Object"),
-                SampleItem("Violin", "Music"),
-                SampleItem("Water", "Drink"),
-                SampleItem("Xylophone", "Music"),
-                SampleItem("Yoga", "Activity"),
-                SampleItem("Zebra", "Animal")
-            )
-        }
-
-        val letterToIndexMap = remember(mockItems) {
-            val mapping = mutableMapOf<String, Int>()
-            val groupedItems = mockItems.groupBy {
-                val firstChar = it.name.firstOrNull()?.uppercaseChar()
-                if (firstChar?.isLetter() == true) {
-                    firstChar.toString()
-                } else {
-                    "#"
-                }
-            }.toSortedMap()
-
-            var currentIndex = 0
-            groupedItems.forEach { (letter, itemsInSection) ->
-                mapping[letter] = currentIndex
-                currentIndex += 1 + itemsInSection.size
+        val mockItems =
+            remember {
+                listOf(
+                    SampleItem("Apple", "Fruit"),
+                    SampleItem("Banana", "Fruit"),
+                    SampleItem("Carrot", "Vegetable"),
+                    SampleItem("Dog", "Animal"),
+                    SampleItem("Elephant", "Animal"),
+                    SampleItem("Fish", "Animal"),
+                    SampleItem("Grape", "Fruit"),
+                    SampleItem("Horse", "Animal"),
+                    SampleItem("Ice", "Other"),
+                    SampleItem("Juice", "Drink"),
+                    SampleItem("Kiwi", "Fruit"),
+                    SampleItem("Lemon", "Fruit"),
+                    SampleItem("Mouse", "Animal"),
+                    SampleItem("Notebook", "Object"),
+                    SampleItem("Orange", "Fruit"),
+                    SampleItem("Pen", "Object"),
+                    SampleItem("Queen", "Person"),
+                    SampleItem("Rabbit", "Animal"),
+                    SampleItem("Sun", "Nature"),
+                    SampleItem("Tree", "Nature"),
+                    SampleItem("Umbrella", "Object"),
+                    SampleItem("Violin", "Music"),
+                    SampleItem("Water", "Drink"),
+                    SampleItem("Xylophone", "Music"),
+                    SampleItem("Yoga", "Activity"),
+                    SampleItem("Zebra", "Animal"),
+                )
             }
-            mapping
-        }
+
+        val letterToIndexMap =
+            remember(mockItems) {
+                val mapping = mutableMapOf<String, Int>()
+                val groupedItems =
+                    mockItems
+                        .groupBy {
+                            val firstChar = it.name.firstOrNull()?.uppercaseChar()
+                            if (firstChar?.isLetter() == true) {
+                                firstChar.toString()
+                            } else {
+                                "#"
+                            }
+                        }.toSortedMap()
+
+                var currentIndex = 0
+                groupedItems.forEach { (letter, itemsInSection) ->
+                    mapping[letter] = currentIndex
+                    currentIndex += 1 + itemsInSection.size
+                }
+                mapping
+            }
 
         Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp)
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(16.dp),
         ) {
             GenericFastScroller(
                 items = mockItems,
                 listState = rememberLazyListState(),
                 getIndexKey = { it.name },
                 letterToIndexMap = letterToIndexMap,
-                modifier = Modifier.align(Alignment.CenterEnd)
+                modifier = Modifier.align(Alignment.CenterEnd),
             )
         }
     }
@@ -369,41 +395,67 @@ fun GenericFastScrollerPreview() {
 @Composable
 fun SimpleGenericFastScrollerPreview() {
     MaterialTheme {
-        val simpleItems = remember {
-            listOf(
-                "Apple", "Banana", "Cherry", "Date", "Elderberry",
-                "Fig", "Grape", "Honeydew", "Ice cream", "Jackfruit",
-                "Kiwi", "Lemon", "Mango", "Nectarine", "Orange",
-                "Papaya", "Quince", "Raspberry", "Strawberry", "Tangerine",
-                "Ugli fruit", "Vanilla", "Watermelon", "Ximenia", "Yam", "Zucchini"
-            )
-        }
-
-        val letterToIndexMap = remember(simpleItems) {
-            val mapping = mutableMapOf<String, Int>()
-            val groupedItems = simpleItems.groupBy {
-                it.firstOrNull()?.uppercaseChar()?.toString() ?: "#"
-            }.toSortedMap()
-
-            var currentIndex = 0
-            groupedItems.forEach { (letter, itemsInSection) ->
-                mapping[letter] = currentIndex
-                currentIndex += itemsInSection.size
+        val simpleItems =
+            remember {
+                listOf(
+                    "Apple",
+                    "Banana",
+                    "Cherry",
+                    "Date",
+                    "Elderberry",
+                    "Fig",
+                    "Grape",
+                    "Honeydew",
+                    "Ice cream",
+                    "Jackfruit",
+                    "Kiwi",
+                    "Lemon",
+                    "Mango",
+                    "Nectarine",
+                    "Orange",
+                    "Papaya",
+                    "Quince",
+                    "Raspberry",
+                    "Strawberry",
+                    "Tangerine",
+                    "Ugli fruit",
+                    "Vanilla",
+                    "Watermelon",
+                    "Ximenia",
+                    "Yam",
+                    "Zucchini",
+                )
             }
-            mapping
-        }
+
+        val letterToIndexMap =
+            remember(simpleItems) {
+                val mapping = mutableMapOf<String, Int>()
+                val groupedItems =
+                    simpleItems
+                        .groupBy {
+                            it.firstOrNull()?.uppercaseChar()?.toString() ?: "#"
+                        }.toSortedMap()
+
+                var currentIndex = 0
+                groupedItems.forEach { (letter, itemsInSection) ->
+                    mapping[letter] = currentIndex
+                    currentIndex += itemsInSection.size
+                }
+                mapping
+            }
 
         Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp)
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(16.dp),
         ) {
             GenericFastScroller(
                 items = simpleItems,
                 listState = rememberLazyListState(),
                 getIndexKey = { it },
                 letterToIndexMap = letterToIndexMap,
-                modifier = Modifier.align(Alignment.CenterEnd)
+                modifier = Modifier.align(Alignment.CenterEnd),
             )
         }
     }

@@ -35,36 +35,38 @@ fun VersionTimelineEntry(
     modifier: Modifier = Modifier,
     versionInfo: AppVersion,
     isLatest: Boolean = false,
-    isLast: Boolean = false
+    isLast: Boolean = false,
 ) {
     val apiColor = Color(versionInfo.sdkVersion.apiToColor())
 
     Row(
         modifier = modifier.fillMaxWidth(),
         verticalAlignment = Alignment.Top,
-        horizontalArrangement = Arrangement.spacedBy(12.dp)
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         // Simple timeline indicator
         Column(
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             // Timeline dot
             Box(
-                modifier = Modifier
-                    .size(8.dp)
-                    .background(
-                        if (isLatest) apiColor else MaterialTheme.colorScheme.outline,
-                        CircleShape
-                    )
+                modifier =
+                    Modifier
+                        .size(8.dp)
+                        .background(
+                            if (isLatest) apiColor else MaterialTheme.colorScheme.outline,
+                            CircleShape,
+                        ),
             )
 
             // Timeline line
             if (!isLast) {
                 Box(
-                    modifier = Modifier
-                        .width(1.dp)
-                        .height(40.dp)
-                        .background(MaterialTheme.colorScheme.outlineVariant)
+                    modifier =
+                        Modifier
+                            .width(1.dp)
+                            .height(40.dp)
+                            .background(MaterialTheme.colorScheme.outlineVariant),
                 )
             }
         }
@@ -72,69 +74,70 @@ fun VersionTimelineEntry(
         // Version content
         Column(
             modifier = Modifier.weight(1f),
-            verticalArrangement = Arrangement.spacedBy(4.dp)
+            verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 // Left side: Version name and LATEST badge
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(6.dp)
+                    horizontalArrangement = Arrangement.spacedBy(6.dp),
                 ) {
                     Text(
                         text = versionInfo.versionName,
-                        style = MaterialTheme.typography.bodyLarge.copy(
-                            fontWeight = if (isLatest) FontWeight.Bold else FontWeight.Medium
-                        ),
+                        style =
+                            MaterialTheme.typography.bodyLarge.copy(
+                                fontWeight = if (isLatest) FontWeight.Bold else FontWeight.Medium,
+                            ),
                         color = MaterialTheme.colorScheme.onSurface,
                         maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
+                        overflow = TextOverflow.Ellipsis,
                     )
-
-
                 }
 
                 // Right side: API badge - always visible, consistent position
                 Surface(
                     shape = RoundedCornerShape(8.dp),
-                    color = apiColor.copy(alpha = 0.15f)
+                    color = apiColor.copy(alpha = 0.15f),
                 ) {
                     Text(
                         text = "API ${versionInfo.sdkVersion}",
                         modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
-                        style = MaterialTheme.typography.labelSmall.copy(
-                            fontWeight = FontWeight.Medium
-                        ),
-                        color = apiColor
+                        style =
+                            MaterialTheme.typography.labelSmall.copy(
+                                fontWeight = FontWeight.Medium,
+                            ),
+                        color = apiColor,
                     )
                 }
             }
 
             Row(
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 Text(
                     text = versionInfo.lastUpdateTime,
                     style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
 
                 if (isLatest) {
                     Surface(
                         shape = RoundedCornerShape(4.dp),
-                        color = apiColor.copy(alpha = 0.2f)
+                        color = apiColor.copy(alpha = 0.2f),
                     ) {
                         Text(
                             text = stringResource(R.string.latest),
                             modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
-                            style = MaterialTheme.typography.labelSmall.copy(
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 10.sp
-                            ),
-                            color = apiColor
+                            style =
+                                MaterialTheme.typography.labelSmall.copy(
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 10.sp,
+                                ),
+                            color = apiColor,
                         )
                     }
                 }
@@ -151,17 +154,15 @@ fun VersionTimeline(
     modifier: Modifier = Modifier,
     versions: List<AppVersion>,
 ) {
-
-
     Column(
         modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(0.dp)
+        verticalArrangement = Arrangement.spacedBy(0.dp),
     ) {
         versions.forEachIndexed { index, version ->
             VersionTimelineEntry(
                 versionInfo = version,
                 isLatest = index == 0,
-                isLast = index == versions.lastIndex
+                isLast = index == versions.lastIndex,
             )
         }
     }
@@ -172,41 +173,42 @@ fun VersionTimeline(
 private fun VersionTimelinePreview() {
     SDKMonitorTheme {
         VersionTimeline(
-            versions = listOf(
-                AppVersion(
-                    packageName = "com.whatsapp",
-                    title = "WhatsApp",
-                    sdkVersion = 34,
-                    versionName = "2.24.1.75",
-                    versionCode = 242175,
-                    lastUpdateTime = "2 hours ago"
+            versions =
+                listOf(
+                    AppVersion(
+                        packageName = "com.whatsapp",
+                        title = "WhatsApp",
+                        sdkVersion = 34,
+                        versionName = "2.24.1.75",
+                        versionCode = 242175,
+                        lastUpdateTime = "2 hours ago",
+                    ),
+                    AppVersion(
+                        packageName = "com.whatsapp",
+                        title = "WhatsApp",
+                        sdkVersion = 33,
+                        versionName = "2.24.1.74",
+                        versionCode = 242174,
+                        lastUpdateTime = "1 week ago",
+                    ),
+                    AppVersion(
+                        packageName = "com.whatsapp",
+                        title = "WhatsApp",
+                        sdkVersion = 32,
+                        versionName = "2.24.1.70",
+                        versionCode = 242170,
+                        lastUpdateTime = "3 weeks ago",
+                    ),
+                    AppVersion(
+                        packageName = "com.whatsapp",
+                        title = "WhatsApp",
+                        sdkVersion = 31,
+                        versionName = "2.24.1.65",
+                        versionCode = 242165,
+                        lastUpdateTime = "2 months ago",
+                    ),
                 ),
-                AppVersion(
-                    packageName = "com.whatsapp",
-                    title = "WhatsApp",
-                    sdkVersion = 33,
-                    versionName = "2.24.1.74",
-                    versionCode = 242174,
-                    lastUpdateTime = "1 week ago"
-                ),
-                AppVersion(
-                    packageName = "com.whatsapp",
-                    title = "WhatsApp",
-                    sdkVersion = 32,
-                    versionName = "2.24.1.70",
-                    versionCode = 242170,
-                    lastUpdateTime = "3 weeks ago"
-                ),
-                AppVersion(
-                    packageName = "com.whatsapp",
-                    title = "WhatsApp",
-                    sdkVersion = 31,
-                    versionName = "2.24.1.65",
-                    versionCode = 242165,
-                    lastUpdateTime = "2 months ago"
-                )
-            ),
-            modifier = Modifier.padding(16.dp)
+            modifier = Modifier.padding(16.dp),
         )
     }
 }
@@ -216,25 +218,26 @@ private fun VersionTimelinePreview() {
 private fun VersionTimelineDarkPreview() {
     SDKMonitorTheme(darkTheme = true) {
         VersionTimeline(
-            versions = listOf(
-                AppVersion(
-                    packageName = "com.instagram.android",
-                    title = "Instagram",
-                    sdkVersion = 34,
-                    versionName = "305.0.0.37.120",
-                    versionCode = 305000037,
-                    lastUpdateTime = "5 minutes ago"
+            versions =
+                listOf(
+                    AppVersion(
+                        packageName = "com.instagram.android",
+                        title = "Instagram",
+                        sdkVersion = 34,
+                        versionName = "305.0.0.37.120",
+                        versionCode = 305000037,
+                        lastUpdateTime = "5 minutes ago",
+                    ),
+                    AppVersion(
+                        packageName = "com.instagram.android",
+                        title = "Instagram",
+                        sdkVersion = 33,
+                        versionName = "305.0.0.36.120",
+                        versionCode = 305000036,
+                        lastUpdateTime = "2 weeks ago",
+                    ),
                 ),
-                AppVersion(
-                    packageName = "com.instagram.android",
-                    title = "Instagram",
-                    sdkVersion = 33,
-                    versionName = "305.0.0.36.120",
-                    versionCode = 305000036,
-                    lastUpdateTime = "2 weeks ago"
-                )
-            ),
-            modifier = Modifier.padding(16.dp)
+            modifier = Modifier.padding(16.dp),
         )
     }
 }

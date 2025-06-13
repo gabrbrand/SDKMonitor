@@ -234,4 +234,10 @@
     <string name="open_source_transparent">开源且透明</string>
     <string name="sdk_monitor_feedback">SDK监视器反馈</string>
     <string name="send_feedback">发送反馈</string>
+
+    <!-- Export Data -->
+    <string name="export_data">导出数据</string>
+    <string name="export_data_description">将您的应用数据下载为CSV备份</string>
+    <string name="export_sdk_monitor_data">导出SDK监视器数据</string>
+    <string name="sdk_monitor_data_backup">SDK监视器数据备份创建于%s</string>
 </resources>

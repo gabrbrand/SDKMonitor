@@ -56,53 +56,56 @@ import com.bernaferrari.sdkmonitor.ui.theme.SDKMonitorTheme
 fun SettingsItem(
     modifier: Modifier = Modifier,
     title: String,
-    subtitle: String? = null,
     icon: ImageVector,
+    subtitle: String? = null,
     isSwitch: Boolean = false,
     switchValue: Boolean = false,
     onSwitchToggle: ((Boolean) -> Unit)? = null,
     onClick: (() -> Unit)? = null,
 ) {
     Surface(
-        modifier = modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(16.dp))
-            .clickable {
-                if (isSwitch) {
-                    onSwitchToggle?.invoke(!switchValue)
-                } else {
-                    onClick?.invoke()
-                }
-            },
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(16.dp))
+                .clickable {
+                    if (isSwitch) {
+                        onSwitchToggle?.invoke(!switchValue)
+                    } else {
+                        onClick?.invoke()
+                    }
+                },
         shape = RoundedCornerShape(16.dp),
         color = MaterialTheme.colorScheme.surface,
-        border = BorderStroke(
-            width = 1.dp,
-            color = MaterialTheme.colorScheme.outlineVariant
-        ),
+        border =
+            BorderStroke(
+                width = 1.dp,
+                color = MaterialTheme.colorScheme.outlineVariant,
+            ),
     ) {
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(20.dp),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(20.dp),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             // Icon with background
             Surface(
                 modifier = Modifier.size(48.dp),
                 shape = RoundedCornerShape(12.dp),
-                color = MaterialTheme.colorScheme.surfaceContainerHighest
+                color = MaterialTheme.colorScheme.surfaceContainerHighest,
             ) {
                 Box(
                     contentAlignment = Alignment.Center,
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier.fillMaxSize(),
                 ) {
                     Icon(
                         imageVector = icon,
                         contentDescription = title,
                         tint = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.size(24.dp)
+                        modifier = Modifier.size(24.dp),
                     )
                 }
             }
@@ -110,21 +113,22 @@ fun SettingsItem(
             // Text content
             Column(
                 modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(4.dp)
+                verticalArrangement = Arrangement.spacedBy(4.dp),
             ) {
                 Text(
                     text = title,
-                    style = MaterialTheme.typography.titleMedium.copy(
-                        fontWeight = FontWeight.SemiBold
-                    ),
-                    color = MaterialTheme.colorScheme.onSurface
+                    style =
+                        MaterialTheme.typography.titleMedium.copy(
+                            fontWeight = FontWeight.SemiBold,
+                        ),
+                    color = MaterialTheme.colorScheme.onSurface,
                 )
 
                 if (subtitle != null) {
                     Text(
                         text = subtitle,
                         style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
             }
@@ -134,17 +138,18 @@ fun SettingsItem(
                 Switch(
                     checked = switchValue,
                     onCheckedChange = onSwitchToggle,
-                    colors = SwitchDefaults.colors(
-                        checkedThumbColor = MaterialTheme.colorScheme.primary,
-                        checkedTrackColor = MaterialTheme.colorScheme.primaryContainer
-                    )
+                    colors =
+                        SwitchDefaults.colors(
+                            checkedThumbColor = MaterialTheme.colorScheme.primary,
+                            checkedTrackColor = MaterialTheme.colorScheme.primaryContainer,
+                        ),
                 )
             } else {
                 Icon(
                     imageVector = Icons.Default.ChevronRight,
                     contentDescription = "Open",
                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.size(20.dp)
+                    modifier = Modifier.size(20.dp),
                 )
             }
         }
@@ -158,19 +163,20 @@ fun SettingsItem(
 fun SettingsSection(
     title: String,
     modifier: Modifier = Modifier,
-    content: @Composable ColumnScope.() -> Unit
+    content: @Composable ColumnScope.() -> Unit,
 ) {
     Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp)
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 8.dp),
     ) {
         Text(
             text = title,
             style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.primary,
             fontWeight = FontWeight.SemiBold,
-            modifier = Modifier.padding(bottom = 12.dp)
+            modifier = Modifier.padding(bottom = 12.dp),
         )
 
         content()
@@ -188,67 +194,75 @@ fun SwitchPreference(
     onCheckedChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
-    icon: ImageVector? = null
+    icon: ImageVector? = null,
 ) {
     Card(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(vertical = 4.dp)
-            .clickable(enabled = enabled) { onCheckedChange(!checked) },
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .padding(vertical = 4.dp)
+                .clickable(enabled = enabled) { onCheckedChange(!checked) },
         shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = if (checked) {
-                MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3f)
-            } else {
-                MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
-            }
-        ),
-        elevation = CardDefaults.cardElevation(2.dp)
+        colors =
+            CardDefaults.cardColors(
+                containerColor =
+                    if (checked) {
+                        MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3f)
+                    } else {
+                        MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
+                    },
+            ),
+        elevation = CardDefaults.cardElevation(2.dp),
     ) {
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             // Optional icon
             icon?.let { iconVector ->
                 Icon(
                     imageVector = iconVector,
                     contentDescription = null,
-                    modifier = Modifier
-                        .size(24.dp)
-                        .padding(end = 16.dp),
-                    tint = if (checked) {
-                        MaterialTheme.colorScheme.primary
-                    } else {
-                        MaterialTheme.colorScheme.onSurfaceVariant
-                    }
+                    modifier =
+                        Modifier
+                            .size(24.dp)
+                            .padding(end = 16.dp),
+                    tint =
+                        if (checked) {
+                            MaterialTheme.colorScheme.primary
+                        } else {
+                            MaterialTheme.colorScheme.onSurfaceVariant
+                        },
                 )
             }
 
             Column(
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
             ) {
                 Text(
                     text = title,
                     style = MaterialTheme.typography.bodyLarge,
                     fontWeight = FontWeight.Medium,
-                    color = if (enabled) {
-                        MaterialTheme.colorScheme.onSurface
-                    } else {
-                        MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
-                    }
+                    color =
+                        if (enabled) {
+                            MaterialTheme.colorScheme.onSurface
+                        } else {
+                            MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                        },
                 )
 
                 Text(
                     text = summary,
                     style = MaterialTheme.typography.bodyMedium,
-                    color = if (enabled) {
-                        MaterialTheme.colorScheme.onSurfaceVariant
-                    } else {
-                        MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
-                    }
+                    color =
+                        if (enabled) {
+                            MaterialTheme.colorScheme.onSurfaceVariant
+                        } else {
+                            MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
+                        },
                 )
             }
 
@@ -256,12 +270,13 @@ fun SwitchPreference(
                 checked = checked,
                 onCheckedChange = onCheckedChange,
                 enabled = enabled,
-                colors = SwitchDefaults.colors(
-                    checkedThumbColor = MaterialTheme.colorScheme.primary,
-                    checkedTrackColor = MaterialTheme.colorScheme.primaryContainer,
-                    uncheckedThumbColor = MaterialTheme.colorScheme.outline,
-                    uncheckedTrackColor = MaterialTheme.colorScheme.surfaceVariant
-                )
+                colors =
+                    SwitchDefaults.colors(
+                        checkedThumbColor = MaterialTheme.colorScheme.primary,
+                        checkedTrackColor = MaterialTheme.colorScheme.primaryContainer,
+                        uncheckedThumbColor = MaterialTheme.colorScheme.outline,
+                        uncheckedTrackColor = MaterialTheme.colorScheme.surfaceVariant,
+                    ),
             )
         }
     }
@@ -278,63 +293,70 @@ fun TextPreference(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     icon: ImageVector? = null,
-    showArrow: Boolean = true
+    showArrow: Boolean = true,
 ) {
     Card(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(vertical = 4.dp)
-            .clickable(enabled = enabled) { onClick() },
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .padding(vertical = 4.dp)
+                .clickable(enabled = enabled) { onClick() },
         shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
-        ),
-        elevation = CardDefaults.cardElevation(2.dp)
+        colors =
+            CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
+            ),
+        elevation = CardDefaults.cardElevation(2.dp),
     ) {
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             // Optional icon
             icon?.let { iconVector ->
                 Icon(
                     imageVector = iconVector,
                     contentDescription = null,
-                    modifier = Modifier
-                        .size(24.dp)
-                        .padding(end = 16.dp),
-                    tint = if (enabled) {
-                        MaterialTheme.colorScheme.onSurfaceVariant
-                    } else {
-                        MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
-                    }
+                    modifier =
+                        Modifier
+                            .size(24.dp)
+                            .padding(end = 16.dp),
+                    tint =
+                        if (enabled) {
+                            MaterialTheme.colorScheme.onSurfaceVariant
+                        } else {
+                            MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
+                        },
                 )
             }
 
             Column(
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
             ) {
                 Text(
                     text = title,
                     style = MaterialTheme.typography.bodyLarge,
                     fontWeight = FontWeight.Medium,
-                    color = if (enabled) {
-                        MaterialTheme.colorScheme.onSurface
-                    } else {
-                        MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
-                    }
+                    color =
+                        if (enabled) {
+                            MaterialTheme.colorScheme.onSurface
+                        } else {
+                            MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                        },
                 )
 
                 Text(
                     text = summary,
                     style = MaterialTheme.typography.bodyMedium,
-                    color = if (enabled) {
-                        MaterialTheme.colorScheme.onSurfaceVariant
-                    } else {
-                        MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
-                    }
+                    color =
+                        if (enabled) {
+                            MaterialTheme.colorScheme.onSurfaceVariant
+                        } else {
+                            MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
+                        },
                 )
             }
 
@@ -342,7 +364,7 @@ fun TextPreference(
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                     contentDescription = "Open",
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
                 )
             }
         }
@@ -358,26 +380,28 @@ fun AnalyticsSection(
     currentFilter: AppFilter,
     onFilterChange: (AppFilter) -> Unit,
     modifier: Modifier = Modifier,
-    content: @Composable ColumnScope.() -> Unit
+    content: @Composable ColumnScope.() -> Unit,
 ) {
     Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp)
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 8.dp),
     ) {
         // Section header with filter dropdown
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 12.dp),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 12.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
                 text = title,
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.primary,
-                fontWeight = FontWeight.SemiBold
+                fontWeight = FontWeight.SemiBold,
             )
 
             // Filter dropdown - styled like main screen
@@ -385,7 +409,7 @@ fun AnalyticsSection(
 
             Box {
                 CompositionLocalProvider(
-                    LocalMinimumInteractiveComponentSize provides Dp.Unspecified
+                    LocalMinimumInteractiveComponentSize provides Dp.Unspecified,
                 ) {
                     Surface(
                         onClick = { showFilterMenu = true },
@@ -393,39 +417,43 @@ fun AnalyticsSection(
                         color = MaterialTheme.colorScheme.surface,
                     ) {
                         Row(
-                            modifier = Modifier.padding(
-                                horizontal = 12.dp,
-                                vertical = 8.dp
-                            ),
+                            modifier =
+                                Modifier.padding(
+                                    horizontal = 12.dp,
+                                    vertical = 8.dp,
+                                ),
                             verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(6.dp)
+                            horizontalArrangement = Arrangement.spacedBy(6.dp),
                         ) {
                             Icon(
-                                imageVector = when (currentFilter) {
-                                    AppFilter.ALL_APPS -> Icons.Default.Apps
-                                    AppFilter.USER_APPS -> Icons.Default.Person
-                                    AppFilter.SYSTEM_APPS -> Icons.Default.Android
-                                },
+                                imageVector =
+                                    when (currentFilter) {
+                                        AppFilter.ALL_APPS -> Icons.Default.Apps
+                                        AppFilter.USER_APPS -> Icons.Default.Person
+                                        AppFilter.SYSTEM_APPS -> Icons.Default.Android
+                                    },
                                 contentDescription = null,
                                 modifier = Modifier.size(16.dp),
-                                tint = MaterialTheme.colorScheme.onSurface
+                                tint = MaterialTheme.colorScheme.onSurface,
                             )
                             Text(
-                                text = when (currentFilter) {
-                                    AppFilter.ALL_APPS -> stringResource(R.string.all_apps)
-                                    AppFilter.USER_APPS -> stringResource(R.string.user_apps)
-                                    AppFilter.SYSTEM_APPS -> stringResource(R.string.system_apps)
-                                },
-                                style = MaterialTheme.typography.labelMedium.copy(
-                                    fontWeight = FontWeight.SemiBold
-                                ),
-                                color = MaterialTheme.colorScheme.onSurface
+                                text =
+                                    when (currentFilter) {
+                                        AppFilter.ALL_APPS -> stringResource(R.string.all_apps)
+                                        AppFilter.USER_APPS -> stringResource(R.string.user_apps)
+                                        AppFilter.SYSTEM_APPS -> stringResource(R.string.system_apps)
+                                    },
+                                style =
+                                    MaterialTheme.typography.labelMedium.copy(
+                                        fontWeight = FontWeight.SemiBold,
+                                    ),
+                                color = MaterialTheme.colorScheme.onSurface,
                             )
                             Icon(
                                 imageVector = Icons.Default.ExpandMore,
                                 contentDescription = "Filter options",
                                 modifier = Modifier.size(14.dp),
-                                tint = MaterialTheme.colorScheme.onSurfaceVariant
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant,
                             )
                         }
                     }
@@ -434,18 +462,20 @@ fun AnalyticsSection(
                         expanded = showFilterMenu,
                         onDismissRequest = { showFilterMenu = false },
                         shape = RoundedCornerShape(12.dp),
-                        containerColor = MaterialTheme.colorScheme.surface
+                        containerColor = MaterialTheme.colorScheme.surface,
                     ) {
                         Text(
                             text = stringResource(R.string.filter_apps),
-                            style = MaterialTheme.typography.labelLarge.copy(
-                                fontWeight = FontWeight.Bold
-                            ),
+                            style =
+                                MaterialTheme.typography.labelLarge.copy(
+                                    fontWeight = FontWeight.Bold,
+                                ),
                             color = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.padding(
-                                horizontal = 16.dp,
-                                vertical = 8.dp
-                            )
+                            modifier =
+                                Modifier.padding(
+                                    horizontal = 16.dp,
+                                    vertical = 8.dp,
+                                ),
                         )
 
                         AppFilter.entries.forEach { filter ->
@@ -453,47 +483,53 @@ fun AnalyticsSection(
                                 text = {
                                     Row(
                                         verticalAlignment = Alignment.CenterVertically,
-                                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                                        horizontalArrangement = Arrangement.spacedBy(12.dp),
                                     ) {
                                         Icon(
-                                            imageVector = when (filter) {
-                                                AppFilter.ALL_APPS -> Icons.Default.Apps
-                                                AppFilter.USER_APPS -> Icons.Default.Person
-                                                AppFilter.SYSTEM_APPS -> Icons.Default.Android
-                                            },
+                                            imageVector =
+                                                when (filter) {
+                                                    AppFilter.ALL_APPS -> Icons.Default.Apps
+                                                    AppFilter.USER_APPS -> Icons.Default.Person
+                                                    AppFilter.SYSTEM_APPS -> Icons.Default.Android
+                                                },
                                             contentDescription = null,
                                             modifier = Modifier.size(18.dp),
-                                            tint = if (currentFilter == filter) {
-                                                MaterialTheme.colorScheme.primary
-                                            } else {
-                                                MaterialTheme.colorScheme.onSurfaceVariant
-                                            }
+                                            tint =
+                                                if (currentFilter == filter) {
+                                                    MaterialTheme.colorScheme.primary
+                                                } else {
+                                                    MaterialTheme.colorScheme.onSurfaceVariant
+                                                },
                                         )
                                         Text(
-                                            text = when (filter) {
-                                                AppFilter.ALL_APPS -> stringResource(R.string.all_apps)
-                                                AppFilter.USER_APPS -> stringResource(R.string.user_apps)
-                                                AppFilter.SYSTEM_APPS -> stringResource(R.string.system_apps)
-                                            },
-                                            style = MaterialTheme.typography.bodyMedium.copy(
-                                                fontWeight = if (currentFilter == filter) {
-                                                    FontWeight.SemiBold
+                                            text =
+                                                when (filter) {
+                                                    AppFilter.ALL_APPS -> stringResource(R.string.all_apps)
+                                                    AppFilter.USER_APPS -> stringResource(R.string.user_apps)
+                                                    AppFilter.SYSTEM_APPS -> stringResource(R.string.system_apps)
+                                                },
+                                            style =
+                                                MaterialTheme.typography.bodyMedium.copy(
+                                                    fontWeight =
+                                                        if (currentFilter == filter) {
+                                                            FontWeight.SemiBold
+                                                        } else {
+                                                            FontWeight.Normal
+                                                        },
+                                                ),
+                                            color =
+                                                if (currentFilter == filter) {
+                                                    MaterialTheme.colorScheme.primary
                                                 } else {
-                                                    FontWeight.Normal
-                                                }
-                                            ),
-                                            color = if (currentFilter == filter) {
-                                                MaterialTheme.colorScheme.primary
-                                            } else {
-                                                MaterialTheme.colorScheme.onSurface
-                                            }
+                                                    MaterialTheme.colorScheme.onSurface
+                                                },
                                         )
                                     }
                                 },
                                 onClick = {
                                     onFilterChange(filter)
                                     showFilterMenu = false
-                                }
+                                },
                             )
                         }
                     }
@@ -511,7 +547,7 @@ private fun SettingsItemPreview() {
     SDKMonitorTheme {
         Column(
             modifier = Modifier.padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+            verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             SettingsItem(
                 title = "Light Mode",
@@ -519,14 +555,14 @@ private fun SettingsItemPreview() {
                 icon = Icons.Default.LightMode,
                 isSwitch = true,
                 switchValue = true,
-                onSwitchToggle = {}
+                onSwitchToggle = {},
             )
 
             SettingsItem(
                 title = "About",
                 subtitle = "App information",
                 icon = Icons.Default.Info,
-                onClick = {}
+                onClick = {},
             )
         }
     }
@@ -542,7 +578,7 @@ fun SwitchPreferencePreview() {
                 summary = "Use light theme for better visibility",
                 checked = true,
                 onCheckedChange = {},
-                icon = Icons.Default.LightMode
+                icon = Icons.Default.LightMode,
             )
 
             SwitchPreference(
@@ -550,7 +586,7 @@ fun SwitchPreferencePreview() {
                 summary = "Automatically check for app updates",
                 checked = false,
                 onCheckedChange = {},
-                icon = Icons.Default.Sync
+                icon = Icons.Default.Sync,
             )
         }
     }
@@ -565,13 +601,13 @@ fun SettingsSectionPreview() {
                 title = "Dark Mode",
                 summary = "Use dark theme",
                 checked = true,
-                onCheckedChange = {}
+                onCheckedChange = {},
             )
 
             TextPreference(
                 title = "Theme Color",
                 summary = "Current: Blue",
-                onClick = {}
+                onClick = {},
             )
         }
     }
@@ -584,19 +620,20 @@ private fun AnalyticsSectionPreview() {
         AnalyticsSection(
             title = "App Analytics",
             currentFilter = AppFilter.ALL_APPS,
-            onFilterChange = {}
+            onFilterChange = {},
         ) {
             // Placeholder content
             Card(
                 modifier = Modifier.fillMaxWidth(),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceContainer
-                )
+                colors =
+                    CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceContainer,
+                    ),
             ) {
                 Text(
                     text = "Analytics Card Content Here",
                     modifier = Modifier.padding(16.dp),
-                    style = MaterialTheme.typography.bodyMedium
+                    style = MaterialTheme.typography.bodyMedium,
                 )
             }
         }

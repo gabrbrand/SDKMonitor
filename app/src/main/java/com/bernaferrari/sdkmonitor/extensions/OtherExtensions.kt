@@ -9,8 +9,8 @@ import com.bernaferrari.sdkmonitor.R
 import java.util.Calendar
 import java.util.Date
 
-internal fun Long.convertTimestampToDate(context: Context): String {
-    return if (this == 0L) {
+internal fun Long.convertTimestampToDate(context: Context): String =
+    if (this == 0L) {
         "Never" // You might want to add this to strings.xml too
     } else {
         val now = System.currentTimeMillis()
@@ -37,7 +37,9 @@ internal fun Long.convertTimestampToDate(context: Context): String {
                 val date = Date(this)
                 val currentYear = Calendar.getInstance().get(Calendar.YEAR)
                 val timestampYear =
-                    Calendar.getInstance().apply { timeInMillis = this@convertTimestampToDate }
+                    Calendar
+                        .getInstance()
+                        .apply { timeInMillis = this@convertTimestampToDate }
                         .get(Calendar.YEAR)
 
                 // Use Android's built-in localized date formatting
@@ -48,13 +50,11 @@ internal fun Long.convertTimestampToDate(context: Context): String {
                         DateUtils.FORMAT_SHOW_DATE or DateUtils.FORMAT_NO_YEAR
                     } else {
                         DateUtils.FORMAT_SHOW_DATE
-                    }
+                    },
                 )
-
             }
         }
     }
-}
 
 internal operator fun Boolean.inc() = !this
 
@@ -67,30 +67,32 @@ inline val @receiver:ColorInt Int.lighten
     get() = ColorUtils.blendARGB(this, Color.WHITE, 0.2f)
 
 // colors inspired from https://www.vanschneider.com/colors
-fun Int.apiToColor(): Int = when (this) {
-    in 0..32 -> 0xFFD31B33.toInt() // red
-    33 -> 0xFFE54B4B.toInt() // red-orange
-    34 -> 0xFFE37A46.toInt() // orange
-    35 -> 0XFF178E96.toInt() // blue-green
-    else -> 0xFF14B572.toInt() // green
-}
+fun Int.apiToColor(): Int =
+    when (this) {
+        in 0..32 -> 0xFFD31B33.toInt() // red
+        33 -> 0xFFE54B4B.toInt() // red-orange
+        34 -> 0xFFE37A46.toInt() // orange
+        35 -> 0XFF178E96.toInt() // blue-green
+        else -> 0xFF14B572.toInt() // green
+    }
 
-fun Int.apiToVersion() = when (this) {
-    3 -> "Cupcake"
-    4 -> "Donut"
-    5, 6, 7 -> "Eclair"
-    8 -> "Froyo"
-    9, 10 -> "Gingerbread"
-    11, 12, 13 -> "Honeycomb"
-    14, 15 -> "Ice Cream Sandwich"
-    16, 17, 18 -> "Jelly Bean"
-    19, 20 -> "KitKat"
-    21, 22 -> "Lollipop"
-    23 -> "Marshmallow"
-    24, 25 -> "Nougat"
-    26, 27 -> "Oreo"
-    28 -> "Pie"
-    29, 30, 31 -> "Android ${this - 19}"
-    32 -> "Android 12L"
-    else -> "Android ${this - 20}"
-}
+fun Int.apiToVersion() =
+    when (this) {
+        3 -> "Cupcake"
+        4 -> "Donut"
+        5, 6, 7 -> "Eclair"
+        8 -> "Froyo"
+        9, 10 -> "Gingerbread"
+        11, 12, 13 -> "Honeycomb"
+        14, 15 -> "Ice Cream Sandwich"
+        16, 17, 18 -> "Jelly Bean"
+        19, 20 -> "KitKat"
+        21, 22 -> "Lollipop"
+        23 -> "Marshmallow"
+        24, 25 -> "Nougat"
+        26, 27 -> "Oreo"
+        28 -> "Pie"
+        29, 30, 31 -> "Android ${this - 19}"
+        32 -> "Android 12L"
+        else -> "Android ${this - 20}"
+    }

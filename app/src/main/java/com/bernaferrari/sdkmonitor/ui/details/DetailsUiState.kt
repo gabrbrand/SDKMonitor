@@ -14,10 +14,12 @@ sealed class DetailsUiState {
 
     data class Success(
         val appDetails: AppDetails,
-        val versions: List<AppVersion> = emptyList()
+        val versions: List<AppVersion> = emptyList(),
     ) : DetailsUiState()
 
-    data class Error(val message: String) : DetailsUiState()
+    data class Error(
+        val message: String,
+    ) : DetailsUiState()
 }
 
 /**
@@ -28,17 +30,20 @@ data class VersionInfo(
     val versionCode: Long,
     val targetSdk: Int,
     val timestamp: Long,
-    val changes: List<String> = emptyList()
+    val changes: List<String> = emptyList(),
 )
 
 /**
  * Extension function to convert Version to AppVersion
  */
-fun Version.toAppVersion(appDetails: AppDetails, context: Context) = AppVersion(
+fun Version.toAppVersion(
+    appDetails: AppDetails,
+    context: Context,
+) = AppVersion(
     packageName = this.packageName,
     title = appDetails.title,
     sdkVersion = this.targetSdk,
     versionName = this.versionName,
     versionCode = this.version,
-    lastUpdateTime = this.lastUpdateTime.convertTimestampToDate(context)
+    lastUpdateTime = this.lastUpdateTime.convertTimestampToDate(context),
 )

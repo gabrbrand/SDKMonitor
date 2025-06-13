@@ -15,28 +15,22 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object DatabaseModule {
-
     @Provides
     @Singleton
     fun provideAppDatabase(
-        @ApplicationContext context: Context
-    ): AppDatabase {
-        return Room.databaseBuilder(
-            context.applicationContext,
-            AppDatabase::class.java,
-            "Apps.db"
-        )
-            .fallbackToDestructiveMigration(false)
+        @ApplicationContext context: Context,
+    ): AppDatabase =
+        Room
+            .databaseBuilder(
+                context.applicationContext,
+                AppDatabase::class.java,
+                "Apps.db",
+            ).fallbackToDestructiveMigration(false)
             .build()
-    }
 
     @Provides
-    fun provideAppsDao(database: AppDatabase): AppsDao {
-        return database.snapsDao()
-    }
+    fun provideAppsDao(database: AppDatabase): AppsDao = database.snapsDao()
 
     @Provides
-    fun provideVersionsDao(database: AppDatabase): VersionsDao {
-        return database.versionsDao()
-    }
+    fun provideVersionsDao(database: AppDatabase): VersionsDao = database.versionsDao()
 }

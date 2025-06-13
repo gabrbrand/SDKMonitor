@@ -50,7 +50,7 @@ import com.bernaferrari.sdkmonitor.ui.theme.SDKMonitorTheme
 @Composable
 fun createHighlightedText(
     text: String,
-    searchQuery: String
+    searchQuery: String,
 ): AnnotatedString {
     if (searchQuery.isBlank()) {
         return AnnotatedString(text)
@@ -69,11 +69,12 @@ fun createHighlightedText(
 
             // Add highlighted match with prominent styling
             withStyle(
-                style = SpanStyle(
-                    fontWeight = FontWeight.ExtraBold,
-                    color = MaterialTheme.colorScheme.primary,
-                    // background = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3f)
-                )
+                style =
+                    SpanStyle(
+                        fontWeight = FontWeight.ExtraBold,
+                        color = MaterialTheme.colorScheme.primary,
+                        // background = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3f)
+                    ),
             ) {
                 append(text.substring(startIndex, startIndex + normalizedQuery.length))
             }
@@ -105,92 +106,99 @@ fun MainAppCard(
 
     Column {
         Row(
-            modifier = modifier
-                .fillMaxWidth()
-                .clip(RoundedCornerShape(16.dp))
-                .then(
-                    if (isSelected && isTablet()) {
-                        Modifier
-                            .background(
-                                MaterialTheme.colorScheme.surfaceContainerHigh
-                            )
-                            .border(
-                                width = 2.dp,
-                                color = MaterialTheme.colorScheme.outlineVariant,
-                                shape = RoundedCornerShape(16.dp)
-                            )
-                    } else Modifier
-                )
-                .clickable { onClick() }
-                .padding(
-                    horizontal = 16.dp,
-                    vertical = 16.dp
-                ),
+            modifier =
+                modifier
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(16.dp))
+                    .then(
+                        if (isSelected && isTablet()) {
+                            Modifier
+                                .background(
+                                    MaterialTheme.colorScheme.surfaceContainerHigh,
+                                ).border(
+                                    width = 2.dp,
+                                    color = MaterialTheme.colorScheme.outlineVariant,
+                                    shape = RoundedCornerShape(16.dp),
+                                )
+                        } else {
+                            Modifier
+                        },
+                    ).clickable { onClick() }
+                    .padding(
+                        horizontal = 16.dp,
+                        vertical = 16.dp,
+                    ),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             // App Icon - clean and modern with better error handling
             Box(
-                modifier = Modifier
-                    .size(56.dp)
-                    .clip(RoundedCornerShape(16.dp)),
-                contentAlignment = Alignment.Center
+                modifier =
+                    Modifier
+                        .size(56.dp)
+                        .clip(RoundedCornerShape(16.dp)),
+                contentAlignment = Alignment.Center,
             ) {
                 if (appIcon != null) {
                     Image(
                         bitmap = appIcon.asImageBitmap(),
                         contentDescription = "App icon for ${appVersion.title}",
-                        modifier = Modifier
-                            .size(56.dp)
-                            .clip(RoundedCornerShape(16.dp))
+                        modifier =
+                            Modifier
+                                .size(56.dp)
+                                .clip(RoundedCornerShape(16.dp)),
                     )
                 } else if (isPreview) {
                     Icon(
                         imageVector = Icons.Outlined.Apps,
                         contentDescription = "App icon for ${appVersion.title}",
-                        modifier = Modifier
-                            .size(32.dp)
-                            .background(
-                                MaterialTheme.colorScheme.surfaceContainer,
-                                RoundedCornerShape(16.dp)
-                            )
-                            .padding(12.dp),
-                        tint = MaterialTheme.colorScheme.primary
+                        modifier =
+                            Modifier
+                                .size(32.dp)
+                                .background(
+                                    MaterialTheme.colorScheme.surfaceContainer,
+                                    RoundedCornerShape(16.dp),
+                                ).padding(12.dp),
+                        tint = MaterialTheme.colorScheme.primary,
                     )
                 } else {
                     // Try to get app icon, fall back to placeholder if app is uninstalled
-                    val iconData = remember(appVersion.packageName) {
-                        try {
-                            context.packageManager.getApplicationIcon(appVersion.packageName)
-                        } catch (e: PackageManager.NameNotFoundException) {
-                            null // App is uninstalled, use null instead of ImageVector
+                    val iconData =
+                        remember(appVersion.packageName) {
+                            try {
+                                context.packageManager.getApplicationIcon(appVersion.packageName)
+                            } catch (e: PackageManager.NameNotFoundException) {
+                                null // App is uninstalled, use null instead of ImageVector
+                            }
                         }
-                    }
 
                     if (iconData != null) {
                         AsyncImage(
-                            model = ImageRequest.Builder(context)
-                                .data(iconData)
-                                .crossfade(true)
-                                .build(),
+                            model =
+                                ImageRequest
+                                    .Builder(context)
+                                    .data(iconData)
+                                    .crossfade(true)
+                                    .build(),
                             contentDescription = "App icon for ${appVersion.title}",
-                            modifier = Modifier
-                                .size(56.dp)
-                                .clip(RoundedCornerShape(16.dp)),
+                            modifier =
+                                Modifier
+                                    .size(56.dp)
+                                    .clip(RoundedCornerShape(16.dp)),
                         )
                     } else {
                         // App is uninstalled - show placeholder with background
                         Icon(
                             imageVector = Icons.Outlined.Apps,
                             contentDescription = "App icon for ${appVersion.title}",
-                            modifier = Modifier
-                                .size(56.dp)
-                                .background(
-                                    MaterialTheme.colorScheme.surfaceContainer,
-                                    RoundedCornerShape(16.dp)
-                                )
-                                .padding(12.dp),
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
+                            modifier =
+                                Modifier
+                                    .size(56.dp)
+                                    .background(
+                                        MaterialTheme.colorScheme.surfaceContainer,
+                                        RoundedCornerShape(16.dp),
+                                    ).padding(12.dp),
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
                         )
                     }
                 }
@@ -199,32 +207,34 @@ fun MainAppCard(
             // Content section - takes up remaining space
             Column(
                 modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(2.dp)
+                verticalArrangement = Arrangement.spacedBy(2.dp),
             ) {
                 // App title with highlighting
                 Text(
                     text = createHighlightedText(appVersion.title, searchQuery),
-                    style = MaterialTheme.typography.titleMedium.copy(
-                        fontWeight = FontWeight.SemiBold
-                    ),
+                    style =
+                        MaterialTheme.typography.titleMedium.copy(
+                            fontWeight = FontWeight.SemiBold,
+                        ),
                     color = MaterialTheme.colorScheme.onSurface,
                     maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
+                    overflow = TextOverflow.Ellipsis,
                 )
 
                 // Bottom row with date
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
                     // Date - subtle and clean
                     Text(
                         text = appVersion.lastUpdateTime,
-                        style = MaterialTheme.typography.bodySmall.copy(
-                            fontWeight = FontWeight.Medium
-                        ),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        style =
+                            MaterialTheme.typography.bodySmall.copy(
+                                fontWeight = FontWeight.Medium,
+                            ),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
             }
@@ -232,51 +242,52 @@ fun MainAppCard(
             if (showVersionPill) {
                 // Modern minimalist SDK pill with better contrast - CENTER ALIGNED
                 Column(
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(12.dp))
-                        .background(apiColor.copy(alpha = 0.07f))
-                        .border(
-                            width = 1.dp,
-                            color = apiColor,
-                            shape = RoundedCornerShape(12.dp)
-                        )
-                        .padding(horizontal = 10.dp, vertical = 6.dp),
+                    modifier =
+                        Modifier
+                            .clip(RoundedCornerShape(12.dp))
+                            .background(apiColor.copy(alpha = 0.07f))
+                            .border(
+                                width = 1.dp,
+                                color = apiColor,
+                                shape = RoundedCornerShape(12.dp),
+                            ).padding(horizontal = 10.dp, vertical = 6.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(2.dp)
+                    verticalArrangement = Arrangement.spacedBy(2.dp),
                 ) {
                     // Bold SDK number with high contrast
                     Text(
                         text = appVersion.sdkVersion.toString(),
-                        style = MaterialTheme.typography.titleLarge.copy(
-                            fontWeight = FontWeight.ExtraBold
-                        ),
-                        color = apiColor
+                        style =
+                            MaterialTheme.typography.titleLarge.copy(
+                                fontWeight = FontWeight.ExtraBold,
+                            ),
+                        color = apiColor,
                     )
 
                     // Clean API description without background
                     Text(
                         text = apiDescription,
-                        style = MaterialTheme.typography.labelSmall.copy(
-                            fontWeight = FontWeight.SemiBold
-                        ),
+                        style =
+                            MaterialTheme.typography.labelSmall.copy(
+                                fontWeight = FontWeight.SemiBold,
+                            ),
                         color = apiColor,
                         maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
+                        overflow = TextOverflow.Ellipsis,
                     )
                 }
             }
-
         }
 
         // Subtle divider line - only show if not last item
         Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 88.dp, end = 16.dp)
-                .height(0.5.dp)
-                .background(if (!isLast && !isSelected) MaterialTheme.colorScheme.outlineVariant else Color.Transparent)
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(start = 88.dp, end = 16.dp)
+                    .height(0.5.dp)
+                    .background(if (!isLast && !isSelected) MaterialTheme.colorScheme.outlineVariant else Color.Transparent),
         )
-
     }
 }
 
@@ -285,13 +296,14 @@ fun MainAppCard(
 private fun MainAppCardPreview() {
     SDKMonitorTheme {
         MainAppCard(
-            appVersion = AppVersion(
-                packageName = "com.whatsapp",
-                title = "WhatsApp Messenger",
-                sdkVersion = 33,
-                lastUpdateTime = "3 weeks ago",
-                versionName = "2.24.1.75"
-            )
+            appVersion =
+                AppVersion(
+                    packageName = "com.whatsapp",
+                    title = "WhatsApp Messenger",
+                    sdkVersion = 33,
+                    lastUpdateTime = "3 weeks ago",
+                    versionName = "2.24.1.75",
+                ),
         )
     }
 }
@@ -301,13 +313,14 @@ private fun MainAppCardPreview() {
 private fun MainAppCardDarkPreview() {
     SDKMonitorTheme(darkTheme = true) {
         MainAppCard(
-            appVersion = AppVersion(
-                packageName = "com.instagram.android",
-                title = "Instagram",
-                sdkVersion = 28,
-                lastUpdateTime = "1 day ago",
-                versionName = "305.0.0.37.120"
-            )
+            appVersion =
+                AppVersion(
+                    packageName = "com.instagram.android",
+                    title = "Instagram",
+                    sdkVersion = 28,
+                    lastUpdateTime = "1 day ago",
+                    versionName = "305.0.0.37.120",
+                ),
         )
     }
 }

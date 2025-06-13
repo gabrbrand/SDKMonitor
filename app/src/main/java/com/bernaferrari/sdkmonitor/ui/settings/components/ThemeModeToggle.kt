@@ -34,59 +34,64 @@ fun ThemeModeToggle(
     themeMode: ThemeMode,
     isSelected: Boolean,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     // Animate corner radius: 16.dp (rounded) -> 32.dp (circular)
     val cornerRadius by animateDpAsState(
         targetValue = if (isSelected) 32.dp else 16.dp,
         animationSpec = tween(durationMillis = 300),
-        label = "cornerRadius"
+        label = "cornerRadius",
     )
 
     // Optionally animate border width for extra feedback
     val borderWidth by animateDpAsState(
         targetValue = if (isSelected) 2.dp else 1.dp,
         animationSpec = tween(durationMillis = 300),
-        label = "borderWidth"
+        label = "borderWidth",
     )
 
     Column(
         modifier = modifier,
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         OutlinedCard(
             onClick = onClick,
             modifier = Modifier.height(64.dp),
             shape = RoundedCornerShape(cornerRadius),
-            colors = CardDefaults.outlinedCardColors(
-                containerColor = if (isSelected) {
-                    MaterialTheme.colorScheme.primaryContainer
-                } else {
-                    MaterialTheme.colorScheme.surface
-                }
-            ),
-            border = androidx.compose.foundation.BorderStroke(
-                width = borderWidth,
-                color = if (isSelected) {
-                    MaterialTheme.colorScheme.inversePrimary
-                } else {
-                    MaterialTheme.colorScheme.outlineVariant
-                }
-            )
+            colors =
+                CardDefaults.outlinedCardColors(
+                    containerColor =
+                        if (isSelected) {
+                            MaterialTheme.colorScheme.primaryContainer
+                        } else {
+                            MaterialTheme.colorScheme.surface
+                        },
+                ),
+            border =
+                androidx.compose.foundation.BorderStroke(
+                    width = borderWidth,
+                    color =
+                        if (isSelected) {
+                            MaterialTheme.colorScheme.inversePrimary
+                        } else {
+                            MaterialTheme.colorScheme.outlineVariant
+                        },
+                ),
         ) {
             Box(
                 modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
+                contentAlignment = Alignment.Center,
             ) {
                 Icon(
                     imageVector = if (isSelected) themeMode.selectedIcon else themeMode.icon,
                     contentDescription = stringResource(themeMode.displayNameRes),
                     modifier = Modifier.size(24.dp),
-                    tint = if (isSelected) {
-                        MaterialTheme.colorScheme.onPrimaryContainer
-                    } else {
-                        MaterialTheme.colorScheme.onSurfaceVariant
-                    }
+                    tint =
+                        if (isSelected) {
+                            MaterialTheme.colorScheme.onPrimaryContainer
+                        } else {
+                            MaterialTheme.colorScheme.onSurfaceVariant
+                        },
                 )
             }
         }
@@ -96,13 +101,14 @@ fun ThemeModeToggle(
         Text(
             text = stringResource(themeMode.displayNameRes),
             style = MaterialTheme.typography.labelMedium,
-            color = if (isSelected) {
-                MaterialTheme.colorScheme.onSurface
-            } else {
-                MaterialTheme.colorScheme.onSurfaceVariant
-            },
+            color =
+                if (isSelected) {
+                    MaterialTheme.colorScheme.onSurface
+                } else {
+                    MaterialTheme.colorScheme.onSurfaceVariant
+                },
             textAlign = TextAlign.Center,
-            maxLines = 1
+            maxLines = 1,
         )
     }
 }
@@ -113,19 +119,19 @@ private fun ThemeOptionPreview() {
     SDKMonitorTheme {
         Row(
             modifier = Modifier.padding(16.dp),
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             ThemeModeToggle(
                 themeMode = ThemeMode.MATERIAL_YOU,
                 isSelected = true,
                 onClick = {},
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
             )
             ThemeModeToggle(
                 themeMode = ThemeMode.LIGHT,
                 isSelected = false,
                 onClick = {},
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
             )
         }
     }
@@ -137,19 +143,19 @@ private fun ThemeOptionDarkPreview() {
     SDKMonitorTheme(darkTheme = true) {
         Row(
             modifier = Modifier.padding(16.dp),
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             ThemeModeToggle(
                 themeMode = ThemeMode.DARK,
                 isSelected = true,
                 onClick = {},
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
             )
             ThemeModeToggle(
                 themeMode = ThemeMode.SYSTEM,
                 isSelected = false,
                 onClick = {},
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
             )
         }
     }

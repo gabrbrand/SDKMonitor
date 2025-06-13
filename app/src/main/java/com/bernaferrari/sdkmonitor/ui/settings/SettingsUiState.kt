@@ -7,7 +7,7 @@ import com.bernaferrari.sdkmonitor.domain.model.ThemeMode
 data class SdkDistribution(
     val sdkVersion: Int,
     val appCount: Int,
-    val percentage: Float
+    val percentage: Float,
 )
 
 /**
@@ -21,7 +21,7 @@ data class SettingsUiState(
     val sdkDistribution: List<SdkDistribution> = emptyList(),
     val totalApps: Int = 0,
     val allAppsForSdk: List<AppVersion> = emptyList(),
-    val isAnalyticsLoading: Boolean = false
+    val isAnalyticsLoading: Boolean = false,
 ) {
     val hasError: Boolean get() = errorMessage != null
 }
@@ -32,12 +32,13 @@ data class SettingsPreferences(
     val backgroundSync: Boolean = false,
     val orderBySdk: Boolean = false,
     val syncInterval: String = "30",
-    val syncTimeUnit: TimeUnit = TimeUnit.MINUTES
+    val syncTimeUnit: TimeUnit = TimeUnit.MINUTES,
 )
 
-
-enum class TimeUnit(val code: Int) {
+enum class TimeUnit(
+    val code: Int,
+) {
     MINUTES(0),
     HOURS(1),
-    DAYS(2)
+    DAYS(2),
 }

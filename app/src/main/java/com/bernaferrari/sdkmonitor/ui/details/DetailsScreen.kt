@@ -66,38 +66,44 @@ fun DetailsScreen(
     packageName: String,
     onNavigateBack: () -> Unit,
     isTabletSize: Boolean = false,
-    viewModel: DetailsViewModel = hiltViewModel()
+    viewModel: DetailsViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
     var showLoading by remember { mutableStateOf(false) }
 
     // Action handlers
-    val handleAppInfoClick = remember {
-        {
-            val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-                data = Uri.fromParts("package", packageName, null)
-            }
-            context.startActivity(intent)
-        }
-    }
-
-    val handlePlayStoreClick = remember {
-        {
-            val intent = Intent(Intent.ACTION_VIEW).apply {
-                data = "market://details?id=$packageName".toUri()
-            }
-            try {
+    val handleAppInfoClick =
+        remember {
+            {
+                val intent =
+                    Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                        data = Uri.fromParts("package", packageName, null)
+                    }
                 context.startActivity(intent)
-            } catch (e: Exception) {
-                // Fallback to web browser
-                val webIntent = Intent(Intent.ACTION_VIEW).apply {
-                    data = "https://play.google.com/store/apps/details?id=$packageName".toUri()
-                }
-                context.startActivity(webIntent)
             }
         }
-    }
+
+    val handlePlayStoreClick =
+        remember {
+            {
+                val intent =
+                    Intent(Intent.ACTION_VIEW).apply {
+                        data = "market://details?id=$packageName".toUri()
+                    }
+                try {
+                    context.startActivity(intent)
+                } catch (e: Exception) {
+                    // Fallback to web browser
+                    val webIntent =
+                        Intent(Intent.ACTION_VIEW).apply {
+                            data =
+                                "https://play.google.com/store/apps/details?id=$packageName".toUri()
+                        }
+                    context.startActivity(webIntent)
+                }
+            }
+        }
 
     // Only load app details if we have a valid package name (and not in tablet mode with empty selection)
     LaunchedEffect(packageName) {
@@ -121,10 +127,11 @@ fun DetailsScreen(
             TopAppBar(
                 title = {
                     Text(
-                        text = when (val state = uiState) {
-                            is DetailsUiState.Success -> state.appDetails.title
-                            else -> ""
-                        },
+                        text =
+                            when (val state = uiState) {
+                                is DetailsUiState.Success -> state.appDetails.title
+                                else -> ""
+                            },
                         fontWeight = FontWeight.ExtraBold,
                         style = MaterialTheme.typography.headlineSmall,
                         maxLines = 1,
@@ -137,18 +144,19 @@ fun DetailsScreen(
                             Icon(
                                 Icons.AutoMirrored.Default.ArrowBack,
                                 contentDescription = stringResource(R.string.back),
-                                tint = MaterialTheme.colorScheme.primary
+                                tint = MaterialTheme.colorScheme.primary,
                             )
                         }
                     }
                 },
             )
-        }
+        },
     ) { paddingValues ->
         Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues),
         ) {
             // Handle empty package name case (for tablet mode) - don't try to load anything
             if (packageName.isBlank()) {
@@ -160,8 +168,9 @@ fun DetailsScreen(
                 is DetailsUiState.Loading -> {
                     if (showLoading) {
                         LoadingState(
-                            modifier = Modifier
-                                .fillMaxSize()
+                            modifier =
+                                Modifier
+                                    .fillMaxSize(),
                         )
                     }
                 }
@@ -172,8 +181,9 @@ fun DetailsScreen(
                         ErrorState(
                             message = state.message,
                             onRetry = { viewModel.loadAppDetails(packageName) },
-                            modifier = Modifier
-                                .fillMaxSize()
+                            modifier =
+                                Modifier
+                                    .fillMaxSize(),
                         )
                     }
                 }
@@ -182,7 +192,7 @@ fun DetailsScreen(
                     DetailsContent(
                         state = state,
                         onAppInfoClick = handleAppInfoClick,
-                        onPlayStoreClick = handlePlayStoreClick
+                        onPlayStoreClick = handlePlayStoreClick,
                     )
                 }
             }
@@ -191,26 +201,24 @@ fun DetailsScreen(
 }
 
 @Composable
-private fun LoadingState(
-    modifier: Modifier = Modifier
-) {
+private fun LoadingState(modifier: Modifier = Modifier) {
     Box(
         modifier = modifier,
-        contentAlignment = Alignment.Center
+        contentAlignment = Alignment.Center,
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+            verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             CircularProgressIndicator(
                 modifier = Modifier.size(48.dp),
-                color = MaterialTheme.colorScheme.primary
+                color = MaterialTheme.colorScheme.primary,
             )
 
             Text(
                 text = stringResource(R.string.loading_app_details),
                 style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
     }
@@ -220,56 +228,58 @@ private fun LoadingState(
 private fun ErrorState(
     message: String,
     onRetry: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Box(
         modifier = modifier,
-        contentAlignment = Alignment.Center
+        contentAlignment = Alignment.Center,
     ) {
         Card(
             modifier = Modifier.padding(24.dp),
             shape = RoundedCornerShape(20.dp),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surfaceContainer
-            ),
-            elevation = CardDefaults.cardElevation(0.dp)
+            colors =
+                CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceContainer,
+                ),
+            elevation = CardDefaults.cardElevation(0.dp),
         ) {
             Column(
                 modifier = Modifier.padding(32.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+                verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
                 Icon(
                     imageVector = Icons.Default.Error,
                     contentDescription = "Error",
                     modifier = Modifier.size(48.dp),
-                    tint = MaterialTheme.colorScheme.error
+                    tint = MaterialTheme.colorScheme.error,
                 )
 
                 Text(
                     text = stringResource(R.string.app_not_found),
-                    style = MaterialTheme.typography.headlineSmall.copy(
-                        fontWeight = FontWeight.Bold
-                    ),
+                    style =
+                        MaterialTheme.typography.headlineSmall.copy(
+                            fontWeight = FontWeight.Bold,
+                        ),
                     color = MaterialTheme.colorScheme.onSurface,
-                    textAlign = TextAlign.Center
+                    textAlign = TextAlign.Center,
                 )
 
                 Text(
                     text = message,
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    textAlign = TextAlign.Center
+                    textAlign = TextAlign.Center,
                 )
 
                 FilledTonalButton(
                     onClick = onRetry,
-                    shape = RoundedCornerShape(12.dp)
+                    shape = RoundedCornerShape(12.dp),
                 ) {
                     Icon(
                         imageVector = Icons.Default.Refresh,
                         contentDescription = null,
-                        modifier = Modifier.size(18.dp)
+                        modifier = Modifier.size(18.dp),
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(stringResource(R.string.try_again))
@@ -284,26 +294,26 @@ private fun DetailsContent(
     state: DetailsUiState.Success,
     onAppInfoClick: () -> Unit,
     onPlayStoreClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     LazyColumn(
         modifier = modifier.fillMaxSize(),
         contentPadding = PaddingValues(20.dp),
-        verticalArrangement = Arrangement.spacedBy(20.dp)
+        verticalArrangement = Arrangement.spacedBy(20.dp),
     ) {
         item {
             AppDetailsCard(
                 appDetails = state.appDetails,
                 onAppInfoClick = onAppInfoClick,
                 onPlayStoreClick = onPlayStoreClick,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
             )
         }
 
         item {
             VersionHistoryCard(
                 versions = state.versions,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
             )
         }
 
@@ -316,37 +326,39 @@ private fun DetailsContent(
 @Composable
 private fun VersionHistoryCard(
     versions: List<AppVersion>,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Card(
         modifier = modifier,
         shape = RoundedCornerShape(20.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceContainer
-        ),
-        elevation = CardDefaults.cardElevation(0.dp)
+        colors =
+            CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surfaceContainer,
+            ),
+        elevation = CardDefaults.cardElevation(0.dp),
     ) {
         Column(
             modifier = Modifier.padding(20.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+            verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
             ) {
                 Icon(
                     imageVector = Icons.Default.History,
                     contentDescription = stringResource(R.string.version_history),
                     modifier = Modifier.size(20.dp),
-                    tint = MaterialTheme.colorScheme.primary
+                    tint = MaterialTheme.colorScheme.primary,
                 )
 
                 Text(
                     text = stringResource(R.string.version_history),
-                    style = MaterialTheme.typography.titleMedium.copy(
-                        fontWeight = FontWeight.Bold
-                    ),
-                    color = MaterialTheme.colorScheme.onSurface
+                    style =
+                        MaterialTheme.typography.titleMedium.copy(
+                            fontWeight = FontWeight.Bold,
+                        ),
+                    color = MaterialTheme.colorScheme.onSurface,
                 )
 
                 Spacer(modifier = Modifier.weight(1f))
@@ -354,15 +366,16 @@ private fun VersionHistoryCard(
                 if (versions.isNotEmpty()) {
                     Surface(
                         shape = RoundedCornerShape(8.dp),
-                        color = MaterialTheme.colorScheme.primaryContainer
+                        color = MaterialTheme.colorScheme.primaryContainer,
                     ) {
                         Text(
                             text = "${versions.size}",
                             modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
-                            style = MaterialTheme.typography.labelMedium.copy(
-                                fontWeight = FontWeight.Medium
-                            ),
-                            color = MaterialTheme.colorScheme.onPrimaryContainer
+                            style =
+                                MaterialTheme.typography.labelMedium.copy(
+                                    fontWeight = FontWeight.Medium,
+                                ),
+                            color = MaterialTheme.colorScheme.onPrimaryContainer,
                         )
                     }
                 }
@@ -371,14 +384,14 @@ private fun VersionHistoryCard(
             if (versions.isNotEmpty()) {
                 VersionTimeline(
                     versions = versions,
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
                 )
             } else {
                 Text(
                     text = stringResource(R.string.no_version_history),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.padding(vertical = 8.dp)
+                    modifier = Modifier.padding(vertical = 8.dp),
                 )
             }
         }

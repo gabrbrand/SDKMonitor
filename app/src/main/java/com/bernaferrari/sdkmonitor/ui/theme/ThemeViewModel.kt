@@ -18,43 +18,45 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class ThemeViewModel @Inject constructor(
-    private val preferencesRepository: PreferencesRepository
-) : ViewModel() {
+class ThemeViewModel
+    @Inject
+    constructor(
+        private val preferencesRepository: PreferencesRepository,
+    ) : ViewModel() {
+        private val _themeMode = MutableStateFlow(ThemeMode.MATERIAL_YOU)
+        val themeMode: StateFlow<ThemeMode> = _themeMode.asStateFlow()
 
-    private val _themeMode = MutableStateFlow(ThemeMode.MATERIAL_YOU)
-    private val themeMode: StateFlow<ThemeMode> = _themeMode.asStateFlow()
+        init {
+            observeThemePreferences()
+        }
 
-    init {
-        observeThemePreferences()
-    }
+        private fun observeThemePreferences() {
+            viewModelScope.launch {
+                preferencesRepository
+                    .getUserPreferences()
+                    .catch { /* Handle error silently, use default */ }
+                    .collect { preferences ->
+                        _themeMode.value = preferences.themeMode
+                    }
+            }
+        }
 
-    private fun observeThemePreferences() {
-        viewModelScope.launch {
-            preferencesRepository.getUserPreferences()
-                .catch { /* Handle error silently, use default */ }
-                .collect { preferences ->
-                    _themeMode.value = preferences.themeMode
-                }
+        @Composable
+        fun shouldUseDarkTheme(): Boolean {
+            val currentTheme by themeMode.collectAsState()
+            val systemInDarkTheme = isSystemInDarkTheme()
+
+            return when (currentTheme) {
+                ThemeMode.LIGHT -> false
+                ThemeMode.DARK -> true
+                ThemeMode.SYSTEM -> systemInDarkTheme
+                ThemeMode.MATERIAL_YOU -> systemInDarkTheme
+            }
+        }
+
+        @Composable
+        fun shouldUseDynamicColor(): Boolean {
+            val currentTheme by themeMode.collectAsState()
+            return currentTheme == ThemeMode.MATERIAL_YOU && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
         }
     }
-
-    @Composable
-    fun shouldUseDarkTheme(): Boolean {
-        val currentTheme by themeMode.collectAsState()
-        val systemInDarkTheme = isSystemInDarkTheme()
-
-        return when (currentTheme) {
-            ThemeMode.LIGHT -> false
-            ThemeMode.DARK -> true
-            ThemeMode.SYSTEM -> systemInDarkTheme
-            ThemeMode.MATERIAL_YOU -> systemInDarkTheme
-        }
-    }
-
-    @Composable
-    fun shouldUseDynamicColor(): Boolean {
-        val currentTheme by themeMode.collectAsState()
-        return currentTheme == ThemeMode.MATERIAL_YOU && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
-    }
-}

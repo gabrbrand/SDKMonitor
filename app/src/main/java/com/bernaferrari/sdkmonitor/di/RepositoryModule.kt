@@ -13,16 +13,11 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 abstract class RepositoryModule {
+    @Binds
+    @Singleton
+    abstract fun bindAppsRepository(appsRepositoryImpl: AppsRepositoryImpl): AppsRepository
 
     @Binds
     @Singleton
-    abstract fun bindAppsRepository(
-        appsRepositoryImpl: AppsRepositoryImpl
-    ): AppsRepository
-
-    @Binds
-    @Singleton
-    abstract fun bindPreferencesRepository(
-        preferencesRepositoryImpl: PreferencesRepositoryImpl
-    ): PreferencesRepository
+    abstract fun bindPreferencesRepository(preferencesRepositoryImpl: PreferencesRepositoryImpl): PreferencesRepository
 }

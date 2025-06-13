@@ -6,8 +6,10 @@ import android.content.Intent
 import io.github.aakira.napier.Napier
 
 class PackageReceiver : BroadcastReceiver() {
-
-    override fun onReceive(context: Context, intent: Intent) {
+    override fun onReceive(
+        context: Context,
+        intent: Intent,
+    ) {
         try {
             Napier.d("📦 Package event received: ${intent.action}")
 

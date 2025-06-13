@@ -53,69 +53,76 @@ fun SdkDetailDialog(
 
     Dialog(
         onDismissRequest = onDismiss,
-        properties = DialogProperties(
-            dismissOnBackPress = true,
-            dismissOnClickOutside = true,
-            usePlatformDefaultWidth = false
-        ),
+        properties =
+            DialogProperties(
+                dismissOnBackPress = true,
+                dismissOnClickOutside = true,
+                usePlatformDefaultWidth = false,
+            ),
     ) {
         Surface(
-            modifier = modifier
-                .fillMaxSize()
-                .padding(24.dp),
+            modifier =
+                modifier
+                    .fillMaxSize()
+                    .padding(24.dp),
             shape = RoundedCornerShape(24.dp),
             color = MaterialTheme.colorScheme.surface,
-            shadowElevation = 24.dp
+            shadowElevation = 24.dp,
         ) {
             Column(
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier.fillMaxSize(),
             ) {
                 Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clip(RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp))
-                        .background(
-                            brush = Brush.horizontalGradient(
-                                colors = listOf(
-                                    apiColor,
-                                    apiColor.copy(alpha = 0.8f)
-                                )
-                            )
-                        )
-                        .padding(16.dp)
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .clip(RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp))
+                            .background(
+                                brush =
+                                    Brush.horizontalGradient(
+                                        colors =
+                                            listOf(
+                                                apiColor,
+                                                apiColor.copy(alpha = 0.8f),
+                                            ),
+                                    ),
+                            ).padding(16.dp),
                 ) {
                     Row(
-                        modifier = Modifier
-                            .fillMaxWidth(),
-                        verticalAlignment = Alignment.Top
+                        modifier =
+                            Modifier
+                                .fillMaxWidth(),
+                        verticalAlignment = Alignment.Top,
                     ) {
                         // Title content taking available space
                         Column(
-                            modifier = Modifier
-                                .weight(1f),
-                            verticalArrangement = Arrangement.spacedBy(4.dp)
+                            modifier =
+                                Modifier
+                                    .weight(1f),
+                            verticalArrangement = Arrangement.spacedBy(4.dp),
                         ) {
                             Text(
                                 text = "Target SDK $sdkVersion",
-                                style = MaterialTheme.typography.headlineMedium.copy(
-                                    fontWeight = FontWeight.Bold
-                                ),
+                                style =
+                                    MaterialTheme.typography.headlineMedium.copy(
+                                        fontWeight = FontWeight.Bold,
+                                    ),
                                 color = Color.White,
                                 maxLines = 1,
-                                overflow = TextOverflow.Ellipsis
+                                overflow = TextOverflow.Ellipsis,
                             )
 
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.spacedBy(8.dp),
-                                verticalAlignment = Alignment.CenterVertically
+                                verticalAlignment = Alignment.CenterVertically,
                             ) {
                                 Text(
                                     text = apiDescription,
                                     style = MaterialTheme.typography.bodyLarge,
                                     color = Color.White.copy(alpha = 0.9f),
                                     maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis
+                                    overflow = TextOverflow.Ellipsis,
                                 )
 
                                 Text(
@@ -126,19 +133,18 @@ fun SdkDetailDialog(
                                 Text(
                                     text = "${apps.size} ${if (apps.size == 1) "app" else "apps"}",
                                     style = MaterialTheme.typography.bodyLarge,
-                                    color = Color.White.copy(alpha = 0.8f)
+                                    color = Color.White.copy(alpha = 0.8f),
                                 )
                             }
-
                         }
 
                         IconButton(
-                            onClick = onDismiss
+                            onClick = onDismiss,
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Close,
                                 contentDescription = "Close",
-                                tint = Color.White
+                                tint = Color.White,
                             )
                         }
                     }
@@ -147,16 +153,17 @@ fun SdkDetailDialog(
                 // Apps List - Modified to use weight for proper bottom button placement
                 if (apps.isEmpty()) {
                     Box(
-                        modifier = Modifier
-                            .weight(1f)
-                            .padding(horizontal = 24.dp),
-                        contentAlignment = Alignment.Center
+                        modifier =
+                            Modifier
+                                .weight(1f)
+                                .padding(horizontal = 24.dp),
+                        contentAlignment = Alignment.Center,
                     ) {
                         Text(
                             text = "No apps found with this SDK version",
                             style = MaterialTheme.typography.bodyLarge,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            textAlign = TextAlign.Center
+                            textAlign = TextAlign.Center,
                         )
                     }
                 } else {
@@ -168,7 +175,7 @@ fun SdkDetailDialog(
                                 modifier = Modifier.padding(horizontal = 0.dp, vertical = 0.dp),
                                 appVersion = app,
                                 showVersionPill = false,
-                                onClick = { onAppClick(app.packageName) }
+                                onClick = { onAppClick(app.packageName) },
                             )
                         }
                     }
@@ -176,23 +183,25 @@ fun SdkDetailDialog(
 
                 // Bottom Close Button - Smaller and positioned bottom-right
                 Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(MaterialTheme.colorScheme.surfaceContainer)
-                        .padding(horizontal = 16.dp, vertical = 8.dp),
-                    horizontalArrangement = Arrangement.End
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .background(MaterialTheme.colorScheme.surfaceContainer)
+                            .padding(horizontal = 16.dp, vertical = 8.dp),
+                    horizontalArrangement = Arrangement.End,
                 ) {
                     Button(
                         onClick = onDismiss,
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.primary
-                        ),
+                        colors =
+                            ButtonDefaults.buttonColors(
+                                containerColor = MaterialTheme.colorScheme.primary,
+                            ),
                         shape = RoundedCornerShape(8.dp),
-                        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
+                        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
                     ) {
                         Text(
                             text = "Close",
-                            style = MaterialTheme.typography.labelMedium
+                            style = MaterialTheme.typography.labelMedium,
                         )
                     }
                 }
@@ -207,25 +216,26 @@ private fun SdkDetailDialogPreview() {
     SDKMonitorTheme {
         SdkDetailDialog(
             sdkVersion = 33,
-            apps = listOf(
-                AppVersion(
-                    packageName = "com.whatsapp",
-                    title = "WhatsApp",
-                    sdkVersion = 33,
-                    lastUpdateTime = "2 days ago",
-                    versionName = "2.24.1.75",
-                    isFromPlayStore = true
+            apps =
+                listOf(
+                    AppVersion(
+                        packageName = "com.whatsapp",
+                        title = "WhatsApp",
+                        sdkVersion = 33,
+                        lastUpdateTime = "2 days ago",
+                        versionName = "2.24.1.75",
+                        isFromPlayStore = true,
+                    ),
+                    AppVersion(
+                        packageName = "com.instagram.android",
+                        title = "Instagram",
+                        sdkVersion = 33,
+                        lastUpdateTime = "1 week ago",
+                        versionName = "305.0.0.37.120",
+                        isFromPlayStore = true,
+                    ),
                 ),
-                AppVersion(
-                    packageName = "com.instagram.android",
-                    title = "Instagram",
-                    sdkVersion = 33,
-                    lastUpdateTime = "1 week ago",
-                    versionName = "305.0.0.37.120",
-                    isFromPlayStore = true
-                )
-            ),
-            onDismiss = {}
+            onDismiss = {},
         )
     }
 }

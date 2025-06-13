@@ -63,74 +63,77 @@ fun SdkAnalyticsCard(
 
     val animationProgress by animateFloatAsState(
         targetValue = 1f,
-        animationSpec = tween(
-            durationMillis = 1500,
-            easing = FastOutSlowInEasing
-        ),
-        label = "chart_animation"
+        animationSpec =
+            tween(
+                durationMillis = 1500,
+                easing = FastOutSlowInEasing,
+            ),
+        label = "chart_animation",
     )
 
     Surface(
         modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(24.dp),
-        color = MaterialTheme.colorScheme.surfaceContainer
+        color = MaterialTheme.colorScheme.surfaceContainer,
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 20.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 20.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
-
             // Enhanced Header with app type filter buttons
             Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 20.dp),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 20.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(16.dp)
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
                 ) {
                     Surface(
                         modifier = Modifier.size(48.dp),
                         shape = RoundedCornerShape(16.dp),
-                        color = MaterialTheme.colorScheme.surfaceContainerHighest
+                        color = MaterialTheme.colorScheme.surfaceContainerHighest,
                     ) {
                         Box(
                             modifier = Modifier.fillMaxSize(),
-                            contentAlignment = Alignment.Center
+                            contentAlignment = Alignment.Center,
                         ) {
                             Icon(
                                 imageVector = Icons.AutoMirrored.Filled.TrendingUp,
                                 contentDescription = stringResource(R.string.analytics),
                                 modifier = Modifier.size(24.dp),
-                                tint = MaterialTheme.colorScheme.primary
+                                tint = MaterialTheme.colorScheme.primary,
                             )
                         }
                     }
 
                     Column(
-                        verticalArrangement = Arrangement.spacedBy(4.dp)
+                        verticalArrangement = Arrangement.spacedBy(4.dp),
                     ) {
                         Text(
                             text = stringResource(R.string.sdk_analytics),
-                            style = MaterialTheme.typography.titleLarge.copy(
-                                fontWeight = FontWeight.Bold
-                            ),
-                            color = MaterialTheme.colorScheme.onSurface
+                            style =
+                                MaterialTheme.typography.titleLarge.copy(
+                                    fontWeight = FontWeight.Bold,
+                                ),
+                            color = MaterialTheme.colorScheme.onSurface,
                         )
 
                         Row(
                             horizontalArrangement = Arrangement.spacedBy(20.dp),
-                            verticalAlignment = Alignment.CenterVertically
+                            verticalAlignment = Alignment.CenterVertically,
                         ) {
                             // Total apps stat
                             Row(
                                 horizontalArrangement = Arrangement.spacedBy(4.dp),
-                                verticalAlignment = Alignment.CenterVertically
+                                verticalAlignment = Alignment.CenterVertically,
                             ) {
                                 Surface(
                                     shape = RoundedCornerShape(6.dp),
@@ -138,29 +141,32 @@ fun SdkAnalyticsCard(
                                 ) {
                                     Text(
                                         text = totalApps.toString(),
-                                        style = MaterialTheme.typography.labelLarge.copy(
-                                            fontWeight = FontWeight.Bold
-                                        ),
+                                        style =
+                                            MaterialTheme.typography.labelLarge.copy(
+                                                fontWeight = FontWeight.Bold,
+                                            ),
                                         color = MaterialTheme.colorScheme.onSecondaryContainer,
-                                        modifier = Modifier.padding(
-                                            horizontal = 8.dp,
-                                            vertical = 2.dp
-                                        )
+                                        modifier =
+                                            Modifier.padding(
+                                                horizontal = 8.dp,
+                                                vertical = 2.dp,
+                                            ),
                                     )
                                 }
                                 Text(
                                     text = stringResource(R.string.apps_lowercase),
-                                    style = MaterialTheme.typography.bodySmall.copy(
-                                        fontWeight = FontWeight.Medium
-                                    ),
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    style =
+                                        MaterialTheme.typography.bodySmall.copy(
+                                            fontWeight = FontWeight.Medium,
+                                        ),
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 )
                             }
 
                             // SDK versions stat
                             Row(
                                 horizontalArrangement = Arrangement.spacedBy(4.dp),
-                                verticalAlignment = Alignment.CenterVertically
+                                verticalAlignment = Alignment.CenterVertically,
                             ) {
                                 Surface(
                                     shape = RoundedCornerShape(6.dp),
@@ -168,22 +174,25 @@ fun SdkAnalyticsCard(
                                 ) {
                                     Text(
                                         text = filteredData.size.toString(),
-                                        style = MaterialTheme.typography.labelLarge.copy(
-                                            fontWeight = FontWeight.Bold
-                                        ),
+                                        style =
+                                            MaterialTheme.typography.labelLarge.copy(
+                                                fontWeight = FontWeight.Bold,
+                                            ),
                                         color = MaterialTheme.colorScheme.onTertiaryContainer,
-                                        modifier = Modifier.padding(
-                                            horizontal = 8.dp,
-                                            vertical = 2.dp
-                                        )
+                                        modifier =
+                                            Modifier.padding(
+                                                horizontal = 8.dp,
+                                                vertical = 2.dp,
+                                            ),
                                     )
                                 }
                                 Text(
                                     text = stringResource(R.string.versions_lowercase),
-                                    style = MaterialTheme.typography.bodySmall.copy(
-                                        fontWeight = FontWeight.Medium
-                                    ),
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    style =
+                                        MaterialTheme.typography.bodySmall.copy(
+                                            fontWeight = FontWeight.Medium,
+                                        ),
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 )
                             }
                         }
@@ -191,31 +200,31 @@ fun SdkAnalyticsCard(
                 }
             }
 
-
             // Chart with filtered data
             if (filteredData.isNotEmpty()) {
                 SdkBarChart(
                     data = filteredData,
                     animationProgress = animationProgress,
                     onBarClick = onSdkClick,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(200.dp)
-                        .padding(horizontal = 20.dp),
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .height(200.dp)
+                            .padding(horizontal = 20.dp),
                 )
 
                 // Legend with filtered data
                 LazyRow(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    contentPadding = PaddingValues(horizontal = 20.dp)
+                    contentPadding = PaddingValues(horizontal = 20.dp),
                 ) {
                     items(filteredData.sortedByDescending { it.sdkVersion }.take(5)) { sdk ->
                         SdkLegendItem(
                             sdkVersion = sdk.sdkVersion,
                             appCount = sdk.appCount,
                             percentage = sdk.percentage,
-                            onClick = { onSdkClick(sdk.sdkVersion) }
+                            onClick = { onSdkClick(sdk.sdkVersion) },
                         )
                     }
                 }
@@ -241,24 +250,25 @@ private fun SdkBarChart(
     val sortedData = data.sortedByDescending { it.sdkVersion }
 
     Canvas(
-        modifier = modifier.pointerInput(Unit) {
-            detectTapGestures { offset ->
-                // Ensure sortedData is not empty to avoid division by zero or negative in calculations
-                if (sortedData.isEmpty()) return@detectTapGestures
+        modifier =
+            modifier.pointerInput(Unit) {
+                detectTapGestures { offset ->
+                    // Ensure sortedData is not empty to avoid division by zero or negative in calculations
+                    if (sortedData.isEmpty()) return@detectTapGestures
 
-                val barWidth = size.width / (sortedData.size * 1.5f - 0.5f)
-                val barSpacing = barWidth * 0.5f
+                    val barWidth = size.width / (sortedData.size * 1.5f - 0.5f)
+                    val barSpacing = barWidth * 0.5f
 
-                sortedData.forEachIndexed { index, sdk ->
-                    val x =
-                        index * (barWidth + barSpacing) // Adjusted: Removed trailing + barSpacing
-                    if (offset.x >= x && offset.x <= x + barWidth) {
-                        onBarClick(sdk.sdkVersion)
-                        return@detectTapGestures
+                    sortedData.forEachIndexed { index, sdk ->
+                        val x =
+                            index * (barWidth + barSpacing) // Adjusted: Removed trailing + barSpacing
+                        if (offset.x >= x && offset.x <= x + barWidth) {
+                            onBarClick(sdk.sdkVersion)
+                            return@detectTapGestures
+                        }
                     }
                 }
-            }
-        }
+            },
     ) {
         // Ensure sortedData is not empty to avoid division by zero or negative in calculations
         if (sortedData.isEmpty()) return@Canvas
@@ -278,56 +288,62 @@ private fun SdkBarChart(
 
             // Draw rounded gradient bar
             drawRoundRect(
-                brush = Brush.verticalGradient(
-                    colors = listOf(
-                        apiColor,
-                        apiColor.copy(alpha = 0.7f)
-                    )
-                ),
+                brush =
+                    Brush.verticalGradient(
+                        colors =
+                            listOf(
+                                apiColor,
+                                apiColor.copy(alpha = 0.7f),
+                            ),
+                    ),
                 topLeft = Offset(x, y),
                 size = Size(barWidth, barHeight),
-                cornerRadius = androidx.compose.ui.geometry.CornerRadius(
-                    x = cornerRadius,
-                    y = cornerRadius
-                )
+                cornerRadius =
+                    androidx.compose.ui.geometry.CornerRadius(
+                        x = cornerRadius,
+                        y = cornerRadius,
+                    ),
             )
 
             // Draw SDK version label
             drawContext.canvas.nativeCanvas.apply {
-                val textPaint = android.graphics.Paint().apply {
-                    color = if (size.width > 400.dp.toPx()) {
-                        onSurfaceColor.toArgb()
-                    } else {
-                        onSurfaceVariantColor.toArgb()
+                val textPaint =
+                    android.graphics.Paint().apply {
+                        color =
+                            if (size.width > 400.dp.toPx()) {
+                                onSurfaceColor.toArgb()
+                            } else {
+                                onSurfaceVariantColor.toArgb()
+                            }
+                        textSize = if (size.width > 400.dp.toPx()) 28f else 24f
+                        textAlign = android.graphics.Paint.Align.CENTER
+                        isFakeBoldText = true
                     }
-                    textSize = if (size.width > 400.dp.toPx()) 28f else 24f
-                    textAlign = android.graphics.Paint.Align.CENTER
-                    isFakeBoldText = true
-                }
 
                 drawText(
                     sdk.sdkVersion.toString(),
                     x + barWidth / 2,
                     size.height - 5.dp.toPx(),
-                    textPaint
+                    textPaint,
                 )
             }
 
             // Draw app count on top of bar if there's space
             if (barHeight > 30.dp.toPx()) {
                 drawContext.canvas.nativeCanvas.apply {
-                    val countPaint = android.graphics.Paint().apply {
-                        color = Color.White.toArgb()
-                        textSize = 20f
-                        textAlign = android.graphics.Paint.Align.CENTER
-                        isFakeBoldText = true
-                    }
+                    val countPaint =
+                        android.graphics.Paint().apply {
+                            color = Color.White.toArgb()
+                            textSize = 20f
+                            textAlign = android.graphics.Paint.Align.CENTER
+                            isFakeBoldText = true
+                        }
 
                     drawText(
                         sdk.appCount.toString(),
                         x + barWidth / 2,
                         y + 16.dp.toPx(),
-                        countPaint
+                        countPaint,
                     )
                 }
             }
@@ -350,24 +366,25 @@ private fun SdkLegendItem(
         onClick = onClick,
         modifier = modifier,
         shape = RoundedCornerShape(12.dp),
-        color = apiColor.copy(alpha = 0.1f)
+        color = apiColor.copy(alpha = 0.1f),
     ) {
         Column(
             modifier = Modifier.padding(12.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(4.dp)
+            verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {
             Surface(
                 shape = RoundedCornerShape(8.dp),
-                color = apiColor
+                color = apiColor,
             ) {
                 Text(
                     text = sdkVersion.toString(),
                     modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
-                    style = MaterialTheme.typography.labelMedium.copy(
-                        fontWeight = FontWeight.Bold
-                    ),
-                    color = Color.White
+                    style =
+                        MaterialTheme.typography.labelMedium.copy(
+                            fontWeight = FontWeight.Bold,
+                        ),
+                    color = Color.White,
                 )
             }
 
@@ -376,71 +393,72 @@ private fun SdkLegendItem(
                 style = MaterialTheme.typography.labelSmall,
                 color = apiColor,
                 maxLines = 1,
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
             )
 
             Text(
                 text = stringResource(R.string.apps_count, appCount),
-                style = MaterialTheme.typography.bodySmall.copy(
-                    fontWeight = FontWeight.Medium
-                ),
-                color = MaterialTheme.colorScheme.onSurface
+                style =
+                    MaterialTheme.typography.bodySmall.copy(
+                        fontWeight = FontWeight.Medium,
+                    ),
+                color = MaterialTheme.colorScheme.onSurface,
             )
 
             Text(
                 text = "${(percentage * 100).toInt()}%",
                 style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
     }
 }
 
 @Composable
-fun SdkAnalyticsEmptyState(
-    modifier: Modifier = Modifier,
-) {
+fun SdkAnalyticsEmptyState(modifier: Modifier = Modifier) {
     Surface(
         modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(24.dp),
-        color = MaterialTheme.colorScheme.surfaceContainer
+        color = MaterialTheme.colorScheme.surfaceContainer,
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(32.dp),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(32.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+            verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             Surface(
                 modifier = Modifier.size(64.dp),
                 shape = RoundedCornerShape(20.dp),
-                color = MaterialTheme.colorScheme.surfaceContainerHighest
+                color = MaterialTheme.colorScheme.surfaceContainerHighest,
             ) {
                 Box(
                     modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
+                    contentAlignment = Alignment.Center,
                 ) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.TrendingUp,
                         contentDescription = null,
                         modifier = Modifier.size(32.dp),
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
             }
 
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+                verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 Text(
                     text = stringResource(R.string.no_apps_found),
-                    style = MaterialTheme.typography.titleMedium.copy(
-                        fontWeight = FontWeight.Bold
-                    ),
+                    style =
+                        MaterialTheme.typography.titleMedium.copy(
+                            fontWeight = FontWeight.Bold,
+                        ),
                     color = MaterialTheme.colorScheme.onSurface,
-                    textAlign = TextAlign.Center
+                    textAlign = TextAlign.Center,
                 )
             }
         }
@@ -448,64 +466,67 @@ fun SdkAnalyticsEmptyState(
 }
 
 @Composable
-fun SdkAnalyticsPlaceholder(
-    modifier: Modifier = Modifier
-) {
+fun SdkAnalyticsPlaceholder(modifier: Modifier = Modifier) {
     val shimmerAlpha by animateFloatAsState(
         targetValue = 0.3f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(1200),
-            repeatMode = RepeatMode.Reverse
-        ),
-        label = "shimmer_animation"
+        animationSpec =
+            infiniteRepeatable(
+                animation = tween(1200),
+                repeatMode = RepeatMode.Reverse,
+            ),
+        label = "shimmer_animation",
     )
 
     Surface(
         modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(24.dp),
-        color = MaterialTheme.colorScheme.surfaceContainer
+        color = MaterialTheme.colorScheme.surfaceContainer,
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 20.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 20.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             // Header placeholder
             Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 20.dp),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 20.dp),
                 horizontalArrangement = Arrangement.spacedBy(16.dp),
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 Surface(
                     modifier = Modifier.size(48.dp),
                     shape = RoundedCornerShape(16.dp),
-                    color = MaterialTheme.colorScheme.surfaceContainerHighest.copy(alpha = shimmerAlpha)
+                    color = MaterialTheme.colorScheme.surfaceContainerHighest.copy(alpha = shimmerAlpha),
                 ) {}
 
                 Column(
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
                     Surface(
-                        modifier = Modifier
-                            .width(140.dp)
-                            .height(24.dp),
+                        modifier =
+                            Modifier
+                                .width(140.dp)
+                                .height(24.dp),
                         shape = RoundedCornerShape(6.dp),
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = shimmerAlpha)
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = shimmerAlpha),
                     ) {}
 
                     Row(
-                        horizontalArrangement = Arrangement.spacedBy(20.dp)
+                        horizontalArrangement = Arrangement.spacedBy(20.dp),
                     ) {
                         repeat(2) {
                             Surface(
-                                modifier = Modifier
-                                    .width(60.dp)
-                                    .height(16.dp),
+                                modifier =
+                                    Modifier
+                                        .width(60.dp)
+                                        .height(16.dp),
                                 shape = RoundedCornerShape(4.dp),
-                                color = MaterialTheme.colorScheme.onSurface.copy(alpha = shimmerAlpha * 0.7f)
+                                color = MaterialTheme.colorScheme.onSurface.copy(alpha = shimmerAlpha * 0.7f),
                             ) {}
                         }
                     }
@@ -514,26 +535,27 @@ fun SdkAnalyticsPlaceholder(
 
             // Chart placeholder with centered loading
             Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(200.dp)
-                    .padding(horizontal = 20.dp),
-                contentAlignment = Alignment.Center
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .height(200.dp)
+                        .padding(horizontal = 20.dp),
+                contentAlignment = Alignment.Center,
             ) {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     shape = RoundedCornerShape(12.dp),
-                    color = MaterialTheme.colorScheme.surfaceContainerHighest.copy(alpha = 0.2f)
+                    color = MaterialTheme.colorScheme.surfaceContainerHighest.copy(alpha = 0.2f),
                 ) {}
 
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
                 ) {
                     CircularProgressIndicator(
                         modifier = Modifier.size(28.dp),
                         color = MaterialTheme.colorScheme.primary,
-                        strokeWidth = 2.5.dp
+                        strokeWidth = 2.5.dp,
                     )
                 }
             }
@@ -542,17 +564,19 @@ fun SdkAnalyticsPlaceholder(
             LazyRow(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
-                contentPadding = PaddingValues(horizontal = 20.dp)
+                contentPadding = PaddingValues(horizontal = 20.dp),
             ) {
                 items(4) { index ->
                     Surface(
-                        modifier = Modifier
-                            .width(80.dp)
-                            .height(120.dp),
+                        modifier =
+                            Modifier
+                                .width(80.dp)
+                                .height(120.dp),
                         shape = RoundedCornerShape(12.dp),
-                        color = MaterialTheme.colorScheme.surfaceContainerHighest.copy(
-                            alpha = shimmerAlpha * (0.8f - index * 0.1f)
-                        )
+                        color =
+                            MaterialTheme.colorScheme.surfaceContainerHighest.copy(
+                                alpha = shimmerAlpha * (0.8f - index * 0.1f),
+                            ),
                     ) {}
                 }
             }
@@ -565,15 +589,16 @@ fun SdkAnalyticsPlaceholder(
 private fun SdkAnalyticsCardPreview() {
     SDKMonitorTheme {
         SdkAnalyticsCard(
-            sdkDistribution = listOf(
-                SdkDistribution(34, 15, 0.3f),
-                SdkDistribution(33, 12, 0.24f),
-                SdkDistribution(31, 10, 0.2f),
-                SdkDistribution(29, 8, 0.16f),
-                SdkDistribution(28, 5, 0.1f)
-            ),
+            sdkDistribution =
+                listOf(
+                    SdkDistribution(34, 15, 0.3f),
+                    SdkDistribution(33, 12, 0.24f),
+                    SdkDistribution(31, 10, 0.2f),
+                    SdkDistribution(29, 8, 0.16f),
+                    SdkDistribution(28, 5, 0.1f),
+                ),
             totalApps = 50,
-            modifier = Modifier.padding(16.dp)
+            modifier = Modifier.padding(16.dp),
         )
     }
 }
@@ -585,7 +610,7 @@ private fun SdkAnalyticsCardEmptyPreview() {
         SdkAnalyticsCard(
             sdkDistribution = emptyList(),
             totalApps = 0,
-            modifier = Modifier.padding(16.dp)
+            modifier = Modifier.padding(16.dp),
         )
     }
 }
@@ -595,7 +620,7 @@ private fun SdkAnalyticsCardEmptyPreview() {
 private fun SdkAnalyticsPlaceholderPreview() {
     SDKMonitorTheme {
         SdkAnalyticsPlaceholder(
-            modifier = Modifier.padding(16.dp)
+            modifier = Modifier.padding(16.dp),
         )
     }
 }
@@ -605,7 +630,7 @@ private fun SdkAnalyticsPlaceholderPreview() {
 private fun SdkAnalyticsEmptyStatePreview() {
     SDKMonitorTheme {
         SdkAnalyticsEmptyState(
-            modifier = Modifier.padding(16.dp)
+            modifier = Modifier.padding(16.dp),
         )
     }
 }

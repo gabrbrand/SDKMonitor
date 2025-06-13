@@ -50,8 +50,8 @@ android {
             setProguardFiles(
                 listOf(
                     getDefaultProguardFile("proguard-android-optimize.txt"),
-                    "proguard-rules.pro"
-                )
+                    "proguard-rules.pro",
+                ),
             )
             signingConfig = signingConfigs.getByName("release")
         }
@@ -87,7 +87,6 @@ android {
 }
 
 dependencies {
-
     // Kotlin
     implementation(libs.kotlin.stdlib)
     implementation(libs.kotlinx.coroutines.core)

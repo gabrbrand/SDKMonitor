@@ -67,7 +67,7 @@ import com.bernaferrari.sdkmonitor.ui.logs.components.LogsCard
 fun LogsScreen(
     onNavigateToAppDetails: (String) -> Unit = {},
     selectedPackageName: String? = null, // Add selected package parameter
-    viewModel: LogsViewModel = hiltViewModel()
+    viewModel: LogsViewModel = hiltViewModel(),
 ) {
     val uiState: LogsUiState by viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -78,46 +78,49 @@ fun LogsScreen(
                     Text(
                         stringResource(R.string.change_logs),
                         fontWeight = FontWeight.ExtraBold,
-                        style = MaterialTheme.typography.headlineSmall
+                        style = MaterialTheme.typography.headlineSmall,
                     )
                 },
             )
-        }
+        },
     ) { paddingValues ->
         Box(
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize(),
         ) {
             when (val state = uiState) {
                 is LogsUiState.Loading -> {
                     LoadingState(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(paddingValues)
+                        modifier =
+                            Modifier
+                                .fillMaxSize()
+                                .padding(paddingValues),
                     )
                 }
 
                 is LogsUiState.Error -> {
                     ErrorState(
                         message = state.message,
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(paddingValues)
+                        modifier =
+                            Modifier
+                                .fillMaxSize()
+                                .padding(paddingValues),
                     )
                 }
 
                 is LogsUiState.Success -> {
                     if (state.logs.isEmpty()) {
                         EmptyLogsContent(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(paddingValues)
+                            modifier =
+                                Modifier
+                                    .fillMaxSize()
+                                    .padding(paddingValues),
                         )
                     } else {
                         LogsContent(
                             logs = state.logs,
                             onNavigateToAppDetails = onNavigateToAppDetails,
                             selectedPackageName = selectedPackageName, // Pass selection state
-                            modifier = Modifier.padding(paddingValues)
+                            modifier = Modifier.padding(paddingValues),
                         )
                     }
                 }
@@ -127,12 +130,10 @@ fun LogsScreen(
 }
 
 @Composable
-private fun LoadingState(
-    modifier: Modifier = Modifier
-) {
+private fun LoadingState(modifier: Modifier = Modifier) {
     Box(
         modifier = modifier,
-        contentAlignment = Alignment.Center
+        contentAlignment = Alignment.Center,
     ) {
         Surface(
             shape = RoundedCornerShape(28.dp),
@@ -141,40 +142,43 @@ private fun LoadingState(
             Column(
                 modifier = Modifier.padding(48.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(24.dp)
+                verticalArrangement = Arrangement.spacedBy(24.dp),
             ) {
                 // Hypnotic pulsing animation
                 val pulseScale by animateFloatAsState(
                     targetValue = 1.3f,
-                    animationSpec = infiniteRepeatable(
-                        animation = tween(1500, easing = FastOutSlowInEasing),
-                        repeatMode = RepeatMode.Reverse
-                    ),
-                    label = "loading_pulse"
+                    animationSpec =
+                        infiniteRepeatable(
+                            animation = tween(1500, easing = FastOutSlowInEasing),
+                            repeatMode = RepeatMode.Reverse,
+                        ),
+                    label = "loading_pulse",
                 )
 
                 CircularProgressIndicator(
-                    modifier = Modifier
-                        .size(64.dp)
-                        .graphicsLayer(scaleX = pulseScale, scaleY = pulseScale),
+                    modifier =
+                        Modifier
+                            .size(64.dp)
+                            .graphicsLayer(scaleX = pulseScale, scaleY = pulseScale),
                     color = MaterialTheme.colorScheme.primary,
-                    strokeWidth = 6.dp
+                    strokeWidth = 6.dp,
                 )
 
                 Text(
                     text = stringResource(R.string.loading_change_history),
-                    style = MaterialTheme.typography.titleLarge.copy(
-                        fontWeight = FontWeight.Bold
-                    ),
+                    style =
+                        MaterialTheme.typography.titleLarge.copy(
+                            fontWeight = FontWeight.Bold,
+                        ),
                     color = MaterialTheme.colorScheme.primary,
-                    textAlign = TextAlign.Center
+                    textAlign = TextAlign.Center,
                 )
 
                 Text(
                     text = stringResource(R.string.analyzing_app_ecosystem),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    textAlign = TextAlign.Center
+                    textAlign = TextAlign.Center,
                 )
             }
         }
@@ -188,140 +192,144 @@ private fun ErrorState(
 ) {
     Box(
         modifier = modifier,
-        contentAlignment = Alignment.Center
+        contentAlignment = Alignment.Center,
     ) {
         Card(
             modifier = Modifier.padding(32.dp),
             shape = RoundedCornerShape(32.dp),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.errorContainer
-            ),
-            elevation = CardDefaults.cardElevation(20.dp)
+            colors =
+                CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.errorContainer,
+                ),
+            elevation = CardDefaults.cardElevation(20.dp),
         ) {
             Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(
-                        brush = Brush.radialGradient(
-                            colors = listOf(
-                                MaterialTheme.colorScheme.error.copy(alpha = 0.05f),
-                                MaterialTheme.colorScheme.errorContainer
-                            )
-                        )
-                    )
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .background(
+                            brush =
+                                Brush.radialGradient(
+                                    colors =
+                                        listOf(
+                                            MaterialTheme.colorScheme.error.copy(alpha = 0.05f),
+                                            MaterialTheme.colorScheme.errorContainer,
+                                        ),
+                                ),
+                        ),
             ) {
                 Column(
                     modifier = Modifier.padding(40.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(20.dp)
+                    verticalArrangement = Arrangement.spacedBy(20.dp),
                 ) {
                     Surface(
                         modifier = Modifier.size(80.dp),
                         shape = RoundedCornerShape(24.dp),
-                        color = MaterialTheme.colorScheme.error.copy(alpha = 0.15f)
+                        color = MaterialTheme.colorScheme.error.copy(alpha = 0.15f),
                     ) {
                         Box(
                             modifier = Modifier.fillMaxSize(),
-                            contentAlignment = Alignment.Center
+                            contentAlignment = Alignment.Center,
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Error,
                                 contentDescription = "Error",
                                 modifier = Modifier.size(40.dp),
-                                tint = MaterialTheme.colorScheme.error
+                                tint = MaterialTheme.colorScheme.error,
                             )
                         }
                     }
 
                     Text(
                         text = stringResource(R.string.oops_something_went_wrong),
-                        style = MaterialTheme.typography.headlineSmall.copy(
-                            fontWeight = FontWeight.Bold
-                        ),
+                        style =
+                            MaterialTheme.typography.headlineSmall.copy(
+                                fontWeight = FontWeight.Bold,
+                            ),
                         color = MaterialTheme.colorScheme.onErrorContainer,
-                        textAlign = TextAlign.Center
+                        textAlign = TextAlign.Center,
                     )
 
                     Text(
                         text = message,
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.onErrorContainer.copy(alpha = 0.8f),
-                        textAlign = TextAlign.Center
+                        textAlign = TextAlign.Center,
                     )
-
                 }
             }
-
         }
-
     }
 }
 
 @Composable
-private fun EmptyLogsContent(
-    modifier: Modifier = Modifier
-) {
+private fun EmptyLogsContent(modifier: Modifier = Modifier) {
     Box(
         modifier = modifier,
-        contentAlignment = Alignment.Center
+        contentAlignment = Alignment.Center,
     ) {
         Surface(
             modifier = Modifier.padding(32.dp),
             shape = RoundedCornerShape(32.dp),
-            color = MaterialTheme.colorScheme.surfaceContainer
+            color = MaterialTheme.colorScheme.surfaceContainer,
         ) {
             Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(
-                        brush = Brush.linearGradient(
-                            colors = listOf(
-                                MaterialTheme.colorScheme.primary.copy(alpha = 0.02f),
-                                MaterialTheme.colorScheme.secondary.copy(alpha = 0.02f),
-                                MaterialTheme.colorScheme.tertiary.copy(alpha = 0.02f)
-                            )
-                        )
-                    )
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .background(
+                            brush =
+                                Brush.linearGradient(
+                                    colors =
+                                        listOf(
+                                            MaterialTheme.colorScheme.primary.copy(alpha = 0.02f),
+                                            MaterialTheme.colorScheme.secondary.copy(alpha = 0.02f),
+                                            MaterialTheme.colorScheme.tertiary.copy(alpha = 0.02f),
+                                        ),
+                                ),
+                        ),
             ) {
                 Column(
                     modifier = Modifier.padding(48.dp),
                     horizontalAlignment = Alignment.Start,
-                    verticalArrangement = Arrangement.spacedBy(24.dp)
+                    verticalArrangement = Arrangement.spacedBy(24.dp),
                 ) {
-
-
                     Surface(
                         modifier = Modifier.size(96.dp),
                         shape = RoundedCornerShape(16.dp),
-                        color = MaterialTheme.colorScheme.surfaceContainerHighest
+                        color = MaterialTheme.colorScheme.surfaceContainerHighest,
                     ) {
                         Box(
                             modifier = Modifier.fillMaxSize(),
-                            contentAlignment = Alignment.Center
+                            contentAlignment = Alignment.Center,
                         ) {
                             Icon(
-                                modifier = Modifier
-                                    .size(48.dp),
+                                modifier =
+                                    Modifier
+                                        .size(48.dp),
                                 imageVector = Icons.Default.History,
                                 contentDescription = null,
-                                tint = MaterialTheme.colorScheme.primary
+                                tint = MaterialTheme.colorScheme.primary,
                             )
                         }
                     }
 
                     Text(
                         text = stringResource(R.string.no_changes_yet),
-                        style = MaterialTheme.typography.headlineMedium.copy(
-                            fontWeight = FontWeight.ExtraBold
-                        ),
+                        style =
+                            MaterialTheme.typography.headlineMedium.copy(
+                                fontWeight = FontWeight.ExtraBold,
+                            ),
                         color = MaterialTheme.colorScheme.onSurface,
                     )
 
                     Text(
                         text = stringResource(R.string.when_apps_update_description),
-                        style = MaterialTheme.typography.bodyLarge.copy(
-                            lineHeight = 24.sp
-                        ),
+                        style =
+                            MaterialTheme.typography.bodyLarge.copy(
+                                lineHeight = 24.sp,
+                            ),
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
@@ -340,9 +348,10 @@ private fun LogsContent(
     val context = LocalContext.current
 
     // Group logs by time periods with localized strings
-    val groupedLogs = remember(logs, context) {
-        groupLogsByTimePeriod(logs, context)
-    }
+    val groupedLogs =
+        remember(logs, context) {
+            groupLogsByTimePeriod(logs, context)
+        }
 
     LazyColumn(
         modifier = modifier.fillMaxSize(),
@@ -351,7 +360,7 @@ private fun LogsContent(
         item {
             TimelineHeader(
                 logs = logs,
-                modifier = Modifier.padding(horizontal = 16.dp)
+                modifier = Modifier.padding(horizontal = 16.dp),
             )
         }
 
@@ -360,41 +369,44 @@ private fun LogsContent(
             // Time period header
             item(key = "header_$timePeriod") {
                 Surface(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 8.dp),
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp, vertical = 8.dp),
                     shape = RoundedCornerShape(12.dp),
-                    color = MaterialTheme.colorScheme.surfaceContainer
+                    color = MaterialTheme.colorScheme.surfaceContainer,
                 ) {
                     Row(
                         modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
                         verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                        horizontalArrangement = Arrangement.spacedBy(12.dp),
                     ) {
                         Icon(
                             imageVector = Icons.Default.History,
                             contentDescription = null,
                             modifier = Modifier.size(20.dp),
-                            tint = MaterialTheme.colorScheme.primary
+                            tint = MaterialTheme.colorScheme.primary,
                         )
                         Text(
                             text = timePeriod,
-                            style = MaterialTheme.typography.titleMedium.copy(
-                                fontWeight = FontWeight.Bold
-                            ),
-                            color = MaterialTheme.colorScheme.primary
+                            style =
+                                MaterialTheme.typography.titleMedium.copy(
+                                    fontWeight = FontWeight.Bold,
+                                ),
+                            color = MaterialTheme.colorScheme.primary,
                         )
                         Surface(
                             shape = RoundedCornerShape(8.dp),
-                            color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3f)
+                            color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3f),
                         ) {
                             Text(
                                 text = logsInPeriod.size.toString(),
                                 modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
-                                style = MaterialTheme.typography.labelSmall.copy(
-                                    fontWeight = FontWeight.Bold
-                                ),
-                                color = MaterialTheme.colorScheme.primary
+                                style =
+                                    MaterialTheme.typography.labelSmall.copy(
+                                        fontWeight = FontWeight.Bold,
+                                    ),
+                                color = MaterialTheme.colorScheme.primary,
                             )
                         }
                     }
@@ -409,7 +421,7 @@ private fun LogsContent(
                         onClick = { onNavigateToAppDetails(log.packageName) },
                         isSelected = selectedPackageName == log.packageName,
                         isLast = index == logsInPeriod.lastIndex,
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth(),
                     )
                 }
             }
@@ -424,7 +436,7 @@ private fun LogsContent(
 // Helper function to group logs by time periods with localization
 private fun groupLogsByTimePeriod(
     logs: List<LogEntry>,
-    context: Context
+    context: Context,
 ): LinkedHashMap<String, List<LogEntry>> {
     val now = System.currentTimeMillis()
     val calendar = java.util.Calendar.getInstance()
@@ -434,30 +446,36 @@ private fun groupLogsByTimePeriod(
     val currentYear = calendar.get(java.util.Calendar.YEAR)
 
     // Get start of today, this week, this month for proper grouping
-    val startOfToday = calendar.apply {
-        set(java.util.Calendar.HOUR_OF_DAY, 0)
-        set(java.util.Calendar.MINUTE, 0)
-        set(java.util.Calendar.SECOND, 0)
-        set(java.util.Calendar.MILLISECOND, 0)
-    }.timeInMillis
+    val startOfToday =
+        calendar
+            .apply {
+                set(java.util.Calendar.HOUR_OF_DAY, 0)
+                set(java.util.Calendar.MINUTE, 0)
+                set(java.util.Calendar.SECOND, 0)
+                set(java.util.Calendar.MILLISECOND, 0)
+            }.timeInMillis
 
     calendar.timeInMillis = now
-    val startOfThisWeek = calendar.apply {
-        set(java.util.Calendar.DAY_OF_WEEK, calendar.firstDayOfWeek)
-        set(java.util.Calendar.HOUR_OF_DAY, 0)
-        set(java.util.Calendar.MINUTE, 0)
-        set(java.util.Calendar.SECOND, 0)
-        set(java.util.Calendar.MILLISECOND, 0)
-    }.timeInMillis
+    val startOfThisWeek =
+        calendar
+            .apply {
+                set(java.util.Calendar.DAY_OF_WEEK, calendar.firstDayOfWeek)
+                set(java.util.Calendar.HOUR_OF_DAY, 0)
+                set(java.util.Calendar.MINUTE, 0)
+                set(java.util.Calendar.SECOND, 0)
+                set(java.util.Calendar.MILLISECOND, 0)
+            }.timeInMillis
 
     calendar.timeInMillis = now
-    val startOfThisMonth = calendar.apply {
-        set(java.util.Calendar.DAY_OF_MONTH, 1)
-        set(java.util.Calendar.HOUR_OF_DAY, 0)
-        set(java.util.Calendar.MINUTE, 0)
-        set(java.util.Calendar.SECOND, 0)
-        set(java.util.Calendar.MILLISECOND, 0)
-    }.timeInMillis
+    val startOfThisMonth =
+        calendar
+            .apply {
+                set(java.util.Calendar.DAY_OF_MONTH, 1)
+                set(java.util.Calendar.HOUR_OF_DAY, 0)
+                set(java.util.Calendar.MINUTE, 0)
+                set(java.util.Calendar.SECOND, 0)
+                set(java.util.Calendar.MILLISECOND, 0)
+            }.timeInMillis
 
     val grouped = LinkedHashMap<String, MutableList<LogEntry>>()
 
@@ -465,119 +483,126 @@ private fun groupLogsByTimePeriod(
         calendar.timeInMillis = log.timestamp
         val logYear = calendar.get(java.util.Calendar.YEAR)
 
-        val period = when {
-            log.timestamp >= startOfToday -> {
-                // Use Android's localized "Today"
-                DateUtils.formatDateTime(
-                    context, log.timestamp,
-                    DateUtils.FORMAT_SHOW_DATE or DateUtils.FORMAT_NO_YEAR or DateUtils.FORMAT_ABBREV_RELATIVE
-                )
-                    .takeIf { it.contains("today", ignoreCase = true) }
-                    ?: context.getString(R.string.today)
-            }
+        val period =
+            when {
+                log.timestamp >= startOfToday -> {
+                    // Use Android's localized "Today"
+                    DateUtils
+                        .formatDateTime(
+                            context,
+                            log.timestamp,
+                            DateUtils.FORMAT_SHOW_DATE or DateUtils.FORMAT_NO_YEAR or DateUtils.FORMAT_ABBREV_RELATIVE,
+                        ).takeIf { it.contains("today", ignoreCase = true) }
+                        ?: context.getString(R.string.today)
+                }
 
-            log.timestamp >= startOfThisWeek -> {
-                context.getString(R.string.this_week)
-            }
+                log.timestamp >= startOfThisWeek -> {
+                    context.getString(R.string.this_week)
+                }
 
-            log.timestamp >= startOfThisMonth -> {
-                context.getString(R.string.this_month)
-            }
+                log.timestamp >= startOfThisMonth -> {
+                    context.getString(R.string.this_month)
+                }
 
-            logYear == currentYear -> {
-                context.getString(R.string.this_year)
-            }
+                logYear == currentYear -> {
+                    context.getString(R.string.this_year)
+                }
 
-            else -> {
-                // For years, just use the year number (universal)
-                logYear.toString()
+                else -> {
+                    // For years, just use the year number (universal)
+                    logYear.toString()
+                }
             }
-        }
 
         grouped.getOrPut(period) { mutableListOf() }.add(log)
     }
 
     // Convert to LinkedHashMap with List values and sort by recency
-    return grouped.mapValues { (_, logs) ->
-        logs.sortedByDescending { it.timestamp }
-    }.toMap(LinkedHashMap())
+    return grouped
+        .mapValues { (_, logs) ->
+            logs.sortedByDescending { it.timestamp }
+        }.toMap(LinkedHashMap())
 }
 
 @Composable
 private fun TimelineHeader(
     logs: List<LogEntry>,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val viewModel: LogsViewModel = hiltViewModel()
 
     Surface(
         modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(24.dp),
-        color = MaterialTheme.colorScheme.surfaceContainer
+        color = MaterialTheme.colorScheme.surfaceContainer,
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(24.dp),
-            verticalArrangement = Arrangement.spacedBy(20.dp)
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(24.dp),
+            verticalArrangement = Arrangement.spacedBy(20.dp),
         ) {
             // Header section with filter status
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(16.dp)
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
             ) {
                 Box(
-                    modifier = Modifier
-                        .size(56.dp)
-                        .background(
-                            color = MaterialTheme.colorScheme.surfaceContainerHighest,
-                            shape = RoundedCornerShape(16.dp)
-                        ),
-                    contentAlignment = Alignment.Center
+                    modifier =
+                        Modifier
+                            .size(56.dp)
+                            .background(
+                                color = MaterialTheme.colorScheme.surfaceContainerHighest,
+                                shape = RoundedCornerShape(16.dp),
+                            ),
+                    contentAlignment = Alignment.Center,
                 ) {
                     Icon(
                         imageVector = Icons.Default.Timeline,
                         contentDescription = "Timeline",
                         modifier = Modifier.size(28.dp),
-                        tint = MaterialTheme.colorScheme.primary
+                        tint = MaterialTheme.colorScheme.primary,
                     )
                 }
 
                 Column(
                     modifier = Modifier.weight(1f),
-                    verticalArrangement = Arrangement.spacedBy(4.dp)
+                    verticalArrangement = Arrangement.spacedBy(4.dp),
                 ) {
                     Text(
                         text = stringResource(R.string.change_timeline),
-                        style = MaterialTheme.typography.headlineSmall.copy(
-                            fontWeight = FontWeight.Bold
-                        ),
-                        color = MaterialTheme.colorScheme.onSurface
+                        style =
+                            MaterialTheme.typography.headlineSmall.copy(
+                                fontWeight = FontWeight.Bold,
+                            ),
+                        color = MaterialTheme.colorScheme.onSurface,
                     )
 
                     // Show actual filter status
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(6.dp)
+                        horizontalArrangement = Arrangement.spacedBy(6.dp),
                     ) {
                         Text(
                             text = stringResource(R.string.showing),
                             style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
 
                         Surface(
                             shape = RoundedCornerShape(8.dp),
-                            color = MaterialTheme.colorScheme.surfaceContainerHighest
+                            color = MaterialTheme.colorScheme.surfaceContainerHighest,
                         ) {
                             Text(
                                 text = getFilterDisplayName(viewModel.getCurrentFilter()),
                                 modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
-                                style = MaterialTheme.typography.labelSmall.copy(
-                                    fontWeight = FontWeight.Medium
-                                ),
-                                color = MaterialTheme.colorScheme.primary
+                                style =
+                                    MaterialTheme.typography.labelSmall.copy(
+                                        fontWeight = FontWeight.Medium,
+                                    ),
+                                color = MaterialTheme.colorScheme.primary,
                             )
                         }
                     }
@@ -585,24 +610,27 @@ private fun TimelineHeader(
             }
 
             Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(1.dp)
-                    .background(
-                        brush = Brush.horizontalGradient(
-                            colors = listOf(
-                                Color.Transparent,
-                                MaterialTheme.colorScheme.outline.copy(alpha = 0.3f),
-                                Color.Transparent
-                            )
-                        )
-                    )
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .height(1.dp)
+                        .background(
+                            brush =
+                                Brush.horizontalGradient(
+                                    colors =
+                                        listOf(
+                                            Color.Transparent,
+                                            MaterialTheme.colorScheme.outline.copy(alpha = 0.3f),
+                                            Color.Transparent,
+                                        ),
+                                ),
+                        ),
             )
 
             // Calculate actual time-based stats from logs
             ProgressSection(
                 logs = logs,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
             )
         }
     }
@@ -611,7 +639,7 @@ private fun TimelineHeader(
 @Composable
 private fun ProgressSection(
     logs: List<LogEntry>,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val now = System.currentTimeMillis()
     val weekMs = 7 * 24 * 60 * 60 * 1000L
@@ -626,14 +654,15 @@ private fun ProgressSection(
 
     Column(
         modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+        verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         Text(
             text = stringResource(R.string.activity_overview),
-            style = MaterialTheme.typography.titleMedium.copy(
-                fontWeight = FontWeight.Bold
-            ),
-            color = MaterialTheme.colorScheme.onSurface
+            style =
+                MaterialTheme.typography.titleMedium.copy(
+                    fontWeight = FontWeight.Bold,
+                ),
+            color = MaterialTheme.colorScheme.onSurface,
         )
 
         // Weekly Progress
@@ -643,17 +672,17 @@ private fun ProgressSection(
             total = totalLogs,
             color = MaterialTheme.colorScheme.primary,
             backgroundColor = MaterialTheme.colorScheme.surfaceContainerHighest,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
         )
 
-        // Monthly Progress  
+        // Monthly Progress
         EnhancedProgressIndicator(
             label = stringResource(R.string.past_month),
             count = monthlyLogs,
             total = totalLogs,
             color = MaterialTheme.colorScheme.primary,
             backgroundColor = MaterialTheme.colorScheme.surfaceContainerHighest,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
         )
 
         // 6 Month Progress
@@ -663,7 +692,7 @@ private fun ProgressSection(
             total = totalLogs,
             color = MaterialTheme.colorScheme.primary,
             backgroundColor = MaterialTheme.colorScheme.surfaceContainerHighest,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
         )
     }
 }
@@ -676,7 +705,7 @@ private fun EnhancedProgressIndicator(
     total: Int,
     color: Color,
     backgroundColor: Color,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val progress = if (total > 0) count.toFloat() / total else 0f
     val percentage = (progress * 100).toInt()
@@ -684,64 +713,69 @@ private fun EnhancedProgressIndicator(
     // Animated progress
     val animatedProgress by animateFloatAsState(
         targetValue = progress,
-        animationSpec = tween(
-            durationMillis = 1200,
-            easing = FastOutSlowInEasing
-        ),
-        label = "progress_animation"
+        animationSpec =
+            tween(
+                durationMillis = 1200,
+                easing = FastOutSlowInEasing,
+            ),
+        label = "progress_animation",
     )
 
     Column(
         modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+        verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         // Label and count row
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 Text(
                     text = label,
-                    style = MaterialTheme.typography.labelLarge.copy(
-                        fontWeight = FontWeight.Medium
-                    ),
-                    color = MaterialTheme.colorScheme.onSurface
+                    style =
+                        MaterialTheme.typography.labelLarge.copy(
+                            fontWeight = FontWeight.Medium,
+                        ),
+                    color = MaterialTheme.colorScheme.onSurface,
                 )
 
                 Surface(
                     shape = RoundedCornerShape(12.dp),
-                    color = backgroundColor.copy(alpha = 0.8f)
+                    color = backgroundColor.copy(alpha = 0.8f),
                 ) {
                     Text(
                         text = count.toString(),
                         modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
-                        style = MaterialTheme.typography.labelSmall.copy(
-                            fontWeight = FontWeight.Bold
-                        ),
-                        color = color
+                        style =
+                            MaterialTheme.typography.labelSmall.copy(
+                                fontWeight = FontWeight.Bold,
+                            ),
+                        color = color,
                     )
                 }
             }
 
             Text(
                 text = "$percentage%",
-                style = MaterialTheme.typography.labelLarge.copy(
-                    fontWeight = FontWeight.Bold
-                ),
-                color = color
+                style =
+                    MaterialTheme.typography.labelLarge.copy(
+                        fontWeight = FontWeight.Bold,
+                    ),
+                color = color,
             )
         }
 
         LinearProgressIndicator(
             progress = { animatedProgress },
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(12.dp),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .height(12.dp),
             color = color,
             trackColor = backgroundColor,
         )
@@ -749,14 +783,14 @@ private fun EnhancedProgressIndicator(
 }
 
 @Composable
-private fun getFilterDisplayName(filter: AppFilter): String {
-    return when (filter) {
+private fun getFilterDisplayName(filter: AppFilter): String =
+    when (filter) {
         AppFilter.ALL_APPS -> stringResource(R.string.all_apps)
         AppFilter.USER_APPS -> stringResource(R.string.user_apps)
         AppFilter.SYSTEM_APPS -> stringResource(R.string.system_apps)
     }.lowercase()
-}
 
-fun formatLogTime(timestamp: Long, context: Context): String {
-    return timestamp.convertTimestampToDate(context)
-}
+fun formatLogTime(
+    timestamp: Long,
+    context: Context,
+): String = timestamp.convertTimestampToDate(context)

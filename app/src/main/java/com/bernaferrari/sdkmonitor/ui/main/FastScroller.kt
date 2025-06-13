@@ -1,4 +1,4 @@
-package com.bernaferrari.sdkmonitor.ui.main.components
+package com.bernaferrari.sdkmonitor.ui.main
 
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.Composable
@@ -9,6 +9,7 @@ import androidx.compose.ui.unit.dp
 import com.bernaferrari.sdkmonitor.domain.model.AppFilter
 import com.bernaferrari.sdkmonitor.domain.model.AppVersion
 import com.bernaferrari.sdkmonitor.domain.model.SortOption
+import com.bernaferrari.sdkmonitor.ui.main.components.GenericFastScroller
 
 @Composable
 fun FastScroller(
@@ -16,8 +17,8 @@ fun FastScroller(
     apps: List<AppVersion>,
     listState: LazyListState,
     appFilter: AppFilter,
-    sortOption: SortOption, // Add sortOption parameter
-    scrollOffsetDp: Int = 60, // Default 60dp offset as requested
+    sortOption: SortOption,
+    scrollOffsetDp: Int = 60,
     onLetterSelected: (String) -> Unit,
     onScrollFinished: () -> Unit,
     onInteractionStart: () -> Unit = {},

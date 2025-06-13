@@ -59,7 +59,7 @@ import com.bernaferrari.sdkmonitor.ui.settings.components.ThemeModeToggle
 fun SettingsScreen(
     onNavigateToAppDetails: (String) -> Unit,
     onNavigateToAbout: (() -> Unit)? = null,
-    viewModel: SettingsViewModel = hiltViewModel()
+    viewModel: SettingsViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsState()
     var showSyncDialog by remember { mutableStateOf(false) }
@@ -70,7 +70,10 @@ fun SettingsScreen(
     val pluralTimeArray = stringArrayResource(R.array.pluralTime)
 
     // Helper function to get the correct time unit display name
-    fun getTimeUnitDisplayName(unit: TimeUnit, value: String): String {
+    fun getTimeUnitDisplayName(
+        unit: TimeUnit,
+        value: String,
+    ): String {
         val intValue = value.toIntOrNull() ?: 1
         return if (intValue == 1) {
             singularTimeArray[unit.code]
@@ -89,36 +92,38 @@ fun SettingsScreen(
                         text = stringResource(R.string.settings_screen_title),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.Bold,
                     )
                 },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = surface,
-                    titleContentColor = MaterialTheme.colorScheme.onSurface
-                )
+                colors =
+                    TopAppBarDefaults.topAppBarColors(
+                        containerColor = surface,
+                        titleContentColor = MaterialTheme.colorScheme.onSurface,
+                    ),
             )
-        }
+        },
     ) { paddingValues ->
         when {
             uiState.isLoading -> {
                 Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(paddingValues),
-                    contentAlignment = Alignment.Center
+                    modifier =
+                        Modifier
+                            .fillMaxSize()
+                            .padding(paddingValues),
+                    contentAlignment = Alignment.Center,
                 ) {
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.spacedBy(16.dp)
+                        verticalArrangement = Arrangement.spacedBy(16.dp),
                     ) {
                         CircularProgressIndicator(
                             modifier = Modifier.size(48.dp),
-                            color = MaterialTheme.colorScheme.primary
+                            color = MaterialTheme.colorScheme.primary,
                         )
                         Text(
                             text = stringResource(R.string.loading_settings),
                             style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                     }
                 }
@@ -126,34 +131,37 @@ fun SettingsScreen(
 
             uiState.hasError -> {
                 Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(paddingValues),
-                    contentAlignment = Alignment.Center
+                    modifier =
+                        Modifier
+                            .fillMaxSize()
+                            .padding(paddingValues),
+                    contentAlignment = Alignment.Center,
                 ) {
                     Card(
                         modifier = Modifier.padding(24.dp),
-                        colors = CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.errorContainer
-                        ),
-                        shape = RoundedCornerShape(16.dp)
+                        colors =
+                            CardDefaults.cardColors(
+                                containerColor = MaterialTheme.colorScheme.errorContainer,
+                            ),
+                        shape = RoundedCornerShape(16.dp),
                     ) {
                         Column(
                             modifier = Modifier.padding(24.dp),
                             horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.spacedBy(16.dp)
+                            verticalArrangement = Arrangement.spacedBy(16.dp),
                         ) {
                             Text(
                                 text = stringResource(R.string.error_loading_settings),
                                 style = MaterialTheme.typography.headlineSmall,
                                 color = MaterialTheme.colorScheme.onErrorContainer,
-                                fontWeight = FontWeight.Bold
+                                fontWeight = FontWeight.Bold,
                             )
                             Text(
-                                text = uiState.errorMessage
-                                    ?: stringResource(R.string.unknown_error),
+                                text =
+                                    uiState.errorMessage
+                                        ?: stringResource(R.string.unknown_error),
                                 style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onErrorContainer
+                                color = MaterialTheme.colorScheme.onErrorContainer,
                             )
                             FilledTonalButton(onClick = { viewModel.clearError() }) {
                                 Text(stringResource(R.string.retry))
@@ -165,24 +173,25 @@ fun SettingsScreen(
 
             else -> {
                 Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(paddingValues)
-                        .verticalScroll(rememberScrollState())
+                    modifier =
+                        Modifier
+                            .fillMaxSize()
+                            .padding(paddingValues)
+                            .verticalScroll(rememberScrollState()),
                 ) {
                     val prefs = uiState.preferences
 
                     SettingsSection(title = stringResource(R.string.appearance)) {
                         Row(
                             modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
                         ) {
                             ThemeMode.entries.forEach { theme ->
                                 ThemeModeToggle(
                                     themeMode = theme,
                                     isSelected = prefs.themeMode == theme,
                                     onClick = { viewModel.updateThemeMode(theme) },
-                                    modifier = Modifier.weight(1f)
+                                    modifier = Modifier.weight(1f),
                                 )
                             }
                         }
@@ -192,7 +201,7 @@ fun SettingsScreen(
                     AnalyticsSection(
                         title = stringResource(R.string.analytics),
                         currentFilter = prefs.appFilter,
-                        onFilterChange = { filter -> viewModel.updateAppFilter(filter) }
+                        onFilterChange = { filter -> viewModel.updateAppFilter(filter) },
                     ) {
                         when {
                             uiState.isAnalyticsLoading -> {
@@ -210,7 +219,7 @@ fun SettingsScreen(
                                     onSdkClick = { sdkVersion ->
                                         selectedSdkVersion = sdkVersion
                                         showSdkDialog = true
-                                    }
+                                    },
                                 )
                             }
                         }
@@ -222,34 +231,39 @@ fun SettingsScreen(
                     SettingsSection(title = stringResource(R.string.background_sync)) {
                         SettingsItem(
                             title = stringResource(R.string.background_sync),
-                            subtitle = if (prefs.backgroundSync) {
-                                when {
-                                    prefs.syncInterval == "1" && prefs.syncTimeUnit == TimeUnit.DAYS -> stringResource(
-                                        R.string.enabled_daily_updates
-                                    )
+                            subtitle =
+                                if (prefs.backgroundSync) {
+                                    when {
+                                        prefs.syncInterval == "1" && prefs.syncTimeUnit == TimeUnit.DAYS ->
+                                            stringResource(
+                                                R.string.enabled_daily_updates,
+                                            )
 
-                                    prefs.syncInterval == "7" && prefs.syncTimeUnit == TimeUnit.DAYS -> stringResource(
-                                        R.string.enabled_weekly_updates
-                                    )
+                                        prefs.syncInterval == "7" && prefs.syncTimeUnit == TimeUnit.DAYS ->
+                                            stringResource(
+                                                R.string.enabled_weekly_updates,
+                                            )
 
-                                    prefs.syncInterval == "30" && prefs.syncTimeUnit == TimeUnit.DAYS -> stringResource(
-                                        R.string.enabled_monthly_updates
-                                    )
+                                        prefs.syncInterval == "30" && prefs.syncTimeUnit == TimeUnit.DAYS ->
+                                            stringResource(
+                                                R.string.enabled_monthly_updates,
+                                            )
 
-                                    else -> stringResource(
-                                        R.string.enabled_every,
-                                        prefs.syncInterval,
-                                        getTimeUnitDisplayName(
-                                            prefs.syncTimeUnit,
-                                            prefs.syncInterval
-                                        ).lowercase()
-                                    )
-                                }
-                            } else {
-                                stringResource(R.string.tap_to_configure_automatic_updates)
-                            },
+                                        else ->
+                                            stringResource(
+                                                R.string.enabled_every,
+                                                prefs.syncInterval,
+                                                getTimeUnitDisplayName(
+                                                    prefs.syncTimeUnit,
+                                                    prefs.syncInterval,
+                                                ).lowercase(),
+                                            )
+                                    }
+                                } else {
+                                    stringResource(R.string.tap_to_configure_automatic_updates)
+                                },
                             icon = if (prefs.backgroundSync) Icons.Default.Sync else Icons.Default.SyncDisabled,
-                            onClick = { showSyncDialog = true }
+                            onClick = { showSyncDialog = true },
                         )
                     }
 
@@ -258,16 +272,17 @@ fun SettingsScreen(
                     // About Section
                     SettingsSection(title = stringResource(R.string.about_section)) {
                         SettingsItem(
-                            title = stringResource(
-                                R.string.app_version_format,
-                                stringResource(R.string.app_name),
-                                BuildConfig.VERSION_NAME
-                            ),
+                            title =
+                                stringResource(
+                                    R.string.app_version_format,
+                                    stringResource(R.string.app_name),
+                                    BuildConfig.VERSION_NAME,
+                                ),
                             subtitle = stringResource(R.string.learn_more_about_app),
                             icon = Icons.Default.Info,
                             onClick = {
                                 onNavigateToAbout?.invoke()
-                            }
+                            },
                         )
                     }
 
@@ -290,7 +305,7 @@ fun SettingsScreen(
                     if (enabled) {
                         viewModel.setSyncInterval(interval, unit)
                     }
-                }
+                },
             )
         }
 
@@ -304,7 +319,7 @@ fun SettingsScreen(
                 onAppClick = { packageName ->
                     showSdkDialog = false
                     onNavigateToAppDetails(packageName)
-                }
+                },
             )
         }
     }

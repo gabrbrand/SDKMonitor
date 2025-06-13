@@ -11,7 +11,6 @@ import kotlinx.coroutines.flow.Flow
  * Repository interface using Flow and coroutines
  */
 interface AppsRepository {
-
     /**
      * Get all apps as a Flow
      */

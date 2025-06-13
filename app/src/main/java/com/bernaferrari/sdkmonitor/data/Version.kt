@@ -1,6 +1,10 @@
 package com.bernaferrari.sdkmonitor.data
 
-import androidx.room.*
+import androidx.room.Entity
+import androidx.room.ForeignKey
+import androidx.room.Ignore
+import androidx.room.Index
+import androidx.room.PrimaryKey
 
 /**
  * Immutable model class for a Version.
@@ -9,15 +13,16 @@ import androidx.room.*
 @Entity(
     tableName = "versions",
     indices = [(Index(value = ["packageName", "versionId"], unique = true))],
-    foreignKeys = [(
+    foreignKeys = [
+        (
             ForeignKey(
                 entity = App::class,
                 parentColumns = arrayOf("packageName"),
                 childColumns = arrayOf("packageName"),
-                onDelete = ForeignKey.CASCADE
+                onDelete = ForeignKey.CASCADE,
             )
-            )
-    ]
+        ),
+    ],
 )
 data class Version(
     @PrimaryKey
@@ -26,7 +31,7 @@ data class Version(
     val packageName: String,
     val versionName: String,
     val lastUpdateTime: Long,
-    val targetSdk: Int
+    val targetSdk: Int,
 ) {
     @Ignore
     constructor(
@@ -34,13 +39,13 @@ data class Version(
         packageName: String,
         versionName: String,
         lastUpdateTime: Long,
-        targetSdk: Int
+        targetSdk: Int,
     ) : this(
         "$packageName $version $versionName $targetSdk".hashCode(),
         version,
         packageName,
         versionName,
         lastUpdateTime,
-        targetSdk
+        targetSdk,
     )
 }

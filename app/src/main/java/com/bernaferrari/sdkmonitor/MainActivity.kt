@@ -25,17 +25,17 @@ class MainActivity : ComponentActivity() {
 
         // Extract package name from intent (from notification or deep link)
         val packageName = intent?.getStringExtra("package_name")
-        
+
         setContent {
             val themeViewModel: ThemeViewModel = hiltViewModel()
-            
+
             SDKMonitorTheme(
                 darkTheme = themeViewModel.shouldUseDarkTheme(),
                 dynamicColor = themeViewModel.shouldUseDynamicColor(),
             ) {
                 AppNavigation(
                     modifier = Modifier.fillMaxSize(),
-                    initialPackageName = packageName
+                    initialPackageName = packageName,
                 )
             }
         }

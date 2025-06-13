@@ -14,7 +14,6 @@ import kotlinx.coroutines.flow.Flow
  */
 @Dao
 interface AppsDao {
-
     @Query("SELECT * FROM apps WHERE (isFromPlayStore = :hasKnownOrigin) ORDER BY title COLLATE NOCASE ASC")
     fun getAppsListFlowFiltered(hasKnownOrigin: Boolean): Flow<List<App>>
 

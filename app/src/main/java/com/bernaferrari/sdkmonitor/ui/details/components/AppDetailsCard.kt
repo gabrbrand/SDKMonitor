@@ -45,26 +45,28 @@ fun AppDetailsCard(
     appDetails: AppDetails,
     modifier: Modifier = Modifier,
     onAppInfoClick: () -> Unit = {},
-    onPlayStoreClick: () -> Unit = {}
+    onPlayStoreClick: () -> Unit = {},
 ) {
     Card(
         modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(20.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceContainer
-        ),
-        elevation = CardDefaults.cardElevation(0.dp)
+        colors =
+            CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surfaceContainer,
+            ),
+        elevation = CardDefaults.cardElevation(0.dp),
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(20.dp),
-            verticalArrangement = Arrangement.spacedBy(20.dp)
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(20.dp),
+            verticalArrangement = Arrangement.spacedBy(20.dp),
         ) {
             SDKInfoSection(appDetails = appDetails)
             ActionButtonsSection(
                 onAppInfoClick = onAppInfoClick,
-                onPlayStoreClick = onPlayStoreClick
+                onPlayStoreClick = onPlayStoreClick,
             )
             AppInformationSection(appDetails = appDetails)
         }
@@ -77,39 +79,41 @@ private fun SDKInfoSection(appDetails: AppDetails) {
 
     Row(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(12.dp)
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         // Target SDK
         Surface(
             modifier = Modifier.weight(1f),
             shape = RoundedCornerShape(16.dp),
-            color = targetSdkColor.copy(alpha = 0.1f)
+            color = targetSdkColor.copy(alpha = 0.1f),
         ) {
             Column(
                 modifier = Modifier.padding(16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(4.dp)
+                verticalArrangement = Arrangement.spacedBy(4.dp),
             ) {
                 Text(
                     text = appDetails.targetSdk.toString(),
-                    style = MaterialTheme.typography.headlineMedium.copy(
-                        fontWeight = FontWeight.Bold
-                    ),
-                    color = targetSdkColor
+                    style =
+                        MaterialTheme.typography.headlineMedium.copy(
+                            fontWeight = FontWeight.Bold,
+                        ),
+                    color = targetSdkColor,
                 )
                 Text(
                     text = stringResource(R.string.target_sdk),
-                    style = MaterialTheme.typography.labelMedium.copy(
-                        fontWeight = FontWeight.Medium
-                    ),
-                    color = targetSdkColor
+                    style =
+                        MaterialTheme.typography.labelMedium.copy(
+                            fontWeight = FontWeight.Medium,
+                        ),
+                    color = targetSdkColor,
                 )
                 Text(
                     text = appDetails.targetSdk.apiToVersion(),
                     style = MaterialTheme.typography.bodySmall,
                     color = targetSdkColor,
                     textAlign = TextAlign.Center,
-                    maxLines = 1
+                    maxLines = 1,
                 )
             }
         }
@@ -118,33 +122,35 @@ private fun SDKInfoSection(appDetails: AppDetails) {
         Surface(
             modifier = Modifier.weight(1f),
             shape = RoundedCornerShape(16.dp),
-            color = MaterialTheme.colorScheme.secondaryContainer
+            color = MaterialTheme.colorScheme.secondaryContainer,
         ) {
             Column(
                 modifier = Modifier.padding(16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(4.dp)
+                verticalArrangement = Arrangement.spacedBy(4.dp),
             ) {
                 Text(
                     text = appDetails.minSdk.toString(),
-                    style = MaterialTheme.typography.headlineMedium.copy(
-                        fontWeight = FontWeight.Bold
-                    ),
-                    color = MaterialTheme.colorScheme.secondary
+                    style =
+                        MaterialTheme.typography.headlineMedium.copy(
+                            fontWeight = FontWeight.Bold,
+                        ),
+                    color = MaterialTheme.colorScheme.secondary,
                 )
                 Text(
                     text = stringResource(R.string.min_sdk),
-                    style = MaterialTheme.typography.labelMedium.copy(
-                        fontWeight = FontWeight.Medium
-                    ),
-                    color = MaterialTheme.colorScheme.secondary
+                    style =
+                        MaterialTheme.typography.labelMedium.copy(
+                            fontWeight = FontWeight.Medium,
+                        ),
+                    color = MaterialTheme.colorScheme.secondary,
                 )
                 Text(
                     text = appDetails.minSdk.apiToVersion(),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.secondary,
                     textAlign = TextAlign.Center,
-                    maxLines = 1
+                    maxLines = 1,
                 )
             }
         }
@@ -154,11 +160,11 @@ private fun SDKInfoSection(appDetails: AppDetails) {
 @Composable
 private fun ActionButtonsSection(
     onAppInfoClick: () -> Unit,
-    onPlayStoreClick: () -> Unit
+    onPlayStoreClick: () -> Unit,
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(12.dp)
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         OutlinedButton(
             onClick = onAppInfoClick,
@@ -168,16 +174,17 @@ private fun ActionButtonsSection(
             Icon(
                 imageVector = Icons.Default.Info,
                 contentDescription = null,
-                modifier = Modifier.size(18.dp)
+                modifier = Modifier.size(18.dp),
             )
             Spacer(modifier = Modifier.width(8.dp))
             Text(
                 stringResource(R.string.app_information),
-                style = MaterialTheme.typography.labelLarge.copy(
-                    fontWeight = FontWeight.SemiBold
-                ),
+                style =
+                    MaterialTheme.typography.labelLarge.copy(
+                        fontWeight = FontWeight.SemiBold,
+                    ),
                 maxLines = 1,
-                overflow = TextOverflow.Ellipsis
+                overflow = TextOverflow.Ellipsis,
             )
         }
 
@@ -189,16 +196,17 @@ private fun ActionButtonsSection(
             Icon(
                 imageVector = Icons.Default.PlayArrow,
                 contentDescription = null,
-                modifier = Modifier.size(18.dp)
+                modifier = Modifier.size(18.dp),
             )
             Spacer(modifier = Modifier.width(8.dp))
             Text(
                 stringResource(R.string.play_store),
-                style = MaterialTheme.typography.labelLarge.copy(
-                    fontWeight = FontWeight.SemiBold
-                ),
+                style =
+                    MaterialTheme.typography.labelLarge.copy(
+                        fontWeight = FontWeight.SemiBold,
+                    ),
                 maxLines = 1,
-                overflow = TextOverflow.Ellipsis
+                overflow = TextOverflow.Ellipsis,
             )
         }
     }
@@ -207,51 +215,52 @@ private fun ActionButtonsSection(
 @Composable
 private fun AppInformationSection(appDetails: AppDetails) {
     Column(
-        verticalArrangement = Arrangement.spacedBy(12.dp)
+        verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         // Section header
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             Icon(
                 imageVector = Icons.Default.Info,
                 contentDescription = stringResource(R.string.app_information),
                 modifier = Modifier.size(18.dp),
-                tint = MaterialTheme.colorScheme.primary
+                tint = MaterialTheme.colorScheme.primary,
             )
             Text(
                 text = stringResource(R.string.app_information),
-                style = MaterialTheme.typography.titleMedium.copy(
-                    fontWeight = FontWeight.Bold
-                ),
-                color = MaterialTheme.colorScheme.onSurface
+                style =
+                    MaterialTheme.typography.titleMedium.copy(
+                        fontWeight = FontWeight.Bold,
+                    ),
+                color = MaterialTheme.colorScheme.onSurface,
             )
         }
 
         // Info rows
         Column(
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+            verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             InfoRow(
                 label = stringResource(R.string.package_label),
                 value = appDetails.packageName,
-                icon = Icons.Default.Code
+                icon = Icons.Default.Code,
             )
             InfoRow(
                 label = stringResource(R.string.version_label),
                 value = "${appDetails.versionName} (${appDetails.versionCode})",
-                icon = Icons.Default.Tag
+                icon = Icons.Default.Tag,
             )
             InfoRow(
                 label = stringResource(R.string.updated_label),
                 value = appDetails.lastUpdateTime,
-                icon = Icons.Default.Update
+                icon = Icons.Default.Update,
             )
             InfoRow(
                 label = stringResource(R.string.size_label),
                 value = formatSize(appDetails.size),
-                icon = Icons.Default.Storage
+                icon = Icons.Default.Storage,
             )
         }
     }
@@ -262,34 +271,35 @@ private fun InfoRow(
     label: String,
     value: String,
     icon: ImageVector,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Row(
         modifier = modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(12.dp)
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         Icon(
             imageVector = icon,
             contentDescription = label,
             modifier = Modifier.size(16.dp),
-            tint = MaterialTheme.colorScheme.onSurfaceVariant
+            tint = MaterialTheme.colorScheme.onSurfaceVariant,
         )
 
         Text(
             text = label,
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.width(80.dp)
+            modifier = Modifier.width(80.dp),
         )
 
         Text(
             text = value,
-            style = MaterialTheme.typography.bodyMedium.copy(
-                fontWeight = FontWeight.Medium
-            ),
+            style =
+                MaterialTheme.typography.bodyMedium.copy(
+                    fontWeight = FontWeight.Medium,
+                ),
             color = MaterialTheme.colorScheme.onSurface,
-            modifier = Modifier.weight(1f)
+            modifier = Modifier.weight(1f),
         )
     }
 }
@@ -312,19 +322,20 @@ private fun formatSize(sizeInBytes: Long): String {
 private fun AppDetailsCardPreview() {
     SDKMonitorTheme {
         AppDetailsCard(
-            appDetails = AppDetails(
-                packageName = "com.bernaferrari.sdkmonitor",
-                title = "SDK Monitor",
-                targetSdk = 34,
-                minSdk = 26,
-                versionName = "2.1.0",
-                versionCode = 42,
-                lastUpdateTime = "2 days ago",
-                size = 25 * 1024 * 1024, // 25 MB
-            ),
+            appDetails =
+                AppDetails(
+                    packageName = "com.bernaferrari.sdkmonitor",
+                    title = "SDK Monitor",
+                    targetSdk = 34,
+                    minSdk = 26,
+                    versionName = "2.1.0",
+                    versionCode = 42,
+                    lastUpdateTime = "2 days ago",
+                    size = 25 * 1024 * 1024, // 25 MB
+                ),
             modifier = Modifier.padding(16.dp),
             onAppInfoClick = { /* Handle app info click */ },
-            onPlayStoreClick = { /* Handle play store click */ }
+            onPlayStoreClick = { /* Handle play store click */ },
         )
     }
 }

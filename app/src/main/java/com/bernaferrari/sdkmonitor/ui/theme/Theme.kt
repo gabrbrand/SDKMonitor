@@ -19,36 +19,38 @@ import com.materialkolor.PaletteStyle
 import com.materialkolor.dynamiccolor.ColorSpec
 import com.materialkolor.rememberDynamicMaterialThemeState
 
-//private val primary = Color(0xFF1976D2)
+// private val primary = Color(0xFF1976D2)
 private val primary = Color(0xffFF8364)
 
-//private val primary = Color(
+// private val primary = Color(
 //    red = 0.219f,
 //    green = 0.325f,
 //    blue = 0.961f,
 //    alpha = 1.0f,
 //    colorSpace = ColorSpaces.DisplayP3
-//)
+// )
 
 @Composable
 fun SDKMonitorTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     dynamicColor: Boolean = true,
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
-    val colorScheme = when {
-        dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
-            val context = LocalContext.current
-            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
-        }
+    val colorScheme =
+        when {
+            dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
+                val context = LocalContext.current
+                if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
+            }
 
-        else -> rememberDynamicMaterialThemeState(
-            seedColor = primary,
-            style = PaletteStyle.TonalSpot,
-            isDark = darkTheme,
-            specVersion = ColorSpec.SpecVersion.SPEC_2025,
-        ).colorScheme
-    }
+            else ->
+                rememberDynamicMaterialThemeState(
+                    seedColor = primary,
+                    style = PaletteStyle.TonalSpot,
+                    isDark = darkTheme,
+                    specVersion = ColorSpec.SpecVersion.SPEC_2025,
+                ).colorScheme
+        }
     val view = LocalView.current
     if (!view.isInEditMode) {
         SideEffect {
@@ -64,6 +66,6 @@ fun SDKMonitorTheme(
     return MaterialExpressiveTheme(
         colorScheme = colorScheme,
         typography = Typography,
-        content = content
+        content = content,
     )
 }

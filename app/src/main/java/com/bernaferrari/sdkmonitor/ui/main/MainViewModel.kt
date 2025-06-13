@@ -23,190 +23,165 @@ import javax.inject.Inject
 
 sealed class MainUiState {
     data object Loading : MainUiState()
+
     data class Success(
         val apps: List<AppVersion>,
         val filteredApps: List<AppVersion>,
-        val totalCount: Int
+        val totalCount: Int,
     ) : MainUiState()
 
-    data class Error(val message: String, val throwable: Throwable? = null) : MainUiState()
+    data class Error(
+        val message: String,
+        val throwable: Throwable? = null,
+    ) : MainUiState()
 }
 
 @HiltViewModel
-class MainViewModel @Inject constructor(
-    appsRepository: AppsRepository,
-    private val preferencesRepository: PreferencesRepository,
-    private val appManager: AppManager
-) : ViewModel() {
+class MainViewModel
+    @Inject
+    constructor(
+        appsRepository: AppsRepository,
+        private val preferencesRepository: PreferencesRepository,
+        private val appManager: AppManager,
+    ) : ViewModel() {
+        private val _searchQuery = MutableStateFlow("")
+        val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
 
-    private val _searchQuery = MutableStateFlow("")
-    val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
+        private val _appFilter = MutableStateFlow(AppFilter.ALL_APPS)
+        val appFilter: StateFlow<AppFilter> = _appFilter.asStateFlow()
 
-    private val _appFilter = MutableStateFlow(AppFilter.ALL_APPS)
-    val appFilter: StateFlow<AppFilter> = _appFilter.asStateFlow()
+        private val _sortOption = MutableStateFlow(SortOption.NAME)
+        val sortOption: StateFlow<SortOption> = _sortOption.asStateFlow()
 
-    private val _sortOption = MutableStateFlow(SortOption.NAME)
-    val sortOption: StateFlow<SortOption> = _sortOption.asStateFlow()
+        private val hasLoaded = MutableStateFlow(false)
 
-    private val _hasLoaded = MutableStateFlow(false)
+        val uiState: StateFlow<MainUiState> =
+            combine(
+                appsRepository.getAppsWithVersions(),
+                preferencesRepository.getUserPreferences(),
+                _searchQuery,
+                hasLoaded,
+            ) { apps, prefs, query, hasLoaded ->
+                try {
+                    // Update filter and sort states from preferences
+                    _appFilter.value = prefs.appFilter
+                    _sortOption.value = if (prefs.orderBySdk) SortOption.SDK else SortOption.NAME
 
-    var firstVisibleItemIdx: Int = 0
-    var firstVisibleItemOffset: Int = 0
+                    // Apply filtering based on preferences
+                    val filteredByPrefs =
+                        when (prefs.appFilter) {
+                            AppFilter.ALL_APPS -> apps
+                            AppFilter.USER_APPS -> apps.filter { it.isFromPlayStore }
+                            AppFilter.SYSTEM_APPS -> apps.filter { !it.isFromPlayStore }
+                        }
 
-    // Add scroll position state management
-    private val _scrollPositions = mutableMapOf<String, Pair<Int, Int>>()
+                    // Apply ordering based on preferences
+                    val orderedApps =
+                        if (prefs.orderBySdk) {
+                            filteredByPrefs.sortedWith(
+                                compareByDescending<AppVersion> { it.sdkVersion }
+                                    .thenBy { it.title.lowercase() },
+                            )
+                        } else {
+                            filteredByPrefs.sortedBy { it.title.lowercase() }
+                        }
 
-    val uiState: StateFlow<MainUiState> = combine(
-        appsRepository.getAppsWithVersions(),
-        preferencesRepository.getUserPreferences(),
-        _searchQuery,
-        _hasLoaded
-    ) { apps, prefs, query, hasLoaded ->
-        try {
-            // Update filter and sort states from preferences
-            _appFilter.value = prefs.appFilter
-            _sortOption.value = if (prefs.orderBySdk) SortOption.SDK else SortOption.NAME
+                    // Apply search query
+                    val searchFiltered =
+                        if (query.isBlank()) {
+                            orderedApps
+                        } else {
+                            orderedApps.filter { appVersion ->
+                                query.normalizeString() in appVersion.title.normalizeString()
+                            }
+                        }
 
-            // Apply filtering based on preferences
-            val filteredByPrefs = when (prefs.appFilter) {
-                AppFilter.ALL_APPS -> apps
-                AppFilter.USER_APPS -> apps.filter { it.isFromPlayStore }
-                AppFilter.SYSTEM_APPS -> apps.filter { !it.isFromPlayStore }
-            }
+                    if (!hasLoaded && orderedApps.isEmpty()) {
+                        MainUiState.Loading
+                    } else {
+                        MainUiState.Success(
+                            apps = apps,
+                            filteredApps = searchFiltered,
+                            totalCount = orderedApps.size,
+                        )
+                    }
+                } catch (e: Exception) {
+                    MainUiState.Error(
+                        message = e.localizedMessage ?: "Failed to load apps",
+                        throwable = e,
+                    )
+                }
+            }.stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5000),
+                initialValue = MainUiState.Loading,
+            )
 
-            // Apply ordering based on preferences  
-            val orderedApps = if (prefs.orderBySdk) {
-                filteredByPrefs.sortedWith(
-                    compareByDescending<AppVersion> { it.sdkVersion }
-                        .thenBy { it.title.lowercase() }
-                )
-            } else {
-                filteredByPrefs.sortedBy { it.title.lowercase() }
-            }
+        init {
+            refreshAppsIfNeeded()
+        }
 
-            // Apply search query
-            val searchFiltered = if (query.isBlank()) {
-                orderedApps
-            } else {
-                orderedApps.filter { appVersion ->
-                    query.normalizeString() in appVersion.title.normalizeString()
+        fun updateSearchQuery(query: String) {
+            _searchQuery.value = query
+        }
+
+        fun loadApps() {
+            viewModelScope.launch {
+                try {
+                    // Sync all apps (now includes cleanup automatically)
+                    appManager.syncAllApps()
+                } catch (e: Exception) {
+                    // Handle error appropriately based on your UI state management
+                    Napier.e("❌ Failed to load apps", e)
                 }
             }
-
-            if (!hasLoaded && orderedApps.isEmpty()) {
-                MainUiState.Loading
-            } else {
-                MainUiState.Success(
-                    apps = apps,
-                    filteredApps = searchFiltered,
-                    totalCount = orderedApps.size
-                )
-            }
-        } catch (e: Exception) {
-            MainUiState.Error(
-                message = e.localizedMessage ?: "Failed to load apps",
-                throwable = e
-            )
         }
-    }.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5000),
-        initialValue = MainUiState.Loading
-    )
 
-    init {
-        refreshAppsIfNeeded()
-    }
+        fun updateAppFilter(filter: AppFilter) {
+            viewModelScope.launch {
+                preferencesRepository.updateAppFilter(filter)
+            }
+        }
 
-    fun updateSearchQuery(query: String) {
-        _searchQuery.value = query
-    }
+        fun updateSortOption(option: SortOption) {
+            viewModelScope.launch {
+                preferencesRepository.updateOrderBySdk(option == SortOption.SDK)
+            }
+        }
 
-    fun loadApps() {
-        viewModelScope.launch {
+        fun retryLoadApps() {
+            refreshAppsIfNeeded()
+        }
+
+        private fun refreshAppsIfNeeded() {
+            viewModelScope.launch {
+                if (!hasLoaded.value || uiState.value is MainUiState.Loading) {
+                    refreshAllApps()
+                }
+                hasLoaded.value = true
+            }
+        }
+
+        private suspend fun refreshAllApps() {
             try {
-                // Sync all apps (now includes cleanup automatically)
+                val preferences = preferencesRepository.getUserPreferences().first()
+                val installedApps =
+                    if (preferences.appFilter === AppFilter.ALL_APPS) {
+                        appManager.getPackages()
+                    } else {
+                        appManager.getPackagesWithUserPrefs()
+                    }
+
+                // If no apps found (probably emulator), show system apps
+                if (installedApps.isEmpty()) {
+                    preferencesRepository.updateAppFilter(AppFilter.ALL_APPS)
+                }
+
+                // Use the new integrated sync method instead of manual insertion
                 appManager.syncAllApps()
             } catch (e: Exception) {
-                // Handle error appropriately based on your UI state management
-                Napier.e("❌ Failed to load apps", e)
+                // Handle error - could emit error state
+                e.printStackTrace()
             }
         }
     }
-
-    // Save scroll position for a given key
-    fun saveScrollPosition(key: String, index: Int, offset: Int) {
-        _scrollPositions[key] = index to offset
-    }
-
-    // Retrieve scroll position for a given key
-    fun getScrollPosition(key: String): Pair<Int, Int>? {
-        return _scrollPositions[key]
-    }
-
-    fun updateAppFilter(filter: AppFilter) {
-        viewModelScope.launch {
-            preferencesRepository.updateAppFilter(filter)
-            // Clear scroll positions when filter changes significantly
-            if (_appFilter.value != filter) {
-                _scrollPositions.clear()
-            }
-        }
-    }
-
-    fun updateSortOption(option: SortOption) {
-        viewModelScope.launch {
-            preferencesRepository.updateOrderBySdk(option == SortOption.SDK)
-            // Clear scroll positions when sort changes significantly
-            if (_sortOption.value != option) {
-                _scrollPositions.clear()
-            }
-        }
-    }
-
-    fun retryLoadApps() {
-        refreshAppsIfNeeded()
-    }
-
-    private fun refreshAppsIfNeeded() {
-        viewModelScope.launch {
-            if (!_hasLoaded.value || uiState.value is MainUiState.Loading) {
-                refreshAllApps()
-            }
-            _hasLoaded.value = true
-        }
-    }
-
-    private suspend fun refreshAllApps() {
-        try {
-            val preferences = preferencesRepository.getUserPreferences().first()
-            val installedApps = if (preferences.appFilter === AppFilter.ALL_APPS) {
-                appManager.getPackages()
-            } else {
-                appManager.getPackagesWithUserPrefs()
-            }
-
-            // If no apps found (probably emulator), show system apps
-            if (installedApps.isEmpty()) {
-                preferencesRepository.updateAppFilter(AppFilter.ALL_APPS)
-            }
-
-            // Use the new integrated sync method instead of manual insertion
-            appManager.syncAllApps()
-        } catch (e: Exception) {
-            // Handle error - could emit error state
-            e.printStackTrace()
-        }
-    }
-
-    /**
-     * Force refresh when settings change
-     */
-    fun forceRefresh() {
-        viewModelScope.launch {
-            _hasLoaded.value = false
-            refreshAllApps()
-            _hasLoaded.value = true
-        }
-    }
-}

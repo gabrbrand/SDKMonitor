@@ -234,4 +234,10 @@
     <string name="open_source_transparent">Código aberto e transparente</string>
     <string name="sdk_monitor_feedback">Feedback do SDK Monitor</string>
     <string name="send_feedback">Enviar Feedback</string>
+
+    <!-- Export Data -->
+    <string name="export_data">Exportar Dados</string>
+    <string name="export_data_description">Baixe os dados do seu app como backup CSV</string>
+    <string name="export_sdk_monitor_data">Exportar Dados do SDK Monitor</string>
+    <string name="sdk_monitor_data_backup">Backup de dados do SDK Monitor criado em %s</string>
 </resources>

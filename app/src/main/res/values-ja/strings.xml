@@ -232,4 +232,10 @@
     <string name="open_source_transparent">オープンソースで透明性</string>
     <string name="sdk_monitor_feedback">SDKモニターフィードバック</string>
     <string name="send_feedback">フィードバック送信</string>
+
+    <!-- Export Data -->
+    <string name="export_data">データをエクスポート</string>
+    <string name="export_data_description">アプリデータをCSVバックアップとしてダウンロード</string>
+    <string name="export_sdk_monitor_data">SDKモニターデータをエクスポート</string>
+    <string name="sdk_monitor_data_backup">SDKモニターデータのバックアップが%sに作成されました</string>
 </resources>
