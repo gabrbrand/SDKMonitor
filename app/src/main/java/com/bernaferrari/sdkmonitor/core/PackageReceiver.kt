@@ -3,43 +3,42 @@ package com.bernaferrari.sdkmonitor.core
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import com.orhanobut.logger.Logger
+import io.github.aakira.napier.Napier
 
 class PackageReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
         try {
-            Logger.d("📦 Package event received: ${intent.action}")
+            Napier.d("📦 Package event received: ${intent.action}")
 
             val packageName = intent.data?.encodedSchemeSpecificPart
             if (packageName.isNullOrBlank()) {
-                Logger.w("⚠️ Package name is null or empty, ignoring event")
+                Napier.w("⚠️ Package name is null or empty, ignoring event")
                 return
             }
 
             when (intent.action) {
                 Intent.ACTION_PACKAGE_ADDED -> {
-                    Logger.d("➕ Package installed: $packageName")
-                    PackageWorker.startActionAddPackage(context,packageName)
+                    Napier.d("➕ Package installed: $packageName")
+                    PackageWorker.startActionAddPackage(context, packageName)
                 }
 
                 Intent.ACTION_PACKAGE_REPLACED -> {
-                    Logger.d("🔄 Package updated: $packageName")
+                    Napier.d("🔄 Package updated: $packageName")
                     PackageWorker.startActionFetchUpdate(context, packageName)
                 }
 
                 Intent.ACTION_PACKAGE_FULLY_REMOVED -> {
-                    Logger.d("🗑️ Package uninstalled: $packageName")
+                    Napier.d("🗑️ Package uninstalled: $packageName")
                     PackageWorker.startActionRemovePackage(context, packageName)
                 }
 
                 else -> {
-                    Logger.d("🤷 Unknown package action: ${intent.action}")
+                    Napier.d("🤷 Unknown package action: ${intent.action}")
                 }
             }
         } catch (exception: Exception) {
-            Logger.e(exception, "❌ Failed to process package event")
-            // Continue gracefully - don't crash the system
+            Napier.e("❌ Failed to process package event", exception)
         }
     }
 }

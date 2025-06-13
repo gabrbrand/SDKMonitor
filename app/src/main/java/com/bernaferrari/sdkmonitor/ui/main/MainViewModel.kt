@@ -9,8 +9,8 @@ import com.bernaferrari.sdkmonitor.domain.model.SortOption
 import com.bernaferrari.sdkmonitor.domain.repository.AppsRepository
 import com.bernaferrari.sdkmonitor.domain.repository.PreferencesRepository
 import com.bernaferrari.sdkmonitor.extensions.normalizeString
-import com.orhanobut.logger.Logger
 import dagger.hilt.android.lifecycle.HiltViewModel
+import io.github.aakira.napier.Napier
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -129,7 +129,7 @@ class MainViewModel @Inject constructor(
                 appManager.syncAllApps()
             } catch (e: Exception) {
                 // Handle error appropriately based on your UI state management
-                Logger.e(e, "❌ Failed to load apps")
+                Napier.e("❌ Failed to load apps", e)
             }
         }
     }

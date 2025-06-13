@@ -24,6 +24,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.OpenInNew
 import androidx.compose.material.icons.filled.Android
 import androidx.compose.material.icons.filled.Code
+import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Lock
@@ -45,10 +46,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -60,26 +63,32 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.content.FileProvider
 import androidx.core.net.toUri
+import androidx.hilt.navigation.compose.hiltViewModel
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
 import com.bernaferrari.sdkmonitor.BuildConfig
 import com.bernaferrari.sdkmonitor.R
 import com.bernaferrari.sdkmonitor.ui.theme.SDKMonitorTheme
+import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AboutScreen(
     onNavigateBack: (() -> Unit)? = null,
-    isTabletSize: Boolean = false
+    isTabletSize: Boolean = false,
+    settingsViewModel: SettingsViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
+    val scope = rememberCoroutineScope()
 
-    // Add state for privacy dialog
     var showPrivacyDialog by remember { mutableStateOf(false) }
 
-    // Staggered entrance animations
     val headerAnimation by animateFloatAsState(
         targetValue = 1f,
         animationSpec = tween(800, easing = FastOutSlowInEasing),
@@ -128,8 +137,7 @@ fun AboutScreen(
                 .padding(paddingValues)
                 .verticalScroll(rememberScrollState())
                 .padding(24.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(32.dp)
+            verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
             // Hero Section
             AppHeroCard(
@@ -138,57 +146,131 @@ fun AboutScreen(
                     .alpha(headerAnimation)
             )
 
-            // Core Information Cards
-            Column(
+            // Developer Card
+            InfoCard(
+                title = stringResource(R.string.made_with_care_by),
+                content = stringResource(R.string.bernardo_ferrari),
+                icon = Icons.Default.Favorite,
+                iconTint = Color(0xFFE91E63),
+                action = {
+                    SocialSection(context)
+                }
+            )
+
+            // Features Row - Privacy and Open Source
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                // Privacy Card
+                FeatureCard(
+                    title = stringResource(R.string.privacy_first_title),
+                    subtitle = stringResource(R.string.zero_tracking),
+                    icon = Icons.Default.Lock,
+                    color = Color(0xFF4CAF50),
+                    modifier = Modifier.weight(1f),
+                    onClick = { showPrivacyDialog = true }
+                )
+
+                // Open Source Card
+                FeatureCard(
+                    title = stringResource(R.string.open_source),
+                    subtitle = stringResource(R.string.view_on_github),
+                    icon = Icons.Default.Code,
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.weight(1f),
+                    onClick = {
+                        context.startActivity(
+                            Intent(
+                                Intent.ACTION_VIEW,
+                                "https://github.com/bernaferrari/SDKMonitor".toUri()
+                            )
+                        )
+                    }
+                )
+            }
+
+            // Export Data Card - More compact horizontal layout
+            Surface(
                 modifier = Modifier
                     .fillMaxWidth()
                     .alpha(contentAnimation),
-                verticalArrangement = Arrangement.spacedBy(20.dp)
-            ) {
-                // Developer Card
-                InfoCard(
-                    title = stringResource(R.string.made_with_care_by),
-                    content = stringResource(R.string.bernardo_ferrari),
-                    icon = Icons.Default.Favorite,
-                    iconTint = Color(0xFFE91E63),
-                    action = {
-                        SocialSection(context)
-                    }
-                )
+                onClick = {
+                    scope.launch {
+                        val exportedFile = settingsViewModel.exportDataToCsv(context)
+                        exportedFile?.let { file ->
+                            val timestamp =
+                                SimpleDateFormat("yyyy-MM-dd_HH-mm", Locale.getDefault()).format(
+                                    Date()
+                                )
 
-                // Features Row
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
-                    // Privacy Card
-                    FeatureCard(
-                        title = stringResource(R.string.privacy_first_title),
-                        subtitle = stringResource(R.string.zero_tracking),
-                        icon = Icons.Default.Lock,
-                        color = Color(0xFF4CAF50),
-                        modifier = Modifier.weight(1f),
-                        onClick = { showPrivacyDialog = true }
-                    )
+                            // Use FileProvider to get a content URI
+                            val uri = FileProvider.getUriForFile(
+                                context,
+                                "${context.packageName}.fileprovider",
+                                file
+                            )
 
-                    // Open Source Card
-                    FeatureCard(
-                        title = stringResource(R.string.open_source),
-                        subtitle = stringResource(R.string.view_on_github),
-                        icon = Icons.Default.Code,
-                        color = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.weight(1f),
-                        onClick = {
+                            val shareIntent = Intent(Intent.ACTION_SEND).apply {
+                                type = "text/csv"
+                                putExtra(Intent.EXTRA_STREAM, uri)
+                                putExtra(Intent.EXTRA_SUBJECT, "SDK Monitor Export - $timestamp")
+                                putExtra(
+                                    Intent.EXTRA_TEXT,
+                                    "SDK Monitor data backup created on $timestamp"
+                                )
+                                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                            }
                             context.startActivity(
-                                Intent(
-                                    Intent.ACTION_VIEW,
-                                    "https://github.com/bernaferrari/SDKMonitor".toUri()
+                                Intent.createChooser(
+                                    shareIntent,
+                                    "Export SDK Monitor Data"
                                 )
                             )
                         }
-                    )
+                    }
+                },
+                shape = RoundedCornerShape(16.dp),
+                color = Color(0xFF2196F3).copy(0.1f),
+                shadowElevation = 0.dp
+            ) {
+                Row(
+                    modifier = Modifier.padding(20.dp),
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Surface(
+                        modifier = Modifier.size(40.dp),
+                        shape = CircleShape,
+                        color = Color(0xFF2196F3).copy(0.2f)
+                    ) {
+                        Box(contentAlignment = Alignment.Center) {
+                            Icon(
+                                Icons.Default.Download,
+                                contentDescription = null,
+                                modifier = Modifier.size(20.dp),
+                                tint = Color(0xFF2196F3)
+                            )
+                        }
+                    }
+
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            "Export Data",
+                            style = MaterialTheme.typography.titleMedium.copy(
+                                fontWeight = FontWeight.Bold
+                            ),
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                        Text(
+                            "Download your app data as CSV backup",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
                 }
             }
+
 
             // Contact Action - Single elegant button
             Surface(
@@ -285,8 +367,7 @@ private fun AppHeroCard(modifier: Modifier = Modifier) {
                 Brush.verticalGradient(
                     colors = listOf(
                         MaterialTheme.colorScheme.primaryContainer.copy(0.8f),
-                        MaterialTheme.colorScheme.tertiaryContainer.copy(0.4f),
-                        Color.Transparent
+                        MaterialTheme.colorScheme.secondaryContainer.copy(0.8f),
                     )
                 ),
                 RoundedCornerShape(24.dp)
@@ -419,7 +500,6 @@ private fun InfoCard(
                     )
                 }
             }
-
             action?.invoke()
         }
     }
@@ -434,10 +514,13 @@ private fun FeatureCard(
     modifier: Modifier = Modifier,
     onClick: (() -> Unit)? = null
 ) {
+    val cardShape = RoundedCornerShape(20.dp)
+
     Card(
         modifier = modifier
+            .clip(cardShape)
             .then(if (onClick != null) Modifier.clickable { onClick() } else Modifier),
-        shape = RoundedCornerShape(20.dp),
+        shape = cardShape,
         colors = CardDefaults.cardColors(
             containerColor = color.copy(0.1f)
         ),

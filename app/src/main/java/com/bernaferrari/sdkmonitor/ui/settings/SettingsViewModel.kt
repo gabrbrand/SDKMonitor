@@ -1,5 +1,6 @@
 package com.bernaferrari.sdkmonitor.ui.settings
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bernaferrari.sdkmonitor.domain.model.AppFilter
@@ -13,6 +14,10 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.io.File
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import javax.inject.Inject
 
 /**
@@ -30,7 +35,6 @@ class SettingsViewModel @Inject constructor(
 
     init {
         observePreferences()
-        // Remove initial loadAnalytics() call since it will be triggered by preference observer
     }
 
     private fun observePreferences() {
@@ -236,4 +240,57 @@ class SettingsViewModel @Inject constructor(
     fun clearError() {
         _uiState.value = _uiState.value.copy(errorMessage = null)
     }
+
+    /**
+     * Export all app and version data to CSV
+     * Returns the created file for the UI to handle sharing
+     */
+    suspend fun exportDataToCsv(context: Context): File? {
+        return try {
+            val versions = appsRepository.getAllVersions()
+
+            val timestamp = SimpleDateFormat("yyyy-MM-dd_HH-mm", Locale.getDefault()).format(Date())
+            val fileName = "SDK_Monitor_Export_$timestamp.csv"
+
+            val file = File(context.getExternalFilesDir(null), fileName)
+
+            file.bufferedWriter().use { writer ->
+                // Write header with export info
+                writer.write("# SDK Monitor Data Export\n")
+                writer.write(
+                    "# Generated on: ${
+                        SimpleDateFormat(
+                            "yyyy-MM-dd HH:mm:ss",
+                            Locale.getDefault()
+                        ).format(Date())
+                    }\n"
+                )
+                writer.write("# Total Versions: ${versions.size}\n")
+                writer.write("#\n")
+
+                // Write CSV header
+                writer.write("packageName,versionId,version,versionName,lastUpdateTime,targetSdk\n")
+
+                // Write versions data
+                versions.forEach { version ->
+                    writer.write(
+                        "${version.packageName},${version.versionId},${version.version},\"${
+                            version.versionName.replace(
+                                "\"",
+                                "\"\""
+                            )
+                        }\",${version.lastUpdateTime},${version.targetSdk}\n"
+                    )
+                }
+            }
+
+            file
+        } catch (e: Exception) {
+            _uiState.value = _uiState.value.copy(
+                errorMessage = "Failed to export data: ${e.message}"
+            )
+            null
+        }
+    }
 }
+

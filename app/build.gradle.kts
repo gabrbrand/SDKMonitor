@@ -142,14 +142,12 @@ dependencies {
     // Work Manager
     implementation(libs.androidx.work.runtime.ktx)
 
-    implementation(libs.androidx.palette.ktx)
-    implementation(libs.logger)
-
     // UI Utils
     implementation(libs.androidx.palette.ktx)
     implementation(libs.material.kolor)
 
     // Debugging
+    implementation(libs.nappier)
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.leakcanary)
 

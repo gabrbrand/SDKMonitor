@@ -67,7 +67,7 @@ class NotificationManager @Inject constructor(
         packageName: String,
         oldSdk: Int,
         newSdk: Int,
-        appIcon: Drawable? = null
+        appIcon: Bitmap? = null
     ) {
         if (!notificationManager.areNotificationsEnabled()) return
 
@@ -86,14 +86,12 @@ class NotificationManager @Inject constructor(
 
         val sdkDirection = if (newSdk > oldSdk) "↗" else "↘"
 
-        val contentTitle = appName
         val contentText = "targetSDK $oldSdk → $newSdk"
         val bigText = "$appName\ntargetSDK $oldSdk → $newSdk"
 
         val notificationBuilder = NotificationCompat.Builder(context, CHANNEL_ID_SDK_CHANGES)
             .setSmallIcon(R.drawable.ic_target)
-            .setContentTitle(contentTitle)
-            .setContentText(contentText)
+            .setContentTitle(contentText)
             .setContentIntent(pendingIntent)
             .setAutoCancel(true)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
@@ -105,8 +103,7 @@ class NotificationManager @Inject constructor(
 
         // Convert app icon to bitmap and set as large icon
         appIcon?.let { icon ->
-            val bitmap = drawableToBitmap(icon)
-            notificationBuilder.setLargeIcon(bitmap)
+            notificationBuilder.setLargeIcon(icon)
         }
 
         notificationManager.notify(

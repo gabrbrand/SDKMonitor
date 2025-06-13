@@ -5,9 +5,9 @@ import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.bernaferrari.sdkmonitor.domain.repository.PreferencesRepository
-import com.orhanobut.logger.Logger
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
+import io.github.aakira.napier.Napier
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
@@ -25,14 +25,14 @@ class SyncWorker @AssistedInject constructor(
 
     override suspend fun doWork(): Result = withContext(Dispatchers.IO) {
         try {
-            Logger.d("🚀 Starting background sync")
+            Napier.d("🚀 Starting background sync")
             
             performHeavyWork()
-            
-            Logger.d("✨ Background sync completed successfully!")
+
+            Napier.d("✨ Background sync completed successfully!")
             Result.success()
         } catch (exception: Exception) {
-            Logger.e(exception, "❌ Background sync failed")
+            Napier.e("❌ Background sync failed", exception)
             Result.failure()
         }
     }

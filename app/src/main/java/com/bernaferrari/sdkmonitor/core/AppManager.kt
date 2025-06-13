@@ -5,7 +5,6 @@ import android.content.pm.ApplicationInfo
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
-import android.graphics.drawable.Drawable
 import androidx.core.graphics.drawable.toBitmap
 import androidx.palette.graphics.Palette
 import com.bernaferrari.sdkmonitor.data.App
@@ -16,8 +15,8 @@ import com.bernaferrari.sdkmonitor.domain.repository.AppsRepository
 import com.bernaferrari.sdkmonitor.domain.repository.PreferencesRepository
 import com.bernaferrari.sdkmonitor.extensions.convertTimestampToDate
 import com.bernaferrari.sdkmonitor.extensions.darken
-import com.orhanobut.logger.Logger
 import dagger.hilt.android.qualifiers.ApplicationContext
+import io.github.aakira.napier.Napier
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
@@ -31,14 +30,7 @@ class AppManager @Inject constructor(
     private val preferencesRepository: PreferencesRepository,
     private val notificationManager: NotificationManager
 ) {
-
-    private companion object {
-        const val PACKAGE_ANDROID_VENDING = "com.android.vending"
-        const val OUTSIDE_STORE = "com.google.android.packageinstaller"
-    }
-
     private val packageManager: PackageManager = context.packageManager
-    var forceRefresh = true
 
     private fun isUserApp(ai: ApplicationInfo?): Boolean {
         if (ai == null) return false
@@ -46,21 +38,20 @@ class AppManager @Inject constructor(
         return ai.flags and mask == 0
     }
 
-
     fun getPackages(): List<PackageInfo> =
         packageManager.getInstalledPackages(PackageManager.GET_META_DATA)
 
     suspend fun removePackageName(packageName: String) = withContext(Dispatchers.IO) {
         try {
-            Logger.d("🗑️ Removing all data for package: $packageName")
+            Napier.d("🗑️ Removing all data for package: $packageName")
 
             // Remove app and all its versions/logs
             appsRepository.deleteApp(packageName)
             appsRepository.deleteAllVersionsForApp(packageName)
 
-            Logger.d("✅ Successfully removed all data for: $packageName")
+            Napier.d("✅ Successfully removed all data for: $packageName")
         } catch (e: Exception) {
-            Logger.e(e, "❌ Failed to remove package data: $packageName")
+            Napier.e("❌ Failed to remove package data: $packageName", e)
             throw e
         }
     }
@@ -90,7 +81,7 @@ class AppManager @Inject constructor(
         }
     }
 
-    private fun showTargetSDKChangeNotification(
+    private suspend fun showTargetSDKChangeNotification(
         packageInfo: PackageInfo,
         oldTargetSDK: Int,
         newTargetSDK: Int
@@ -100,12 +91,15 @@ class AppManager @Inject constructor(
             appName = appName,
             packageName = packageInfo.packageName,
             oldSdk = oldTargetSDK,
-            newSdk = newTargetSDK
+            newSdk = newTargetSDK,
+            appIcon = getAppIcon(packageInfo.applicationInfo)
         )
     }
 
-    fun getAppLabel(packageInfo: PackageInfo) =
-        packageManager.getApplicationLabel(packageInfo.applicationInfo!!).toString().trim()
+    private fun getAppLabel(packageInfo: PackageInfo) =
+        packageInfo.applicationInfo?.let {
+            packageManager.getApplicationLabel(it).toString().trim()
+        } ?: ""
 
     suspend fun insertNewApp(packageInfo: PackageInfo) {
         if (appsRepository.getAppsMap()[packageInfo.packageName] != null) return
@@ -157,64 +151,12 @@ class AppManager @Inject constructor(
         }
     }
 
-    fun getApplicationInfo(packageName: String): ApplicationInfo? {
-        return getPackageInfo(packageName)?.applicationInfo
-    }
-
-    fun getIconFromId(packageName: String): Drawable? {
+    private fun getAppTitle(packageName: String): String {
         return try {
-            packageManager.getApplicationIcon(getApplicationInfo(packageName)!!)
-        } catch (e: Exception) {
-            null
-        }
-    }
-
-    fun getAppTitle(packageName: String): String {
-        return try {
-            val appInfo = getApplicationInfo(packageName) ?: return packageName
+            val appInfo = getPackageInfo(packageName)?.applicationInfo ?: return packageName
             packageManager.getApplicationLabel(appInfo).toString().trim()
         } catch (e: Exception) {
             packageName
-        }
-    }
-
-    fun getAllInstalledApps(): List<App> {
-        return getPackages().mapNotNull { packageInfo ->
-            try {
-                if (packageInfo.applicationInfo == null) return@mapNotNull null
-
-                val icon =
-                    packageManager.getApplicationIcon(packageInfo.applicationInfo!!).toBitmap()
-                val backgroundColor = getPaletteColor(Palette.from(icon).generate())
-                val label = getAppLabel(packageInfo)
-
-                App(
-                    packageName = packageInfo.packageName,
-                    title = label,
-                    backgroundColor = backgroundColor,
-                    isFromPlayStore = isUserApp(packageInfo.applicationInfo)
-                )
-            } catch (e: Exception) {
-                null
-            }
-        }
-    }
-
-    fun getCurrentVersion(packageName: String): Version? {
-        return try {
-            val packageInfo = getPackageInfo(packageName) ?: return null
-
-            val versionCode = packageInfo.longVersionCode
-
-            Version(
-                version = versionCode,
-                packageName = packageInfo.packageName,
-                versionName = packageInfo.versionName ?: "",
-                lastUpdateTime = packageInfo.lastUpdateTime,
-                targetSdk = packageInfo.applicationInfo?.targetSdkVersion ?: 0
-            )
-        } catch (e: Exception) {
-            null
         }
     }
 
@@ -248,52 +190,56 @@ class AppManager @Inject constructor(
     /**
      * Get app icon as bitmap for display in Compose
      */
-    suspend fun getAppIcon(packageName: String): Bitmap? = withContext(Dispatchers.IO) {
-        try {
-            val drawable = packageManager.getApplicationIcon(packageName)
-            drawable.toBitmap()
-        } catch (e: Exception) {
-            null
+    private suspend fun getAppIcon(appInfo: ApplicationInfo?): Bitmap? =
+        withContext(Dispatchers.IO) {
+            if (appInfo == null) return@withContext null
+
+            try {
+                val drawable = packageManager.getApplicationIcon(appInfo)
+                drawable.toBitmap()
+            } catch (e: Exception) {
+                null
+            }
         }
-    }
 
     suspend fun syncAllApps() {
         try {
-            Logger.d("🔄 Starting app sync with cleanup")
-            
+            Napier.d("🔄 Starting app sync with cleanup")
+
             // Get all installed packages
-            val installedPackages = packageManager.getInstalledPackages(PackageManager.GET_META_DATA)
+            val installedPackages =
+                packageManager.getInstalledPackages(PackageManager.GET_META_DATA)
             val installedPackageNames = installedPackages.map { it.packageName }.toSet()
-            
+
             // Get all apps from database
             val dbApps = appsRepository.getAllApps()
             val dbPackageNames = dbApps.map { it.packageName }.toSet()
-            
+
             // Find apps in DB but not installed anymore
             val uninstalledPackages = dbPackageNames - installedPackageNames
-            
+
             // Clean up uninstalled apps
             if (uninstalledPackages.isNotEmpty()) {
-                Logger.d("🧹 Cleaning up ${uninstalledPackages.size} uninstalled apps")
+                Napier.d("🧹 Cleaning up ${uninstalledPackages.size} uninstalled apps")
                 uninstalledPackages.forEach { packageName ->
                     removePackageName(packageName)
-                    Logger.d("🗑️ Removed uninstalled app: $packageName")
+                    Napier.d("🗑️ Removed uninstalled app: $packageName")
                 }
             }
-            
+
             // Sync all currently installed apps
             installedPackages.forEach { packageInfo ->
                 try {
                     insertNewApp(packageInfo)
                     insertNewVersion(packageInfo)
                 } catch (e: Exception) {
-                    Logger.e(e, "❌ Failed to sync package: ${packageInfo.packageName}")
+                    Napier.e("❌ Failed to sync package: ${packageInfo.packageName}", e)
                 }
             }
-            
-            Logger.d("✅ App sync completed with cleanup")
+
+            Napier.d("✅ App sync completed with cleanup")
         } catch (e: Exception) {
-            Logger.e(e, "❌ Failed to sync apps")
+            Napier.e("❌ Failed to sync apps", e)
             throw e
         }
     }

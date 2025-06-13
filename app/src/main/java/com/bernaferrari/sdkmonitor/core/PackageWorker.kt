@@ -7,9 +7,9 @@ import androidx.work.Data
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
-import com.orhanobut.logger.Logger
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
+import io.github.aakira.napier.Napier
 
 @HiltWorker
 class PackageWorker @AssistedInject constructor(
@@ -75,53 +75,53 @@ class PackageWorker @AssistedInject constructor(
             }
             Result.success()
         } catch (e: Exception) {
-            Logger.e(e, "❌ Failed to handle package action: $action for $packageName")
+            Napier.e("❌ Failed to handle package action: $action for $packageName", e)
             Result.failure()
         }
     }
 
     private suspend fun handleAddPackage(packageName: String) {
         try {
-            Logger.d("📦 Adding package: $packageName")
+            Napier.d("📦 Adding package: $packageName")
             val packageInfo = appManager.getPackageInfo(packageName)
             if (packageInfo != null) {
                 appManager.insertNewApp(packageInfo)
                 appManager.insertNewVersion(packageInfo)
-                Logger.d("✅ Successfully added package: $packageName")
+                Napier.d("✅ Successfully added package: $packageName")
             } else {
-                Logger.w("⚠️ Package not found: $packageName")
+                Napier.w("⚠️ Package not found: $packageName")
             }
         } catch (e: Exception) {
-            Logger.e(e, "❌ Failed to add package: $packageName")
+            Napier.e("❌ Failed to add package: $packageName", e)
             throw e
         }
     }
 
     private suspend fun handleUpdatePackage(packageName: String) {
         try {
-            Logger.d("🔄 Updating package: $packageName")
+            Napier.d("🔄 Updating package: $packageName")
             val packageInfo = appManager.getPackageInfo(packageName)
             if (packageInfo != null) {
                 appManager.insertNewVersion(packageInfo)
-                Logger.d("✅ Successfully updated package: $packageName")
+                Napier.d("✅ Successfully updated package: $packageName")
             } else {
-                Logger.w("⚠️ Package not found for update: $packageName")
+                Napier.w("⚠️ Package not found for update: $packageName")
                 // Package might be uninstalled, remove it
                 handleRemovePackage(packageName)
             }
         } catch (e: Exception) {
-            Logger.e(e, "❌ Failed to update package: $packageName")
+            Napier.e("❌ Failed to update package: $packageName", e)
             throw e
         }
     }
 
     private suspend fun handleRemovePackage(packageName: String) {
         try {
-            Logger.d("🗑️ Removing package: $packageName")
+            Napier.d("🗑️ Removing package: $packageName")
             appManager.removePackageName(packageName)
-            Logger.d("✅ Successfully removed package: $packageName")
+            Napier.d("✅ Successfully removed package: $packageName")
         } catch (e: Exception) {
-            Logger.e(e, "❌ Failed to remove package: $packageName")
+            Napier.e("❌ Failed to remove package: $packageName", e)
             throw e
         }
     }
