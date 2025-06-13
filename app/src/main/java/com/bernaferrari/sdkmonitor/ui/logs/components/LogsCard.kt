@@ -1,4 +1,4 @@
-package com.bernaferrari.sdkmonitor.ui.logs
+package com.bernaferrari.sdkmonitor.ui.logs.components
 
 import android.content.pm.PackageManager
 import androidx.compose.foundation.background
@@ -37,11 +37,12 @@ import com.bernaferrari.sdkmonitor.R
 import com.bernaferrari.sdkmonitor.domain.model.LogEntry
 import com.bernaferrari.sdkmonitor.extensions.apiToColor
 import com.bernaferrari.sdkmonitor.extensions.apiToVersion
+import com.bernaferrari.sdkmonitor.ui.logs.formatLogTime
 import com.bernaferrari.sdkmonitor.ui.theme.SDKMonitorTheme
 
 
 @Composable
-fun LogCard(
+fun LogsCard(
     modifier: Modifier = Modifier,
     log: LogEntry,
     isSelected: Boolean = false,
@@ -51,7 +52,6 @@ fun LogCard(
     val context = LocalContext.current
     val apiColor = Color(log.newSdk.apiToColor())
     val apiDescription = log.newSdk.apiToVersion()
-    val hasVersionChange = log.oldVersion != null && log.oldVersion != log.newVersion
 
     Column {
         Surface(
@@ -178,7 +178,7 @@ fun LogCard(
 @Composable
 private fun LogCardPreview() {
     SDKMonitorTheme {
-        LogCard(
+        LogsCard(
             log = LogEntry(
                 id = 1,
                 packageName = "com.whatsapp",
@@ -287,7 +287,7 @@ private fun SdkTransitionBadge(
 @Composable
 private fun LogCardDarkPreview() {
     SDKMonitorTheme(darkTheme = true) {
-        LogCard(
+        LogsCard(
             log = LogEntry(
                 id = 2,
                 packageName = "com.instagram.android",
@@ -306,7 +306,7 @@ private fun LogCardDarkPreview() {
 @Composable
 private fun LogCardLongVersionPreview() {
     SDKMonitorTheme {
-        LogCard(
+        LogsCard(
             log = LogEntry(
                 id = 3,
                 packageName = "com.google.gmail",

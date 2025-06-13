@@ -1,4 +1,4 @@
-package com.bernaferrari.sdkmonitor.ui.settings
+package com.bernaferrari.sdkmonitor.ui.settings.components
 
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.RepeatMode
@@ -47,13 +47,8 @@ import androidx.compose.ui.unit.dp
 import com.bernaferrari.sdkmonitor.R
 import com.bernaferrari.sdkmonitor.extensions.apiToColor
 import com.bernaferrari.sdkmonitor.extensions.apiToVersion
+import com.bernaferrari.sdkmonitor.ui.settings.SdkDistribution
 import com.bernaferrari.sdkmonitor.ui.theme.SDKMonitorTheme
-
-data class SdkDistribution(
-    val sdkVersion: Int,
-    val appCount: Int,
-    val percentage: Float
-)
 
 @Composable
 fun SdkAnalyticsCard(

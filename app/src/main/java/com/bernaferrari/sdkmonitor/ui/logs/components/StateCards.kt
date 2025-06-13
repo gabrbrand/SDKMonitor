@@ -1,4 +1,4 @@
-package com.bernaferrari.sdkmonitor.ui.logs
+package com.bernaferrari.sdkmonitor.ui.logs.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -61,7 +61,7 @@ fun EmptyStateCard(
                 modifier = Modifier.size(80.dp),
                 shape = RoundedCornerShape(20.dp),
                 color = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
-                shadowElevation = 4.dp
+                shadowElevation = 0.dp
             ) {
                 Box(
                     modifier = Modifier.fillMaxSize(),
@@ -134,7 +134,7 @@ fun ErrorStateCard(
                 modifier = Modifier.size(80.dp),
                 shape = RoundedCornerShape(20.dp),
                 color = MaterialTheme.colorScheme.error.copy(alpha = 0.1f),
-                shadowElevation = 4.dp
+                shadowElevation = 0.dp
             ) {
                 Box(
                     modifier = Modifier.fillMaxSize(),

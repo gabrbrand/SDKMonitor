@@ -1,4 +1,4 @@
-package com.bernaferrari.sdkmonitor.ui.details
+package com.bernaferrari.sdkmonitor.ui.details.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

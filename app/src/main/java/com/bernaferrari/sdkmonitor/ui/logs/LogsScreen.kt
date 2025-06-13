@@ -57,6 +57,7 @@ import com.bernaferrari.sdkmonitor.R
 import com.bernaferrari.sdkmonitor.domain.model.AppFilter
 import com.bernaferrari.sdkmonitor.domain.model.LogEntry
 import com.bernaferrari.sdkmonitor.extensions.convertTimestampToDate
+import com.bernaferrari.sdkmonitor.ui.logs.components.LogsCard
 
 /**
  * Logs Screen - Change Log UI
@@ -403,7 +404,7 @@ private fun LogsContent(
             // Logs in this time period with proper isLast calculation
             logsInPeriod.forEachIndexed { index, log ->
                 item(key = "${timePeriod}_${log.id}") {
-                    LogCard(
+                    LogsCard(
                         log = log,
                         onClick = { onNavigateToAppDetails(log.packageName) },
                         isSelected = selectedPackageName == log.packageName,

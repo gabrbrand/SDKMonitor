@@ -1,4 +1,4 @@
-package com.bernaferrari.sdkmonitor.ui.main
+package com.bernaferrari.sdkmonitor.ui.main.components
 
 import android.content.pm.PackageManager
 import android.graphics.Bitmap

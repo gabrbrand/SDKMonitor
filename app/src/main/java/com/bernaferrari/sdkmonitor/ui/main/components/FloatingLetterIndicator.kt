@@ -1,4 +1,4 @@
-package com.bernaferrari.sdkmonitor.ui.main
+package com.bernaferrari.sdkmonitor.ui.main.components
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio

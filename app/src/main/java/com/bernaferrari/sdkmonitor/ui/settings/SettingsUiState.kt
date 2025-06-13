@@ -4,6 +4,12 @@ import com.bernaferrari.sdkmonitor.domain.model.AppFilter
 import com.bernaferrari.sdkmonitor.domain.model.AppVersion
 import com.bernaferrari.sdkmonitor.domain.model.ThemeMode
 
+data class SdkDistribution(
+    val sdkVersion: Int,
+    val appCount: Int,
+    val percentage: Float
+)
+
 /**
  * UI state for Settings screen with granular control
  * Each preference can be updated independently while maintaining overall state consistency

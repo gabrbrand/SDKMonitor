@@ -1,4 +1,4 @@
-package com.bernaferrari.sdkmonitor.ui.main
+package com.bernaferrari.sdkmonitor.ui.main.components
 
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.Composable
@@ -9,7 +9,6 @@ import androidx.compose.ui.unit.dp
 import com.bernaferrari.sdkmonitor.domain.model.AppFilter
 import com.bernaferrari.sdkmonitor.domain.model.AppVersion
 import com.bernaferrari.sdkmonitor.domain.model.SortOption
-import com.bernaferrari.sdkmonitor.ui.components.GenericFastScroller
 
 
 @Composable

@@ -87,7 +87,4 @@ class PreferencesManager @Inject constructor(
             preferences[PreferenceKeys.SYNC_INTERVAL] = interval
         }
     }
-    
-    // Additional method for getting sync interval as Flow (for compatibility)
-    fun getSyncIntervalFlow(): Flow<String> = syncInterval
 }

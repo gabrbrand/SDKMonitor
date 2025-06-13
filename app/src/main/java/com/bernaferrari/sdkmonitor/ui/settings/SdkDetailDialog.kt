@@ -37,7 +37,7 @@ import androidx.compose.ui.window.DialogProperties
 import com.bernaferrari.sdkmonitor.domain.model.AppVersion
 import com.bernaferrari.sdkmonitor.extensions.apiToColor
 import com.bernaferrari.sdkmonitor.extensions.apiToVersion
-import com.bernaferrari.sdkmonitor.ui.main.MainAppCard
+import com.bernaferrari.sdkmonitor.ui.main.components.MainAppCard
 import com.bernaferrari.sdkmonitor.ui.theme.SDKMonitorTheme
 
 @Composable

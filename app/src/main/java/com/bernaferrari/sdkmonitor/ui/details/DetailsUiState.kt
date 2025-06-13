@@ -1,7 +1,6 @@
 package com.bernaferrari.sdkmonitor.ui.details
 
 import android.content.Context
-import com.bernaferrari.sdkmonitor.R
 import com.bernaferrari.sdkmonitor.data.Version
 import com.bernaferrari.sdkmonitor.domain.model.AppDetails
 import com.bernaferrari.sdkmonitor.domain.model.AppVersion
@@ -15,7 +14,7 @@ sealed class DetailsUiState {
 
     data class Success(
         val appDetails: AppDetails,
-        val versions: List<AppVersion> = emptyList() // Changed from VersionInfo to AppVersion
+        val versions: List<AppVersion> = emptyList()
     ) : DetailsUiState()
 
     data class Error(val message: String) : DetailsUiState()
@@ -42,15 +41,4 @@ fun Version.toAppVersion(appDetails: AppDetails, context: Context) = AppVersion(
     versionName = this.versionName,
     versionCode = this.version,
     lastUpdateTime = this.lastUpdateTime.convertTimestampToDate(context)
-)
-
-/**
- * Extension function to convert Version to VersionInfo (kept for compatibility)
- */
-fun Version.toVersionInfo() = VersionInfo(
-    versionName = this.versionName,
-    versionCode = this.version,
-    targetSdk = this.targetSdk,
-    timestamp = this.lastUpdateTime,
-    changes = emptyList()
 )

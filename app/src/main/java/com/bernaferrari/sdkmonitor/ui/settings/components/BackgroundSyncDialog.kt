@@ -1,4 +1,4 @@
-package com.bernaferrari.sdkmonitor.ui.settings
+package com.bernaferrari.sdkmonitor.ui.settings.components
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateDpAsState
@@ -64,6 +64,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.bernaferrari.sdkmonitor.R
+import com.bernaferrari.sdkmonitor.ui.settings.TimeUnit
 import com.bernaferrari.sdkmonitor.ui.theme.SDKMonitorTheme
 
 enum class SyncPreset(

@@ -1,4 +1,4 @@
-package com.bernaferrari.sdkmonitor.ui.settings
+package com.bernaferrari.sdkmonitor.ui.settings.components
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable

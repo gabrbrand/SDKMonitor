@@ -63,6 +63,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.bernaferrari.sdkmonitor.R
 import com.bernaferrari.sdkmonitor.domain.model.AppFilter
 import com.bernaferrari.sdkmonitor.domain.model.SortOption
+import com.bernaferrari.sdkmonitor.ui.main.components.FastScroller
+import com.bernaferrari.sdkmonitor.ui.main.components.MainAppCard
 
 @Composable
 fun MainScreen(

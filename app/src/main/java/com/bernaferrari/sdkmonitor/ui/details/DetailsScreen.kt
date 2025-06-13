@@ -53,6 +53,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.bernaferrari.sdkmonitor.R
 import com.bernaferrari.sdkmonitor.domain.model.AppVersion
+import com.bernaferrari.sdkmonitor.ui.details.components.AppDetailsCard
+import com.bernaferrari.sdkmonitor.ui.details.components.VersionTimeline
 import kotlinx.coroutines.delay
 
 /**

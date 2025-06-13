@@ -1,4 +1,4 @@
-package com.bernaferrari.sdkmonitor.ui.components
+package com.bernaferrari.sdkmonitor.ui.main.components
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
@@ -39,7 +39,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.bernaferrari.sdkmonitor.ui.main.FloatingLetterIndicator
 import kotlinx.coroutines.launch
 import kotlin.math.abs
 

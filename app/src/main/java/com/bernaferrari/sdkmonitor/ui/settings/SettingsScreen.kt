@@ -21,7 +21,6 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -46,8 +45,16 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.bernaferrari.sdkmonitor.BuildConfig
 import com.bernaferrari.sdkmonitor.R
 import com.bernaferrari.sdkmonitor.domain.model.ThemeMode
+import com.bernaferrari.sdkmonitor.ui.settings.components.AnalyticsSection
+import com.bernaferrari.sdkmonitor.ui.settings.components.BackgroundSyncDialog
+import com.bernaferrari.sdkmonitor.ui.settings.components.SdkAnalyticsCard
+import com.bernaferrari.sdkmonitor.ui.settings.components.SdkAnalyticsEmptyState
+import com.bernaferrari.sdkmonitor.ui.settings.components.SdkAnalyticsPlaceholder
+import com.bernaferrari.sdkmonitor.ui.settings.components.SettingsItem
+import com.bernaferrari.sdkmonitor.ui.settings.components.SettingsSection
+import com.bernaferrari.sdkmonitor.ui.settings.components.ThemeModeToggle
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
     onNavigateToAppDetails: (String) -> Unit,

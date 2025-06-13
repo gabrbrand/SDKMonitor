@@ -1,4 +1,4 @@
-package com.bernaferrari.sdkmonitor.ui.settings
+package com.bernaferrari.sdkmonitor.ui.settings.components
 
 import android.graphics.Color
 import androidx.compose.animation.core.animateDpAsState
